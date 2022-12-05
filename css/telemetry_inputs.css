@@ -1,0 +1,36 @@
+@font-face {
+	font-family: "leaguespartan";
+	src: url('../fonts/leaguespartan.ttf');
+}
+@font-face {
+	font-family: "digital.ttf";
+	src: url('../displays_fonts/digital.ttf');
+}
+@font-face {
+	font-family: "digital";
+	src: url('../displays_fonts/digital.ttf');
+}
+@font-face {
+	font-family: "Exo-Regular.ttf";
+	src: url('../displays_fonts/Exo-Regular.ttf');
+}
+@font-face {
+	font-family: "Exo-Regular";
+	src: url('../displays_fonts/Exo-Regular.ttf');
+}
+@font-face {
+	font-family: "Formula1-Display-Regular.woff";
+	src: url('../displays_fonts/Formula1-Display-Regular.woff');
+}
+@font-face {
+	font-family: "Formula1-Display-Regular";
+	src: url('../displays_fonts/Formula1-Display-Regular.woff');
+}
+@font-face {
+	font-family: "Michroma-Regular.ttf";
+	src: url('../displays_fonts/Michroma-Regular.ttf');
+}
+@font-face {
+	font-family: "Michroma-Regular";
+	src: url('../displays_fonts/Michroma-Regular.ttf');
+}

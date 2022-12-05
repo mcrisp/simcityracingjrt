@@ -1,0 +1,85 @@
+@font-face {
+	font-family: "Michroma";
+	src: url('../displays_fonts/Michroma-Regular.ttf');
+}
+
+/* iRacing Relatives Blackbox */
+body {
+ background: none !important;
+ border-radius: 0.6em !important;
+}
+
+#container {
+ overflow-y: hidden !important;
+ right: 0px !important;
+}
+
+page {
+ background: none !important;
+ border-radius: 0.6em !important;
+}
+
+#container {
+ border-bottom-left-radius: 0.6em !important;
+ border-bottom-right-radius: 0.6em !important;
+ background-color: rgba(0,0,0,0.7) !important;
+}
+
+.ligne {
+ font-size: 80%;
+ /*background-color: rgba(0,0,0,0.7) !important;*/
+ /*background: none !important;*/
+}
+
+.ligne0 {
+ background-color: rgba(0,0,0,0.7) !important;
+ border-top-left-radius: 0.6em !important;
+ border-top-right-radius: 0.6em !important;
+}
+
+.cpos, .ir, .name, .num, .pit, .stint, .pitstalltime { -webkit-filter: none; filter: none; }
+
+.cpos {
+ text-align: right;
+ padding-right: 0.5em;
+ box-sizing: border-box;
+}
+
+.num {
+ height: 1.5em;
+ line-height: 1.5em;
+ vertical-align: middle;
+ border-radius: 0.25em;
+ font-style: italic;
+ position: relative; top: -0.075em;
+}
+
+.ir {
+ font-size: 0.9em;
+ height: 2em; line-height: 2em;
+ border-radius: 0.25em;
+ vertical-align: middle;
+ position: relative; top: -0.075em;
+}
+
+.tires_stints div {
+ font-size: 90% !important;
+}
+
+.rel {
+ text-align: right !important;
+ font-size: 120% !important;
+ font-weight: bold !important;
+ /*margin-left: 0.5em;*/
+ line-height: 1em;
+}
+
+#sf_line {
+ background-color: #f00;
+ border: none !important;
+ height: 2px;
+}
+
+#cpos00, #tires_stints00 { filter: none !important; -webkit-filter: none !important; font-family: "Michroma"; }
+#cpos00 { color: #f5b326 !important; font-size: 105%; padding-left: 0.5em; font-weight: bold !important; }
+#tires_stints00 { color: white !important; font-size: 65%; text-align: middle; }

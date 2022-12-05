@@ -1,0 +1,61 @@
+@font-face {
+    font-family: 'Formula1 Display';
+    src: url('../displays_fonts/Formula1-Display-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#timing, #timing * {
+	 font-family: "Formula1 Display"; letter-spacing: 0.1em; text-transform: uppercase; 
+	 font-size: 0.93em; font-weight: normal; 
+}
+
+.car * {
+	font-size: 1em !important;
+}
+
+.tire_compound * {
+	font-weight: bold !important;
+}
+
+.cpos, .pos { 
+	height: 1.75em; line-height: 1.75em; background: #ffffff; border-radius: 0.3em; padding: 0px; 
+	margin-left: 0.15em; margin-right: 0.15em;
+	-webkit-filter: none !important; filter: none !important; 
+	color: #111111 !important; 
+}
+
+.class_box {
+	height: 1.8em; line-height: 1.8em;
+	margin-left: 0.15em; margin-right: 0.15em;
+}
+
+.gap, .cgap, .rel {
+	text-overflow: hidden; text-align: right; font-family: "Formula1 Display"; font-weight: normal; 
+	letter-spacing: 0.2em; 
+}
+
+#banner {
+	border-top-left-radius: 1.3em; border-top-right-radius: 1.3em; 
+}
+
+#banner_text {
+	font-family: "Formula1 Display"; font-weight: normal; overflow: hidden;
+	text-transform: uppercase;
+	width: 9em !important; overflow: hidden; font-size: 160%; line-height: 220% !important;
+}
+
+#banner_live { 
+	color: white !important; height: 100% !important; padding-top: 0.5em !important; letter-spacing: 0.1em;
+}
+
+.ligne0, .ligne0 * {
+	height: unset; line-height: unset;
+	font-family: "Formula1 Display"; font-size: 0.77em; letter-spacing: 0.1em; 
+	display:inline-block;color: #9e9e9e !important;
+	-webkit-filter: drop-shadow(1px 1px 1px black) !important;
+	filter: drop-shadow(1px 1px 1px black) !important;
+}
+.ligne0:hover, .ligne0 *:hover {
+	color:#ffffff !important;cursor:pointer;
+}

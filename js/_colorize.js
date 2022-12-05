@@ -1,0 +1,9 @@
+colorize_driver_ = {};
+colorize_team_ = {};
+colorize_team_[10010] = '#0088ff';
+colorize_team_[17700] = '#0088ff';
+colorize_team_[159351] = '#ee00ff';
+colorize_driver_[98994] = '#ffdd00';
+colorize_driver_[149353] = '#0088ff';
+colorize_driver_[355148] = '#0088ff';
+colorize_driver_[567264] = '#0088ff';
