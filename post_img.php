@@ -1,6 +1,6 @@
 <?php
 
-	$secret = "1234";
+	$secret = "scrletsgo$$";
 	
 	//$password = $_POST["password"];
 	$password = filter_input(INPUT_POST, 'password');

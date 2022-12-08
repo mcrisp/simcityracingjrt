@@ -3,7 +3,7 @@
 	// CONFIGURATION - Edit this to your needs
 
 	// The secret must match the password that you send in the POST request
-	$secret = "1234";
+	$secret = "scrletsgo$$";
 	
 	// The path to the datajson folder that contains the data.json, trackdata.json, events.json, etc
 	$datadir = "datajson";
