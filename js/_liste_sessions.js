@@ -1,6 +1,8 @@
 liste_sessions = [];
-last_sessionid = 57991898;
-last_sessionnum = 2;
+last_sessionid = 58093789;
+last_sessionnum = 0;
+liste_sessions = liste_sessions.concat([{'sessionid': 58093789, 'sessionnum': 0, 'track': 'Virginia International Raceway - Full Course', 'car': 'Audi R8 LMS', 'annee': 2022, 'mois': 12, 'jour': 7, 'type': 'Practice', 'nom': 'Practice, 3:00:00 - 2022-12-07 01h00 UTC - Virginia International Raceway - Full Course - Audi R8 LMS'}]);
+liste_sessions = liste_sessions.concat([{'sessionid': 58034160, 'sessionnum': 0, 'track': 'Virginia International Raceway - Full Course', 'car': 'Porsche 911 GT3.R', 'annee': 2022, 'mois': 12, 'jour': 5, 'type': 'Practice', 'nom': 'Practice, 2:00:00 - 2022-12-05 23h30 UTC - Virginia International Raceway - Full Course - Porsche 911 GT3.R'}]);
 liste_sessions = liste_sessions.concat([{'sessionid': 57991898, 'sessionnum': 2, 'track': 'WeatherTech Raceway Laguna Seca', 'car': 'Lucas Oil Off-Road Racing Series Pro-2 Lite', 'annee': 2022, 'mois': 12, 'jour': 3, 'type': 'Race', 'nom': 'Race, 0:40:00 - 2022-12-03 16h45 UTC - WeatherTech Raceway Laguna Seca - Lucas Oil Off-Road Racing Series Pro-2 Lite'}]);
 liste_sessions = liste_sessions.concat([{'sessionid': 57991898, 'sessionnum': 1, 'track': 'WeatherTech Raceway Laguna Seca', 'car': 'Lucas Oil Off-Road Racing Series Pro-2 Lite', 'annee': 2022, 'mois': 12, 'jour': 3, 'type': 'Open Qualify', 'nom': 'Open Qualify, 0:10:00 - 2022-12-03 16h45 UTC - WeatherTech Raceway Laguna Seca - Lucas Oil Off-Road Racing Series Pro-2 Lite'}]);
 liste_sessions = liste_sessions.concat([{'sessionid': 57991898, 'sessionnum': 0, 'track': 'WeatherTech Raceway Laguna Seca', 'car': 'Lucas Oil Off-Road Racing Series Pro-2 Lite', 'annee': 2022, 'mois': 12, 'jour': 3, 'type': 'Practice', 'nom': 'Practice, 0:10:00 - 2022-12-03 16h30 UTC - WeatherTech Raceway Laguna Seca - Lucas Oil Off-Road Racing Series Pro-2 Lite'}]);
