@@ -131,14 +131,14 @@
     <div id = "infosbar">
         <div onclick = "change_litre_gallon()" id = "litre">L</div><div onclick = "change_kg_livre()" id = "kg">Kg</div>
         <div id = "tank_h">Tank</div><div id = "estlaps_h">Est. Laps</div><div id="timeremain_h">Time Remaining</div>
-        <div id = "lapsremain_h">Laps Remaining</div><div onclick = "if(broadcast==0) ws.send('refuel')" id = "fuelneed_h">Fuel Needed</div>
+        <div id = "lapsremain_h">Laps Remaining</div><div onclick = "if(broadcast==0) ws.send('refuel'); if(broadcast==1) ws3.send('refuel')" id = "fuelneed_h">Fuel to add</div>
         <div id = "tank">--</div>
         <div id = "conso_h">Cons.</div><div id = "conso">--</div>
         <div id = "estlaps">--</div>
         <div id = "estlaps_bg0">&nbsp</div>
         <div id = "estlaps_bg1">&nbsp</div>
         <div id = "timeremain" onclick = "charge_official_results()">--</div>
-        <div id = "lapsremain">--</div><div onclick = "if(broadcast==0) ws.send('refuel')" id = "fuelneed">--</div>
+        <div id = "lapsremain">--</div><div onclick = "if(broadcast==0) ws.send('refuel'); if(broadcast==1) ws3.send('refuel')" id = "fuelneed">--</div>
         <div id = "lapsremain_bg0">&nbsp</div>
         <div id = "lapsremain_bg1">&nbsp</div>
         <div id = "lapsremain_bg2">&nbsp</div>
@@ -148,13 +148,13 @@
         <div id="flag_img">&nbsp;</div>
         <div id = "sof"><div id = "sof_cont"></div></div>
         <div id = "tires">
-            <div onclick = "if(broadcast==0) ws.send('tires_all')" id = "tires_all">
+            <div onclick = "if(broadcast==0) ws.send('tires_all'); if(broadcast==1) ws3.send('tires_all')" id = "tires_all">
                 <div id = "tires_all_h">TIRES</div><div id = "tires_all_cont">ALL</div>
-            </div><div onclick = "if(broadcast==0) ws.send('tires_none')" id = "tires_none">
+            </div><div onclick = "if(broadcast==0) ws.send('tires_none'); if(broadcast==1) ws3.send('tires_none')" id = "tires_none">
                 <div id = "tires_none_h">TIRES</div><div id = "tires_none_cont">NONE</div>
-            </div><div onclick = "if(broadcast==0) ws.send('tires_left')" id = "tires_left">
+            </div><div onclick = "if(broadcast==0) ws.send('tires_left'); if(broadcast==1) ws3.send('tires_left')" id = "tires_left">
                 <div id = "tires_left_h">TIRES</div><div id = "tires_left_cont">LEFT</div>
-            </div><div onclick = "if(broadcast==0) ws.send('tires_right')" id = "tires_right">
+            </div><div onclick = "if(broadcast==0) ws.send('tires_right'); if(broadcast==1) ws3.send('tires_right')" id = "tires_right">
                 <div id = "tires_right_h">TIRES</div><div id = "tires_right_cont">RIGHT</div>
             </div>
         </div>

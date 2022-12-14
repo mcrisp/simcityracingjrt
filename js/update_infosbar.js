@@ -221,11 +221,17 @@ function update_infosbar() {
     }
 
     //if (selected_idxjs in donnees.d && donnees.c in donnees.d)
-    if (donnees.d != undefined && donnees.c in donnees.d) {
+    //if (donnees.d != undefined && donnees.c in donnees.d) {
+    if (donnees.d != undefined) {
         //if (donnees.d[selected_idxjs].lr < 32767)
         if (donnees.pro_v == 1 || donnees.try_v == 1 || donnees.pro_v == undefined) {
             //document.getElementById("lapsremain").innerHTML = reformat_lapsremain(donnees.d[donnees.c].lr);
-            set_inner_html("lapsremain", reformat_lapsremain(donnees.d[donnees.c].lr));
+            //set_inner_html("lapsremain", reformat_lapsremain(donnees.d[donnees.c].lr));
+
+            if (donnees.lr != undefined) {
+                set_inner_html("lapsremain", reformat_lapsremain(donnees.lr));
+            }
+
             if (donnees.lapsremain_bg1_pct != undefined) {
                 lapsremain_bg1_pct = donnees.lapsremain_bg1_pct;
             }
@@ -360,22 +366,32 @@ function update_infosbar() {
             fz = Math.floor(32 * sofbar_h / dpi_factor_ / 40);
         }
         h_ = h * infosbar_coef;
-        tmp_sof_cont = "<div onmousedown='class_selected="+0+";init_group_by_class();update_datas_text_save();' style='z-index:6;color:#ffffff;padding-left:8px;padding-right:8px;" +
-            "display:inline-block;position:relative;left:0;line-height:" + (2 * h_ - Math.floor(0.5 * h_)) + "px;background-color:#000000'>" +
-            "<div style='text-align:center;font-size:" + 14 * h_ / 40 + "px;line-height:" + (Math.floor(0.5 * h_)) + "px'>ALL ("+ donnees.nb +")</div>" +
-            "<div style='text-align:center;line-height:" + (2 * h_ - 1 * Math.floor(0.5 * h_)) + "px'>" + donnees.sof[0] +
-            "</div></div>";
 
-        tmp_sofbar = "<div onclick='class_selected="+0+";init_group_by_class();update_datas_text_save();' style='z-index:6;font-size:" + fz + "px;padding-left:8px;" +
-            "padding-right:8px;display:inline-block;position:relative;left:0;top:0;line-height:" + h2 + "px;" +
-            "cursor: pointer; background-color:#000000'>ALL ("+ donnees.nb +") : " + donnees.sof[0] + "</div>";
         nb_classes = 0;
         for (var c in donnees.classes) nb_classes += 1;
+
+        if (sof_all_disp || nb_classes == 1) {
+            tmp_sof_cont = "<div onmousedown='class_selected=" + 0 + ";init_group_by_class();update_datas_text_save();' style='z-index:6;color:#ffffff;padding-left:8px;padding-right:8px;" +
+                "display:inline-block;position:relative;left:0;line-height:" + (2 * h_ - Math.floor(0.5 * h_)) + "px;background-color:#000000'>" +
+                "<div style='text-align:center;font-size:" + 14 * h_ / 40 + "px;line-height:" + (Math.floor(0.5 * h_)) + "px'>ALL (" + donnees.nb + ")</div>" +
+                "<div style='text-align:center;line-height:" + (2 * h_ - 1 * Math.floor(0.5 * h_)) + "px'>" + donnees.sof[0] +
+                "</div></div>";
+        } else {
+            tmp_sof_cont = "";
+        }
+
+        if (sof_all_disp || nb_classes == 1) {
+            tmp_sofbar = "<div onclick='class_selected=" + 0 + ";init_group_by_class();update_datas_text_save();' style='z-index:6;font-size:" + fz + "px;padding-left:8px;" +
+                "padding-right:8px;display:inline-block;position:relative;left:0;top:0;line-height:" + h2 + "px;" +
+                "cursor: pointer; background-color:#000000'>ALL (" + donnees.nb + ") - " + donnees.sof[0] + "</div>";
+        } else {
+            tmp_sofbar = "";
+        }
 
         if (nb_classes > 1) {
             for (var c in donnees.classes) {
                 if (donnees.carclasscolor != undefined && (c in donnees.carclasscolor)) {
-                    if (donnees.nbcars_class[c] > 0) {
+                    if (donnees.nbcars_class[c] > 0 && donnees.sof[c] != undefined) {
                         str = donnees.carclasscolor[c];
                         //console.log(c, str)
 
@@ -420,7 +436,7 @@ function update_infosbar() {
                             "<div style='text-align:center;line-height:" + (2 * h_ - 1 * Math.floor(0.5 * h_)) + "px'>" + donnees.sof[c] + "</div></div>";
                         a2 += " style='z-index:6;color:#000000; font-size:" + fz + "px;padding-left:8px;" +
                             "cursor: pointer; padding-right:8px;display:inline-block;position:relative;left:0;top:0;line-height:" + h2 + "px;" +
-                            "background-color:#" + str + "; color: #" + font_coul + " ;'>" + donnees.classname[c] + " (" + donnees.nbcars_class[c] + ") : " + donnees.sof[c] + "</div>";
+                            "background-color:#" + str + "; color: #" + font_coul + " ;'>" + donnees.classname[c] + " (" + donnees.nbcars_class[c] + ") - " + donnees.sof[c] + "</div>";
                         tmp_sof_cont += a1;
                         tmp_sofbar += a2;
                     }

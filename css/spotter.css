@@ -44,6 +44,7 @@ body {
     box-sizing: border-box;
 }
 #drag_overlays {
+    position: relative;
     width:94%;
     height:94%;
     top: 3%;
@@ -64,4 +65,21 @@ body {
 #rule_vertical {
     position: absolute;
     z-index: 98;
+}
+
+#nb_wide_text {
+    position: absolute;
+    color: yellow;
+    width: 100%;
+    text-align: center;
+    z-index: 1;
+    display: none;
+    font-weight: bold;
+    top: 0;
+    /*bottom: 0;*/
+}
+
+.text_shadow {
+    -webkit-filter: drop-shadow(1px 1px 1px black);
+    filter: drop-shadow(1px 1px 1px black, -1px -1px 1px white);
 }

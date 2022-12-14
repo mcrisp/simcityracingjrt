@@ -53,6 +53,16 @@ body * {
     box-sizing: border-box;
 }
 
+.blink {
+  animation: blinker 0.4s step-start infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
 #page {
     background-color: #000000;
     background-repeat: no-repeat;
@@ -113,6 +123,7 @@ body * {
     display: none;
 }
 #drag_overlays {
+    position: relative;
     width:94%;
     height:94%;
     top: 3%;
@@ -251,6 +262,8 @@ body * {
 	filter: drop-shadow(1px 1px 1px black);
 }
 
+#display_changed_name { display: none; z-index: 100; position: absolute; text-align: center; vertical-align:bottom; background-color:rgba(160,160,160,1);}
+
 #setting_changed_name { display: none; z-index: 100; position: absolute; text-align: center; vertical-align:bottom; background-color:rgba(160,160,160,1);}
 #setting_changed_value { display: none; z-index: 101; position: absolute; text-align: center; vertical-align:bottom; background-color:rgba(210,210,210,1); color: #000000}
 
@@ -274,6 +287,11 @@ body * {
 #estlaps { z-index:2; display:inline-block; position: absolute; background-color: rgba(255,255,0,0); color: #000000; text-align: center; overflow:hidden; }
 #estlaps_bg0 { z-index:0; display:inline-block; position: absolute; background-color: #00aa00; color: #000000; text-align: center;  }
 #estlaps_bg1 { z-index:1; display:inline-block; position: absolute; background-color: #ffffff; color: #000000; text-align: center;  }
+
+#estlaps_white_bar_pct
+{ z-index:3; position: absolute; background-color: #000000; color: #ffffff; text-align: center; }
+
+
 #lapsremain { z-index:3; display:inline-block; position: absolute; background-color: rgba(255,0,0,0); color: #ff9900; text-align: center;
 	-webkit-filter: drop-shadow(1px 1px 1px black);
 	filter: drop-shadow(1px 1px 1px black);
@@ -371,6 +389,21 @@ body * {
 
 #me_gap { display:inline-block; position: absolute; background-color: #000000; color: #ffffff; text-align: center;   }
 #me_cgap { display:inline-block; position: absolute; background-color: #000000; color: #ffffff; text-align: center;   }
+
+#leader_name { display:inline-block; position: absolute; background-color: #000000; color: #ffffff; text-align: left;  /*padding-left: 0.25em;*/
+    overflow:hidden;
+    text-overflow:clip ;
+    white-space:nowrap;
+}
+#cleader_name { display:inline-block; position: absolute; background-color: #000000; color: #ffffff; text-align: left;  /*padding-left: 0.25em;*/
+    overflow:hidden;
+    text-overflow:clip ;
+    white-space:nowrap;
+}
+#leader_best { display:inline-block; position: absolute; background-color: #000000; color: #ffffff; text-align: center;   }
+#cleader_best { display:inline-block; position: absolute; background-color: #000000; color: #ffffff; text-align: center;   }
+#leader_last { display:inline-block; position: absolute; background-color: #000000; color: #ffffff; text-align: center;   }
+#cleader_last { display:inline-block; position: absolute; background-color: #000000; color: #ffffff; text-align: center;   }
 
 #pre_topspeed { display:inline-block; position: absolute; background-color: #000000; color: #ffffff; text-align: center;   }
 #pre_max_speed { display:inline-block; position: absolute; background-color: #000000; color: #ffffff; text-align: center;   }
@@ -784,7 +817,7 @@ body * {
 
 #iracing_fuel_box, #iracing_windshield_box, #iracing_fastrepair_box, #iracing_lf_tire_box, #iracing_rf_tire_box, #iracing_lr_tire_box, #iracing_rr_tire_box
 {
-    position: absolute; text-align: center; color: #ffffff; font-weight: bold; border: 0.1em solid white;
+    position: absolute; text-align: center; color: #ffffff; font-weight: bold;
     pointer-events: auto;
 }
 

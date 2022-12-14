@@ -1,15 +1,18 @@
 
 
-// On met à jour le tableau advanced avec les nouvelles valeurs non définies dans le fichier de config js
+// On met à jour le tableau advanced avec les nouvelles valeurs non définies dans le fichier de config js où dans le var_default_options
 function set_var_dashboard_advanced_more_options_and_list_not_defined_default(d) {
 
     //var t = Date.now()
 
+    // REM : on ne met pas ici les options par défaut des options suppl. du rpm_leds puisqu'elles sont traitées dans le responsive_dashboard.js
     var var_dashboard_advanced_more_options_default = [
 
         {"nom" : "zindex_offset", "default_value": 0},
 
         {"nom" : "highlight", "default_value": 0},
+
+        {"nom" : "estlaptime_mode", "default_value": 0},
 
         {"nom" : "box_border_left_width", "default_value": 0},
         {"nom" : "box_border_top_width", "default_value": 0},
@@ -23,6 +26,7 @@ function set_var_dashboard_advanced_more_options_and_list_not_defined_default(d)
         {"nom" : "box_border_br_radius", "default_value": 0},
 
         {"nom" : "perso_bg_color", "default_value": 0},
+        {"nom" : "colorize_bg_color", "default_value": 0},
         {"nom" : "ccc_bg_color", "default_value": 0},
         {"nom" : "bg_color", "default_value": "#000000"},
         {"nom" : "perso_font_color", "default_value": 0},
@@ -35,6 +39,19 @@ function set_var_dashboard_advanced_more_options_and_list_not_defined_default(d)
         {"nom" : "font_weight", "default_value": "bold"},
         {"nom" : "perso_font_style", "default_value": 0},
         {"nom" : "font_style", "default_value": "normal"},
+
+
+        {"nom" : "pit_window_bg_color", "default_value": "#ff99ff"},
+        {"nom" : "lapsremain_gauge_color", "default_value": "#996622"},
+        {"nom" : "fuelneedx_gauge_color", "default_value": "#0099ff"},
+        {"nom" : "estlaps_gauge_color", "default_value": "#ffffff"},
+        {"nom" : "nbpits_nb_decimals", "default_value": 0},
+        {"nom" : "nbpits_gauge_color", "default_value": "#990000"},
+        {"nom" : "gauge_opacity", "default_value": 1},
+        {"nom" : "display_vertical_line", "default_value": 1},
+        {"nom" : "vertical_line_blue_color", "default_value": "#0088ff"},
+        {"nom" : "vertical_line_gold_color", "default_value": "#ffd700"},
+
 
         {"nom" : "header_disp", "default_value": 0},
         {"nom" : "header_width", "default_value": 32},
@@ -67,7 +84,7 @@ function set_var_dashboard_advanced_more_options_and_list_not_defined_default(d)
         {"nom" : "header_border_br_radius", "default_value": 0},
 
     ]
-    // Liste des options avancées du dashboard spécifique à chauqe display, et non définies par défaut dans le var_default_options.js
+    // Liste des options avancées du dashboard spécifique à chaque display, et non définies par défaut dans le var_default_options.js
     var displays_list_not_defined = [
         {"nom": "image_de_premier_plan", "default_value": ""},
         {"nom": "grid_disp", "default_value": 1},
@@ -75,6 +92,7 @@ function set_var_dashboard_advanced_more_options_and_list_not_defined_default(d)
         {"nom": "grid_w", "default_value": 16},
         {"nom": "grid_h", "default_value": 16},
         {"nom": "grid_snap", "default_value": 1},
+        {"nom": "hide_unused_dashboard_elements", "default_value": 0},
     ]
 
     var name, nom, default_value;
@@ -146,6 +164,16 @@ function hexToRgb(str) {
     }
 
     return false;
+}
+
+function hexToRGBA(hex, opacity) {
+    if (hex != undefined && hex != "") {
+        return 'rgba(' + (hex = hex.replace('#', '')).match(new RegExp('(.{' + hex.length / 3 + '})', 'g')).map(function (l) {
+                return parseInt(hex.length % 2 ? l + l : l, 16)
+            }).concat(isFinite(opacity) ? opacity : 1).join(',') + ')';
+    } else {
+        return "";
+    }
 }
 
 function change_bg(name, bg, alpha) {
@@ -304,8 +332,9 @@ function set_box4perfs(id, left, top, larg, larg_offset, haut, haut_offset, font
 function set_label(id, larg, haut, fontsize, border_top_bottom_width) {
     if (document.getElementById(id) != undefined) {
         document.getElementById(id).style.left = 0 + "px";
-        if (larg >= 0)
+        if (larg >= 0) {
             document.getElementById(id).style.width = wh(w * 0 / dashboard_ref_w, w * larg / dashboard_ref_w) + "px";
+        }
         document.getElementById(id).style.top = 0 + "px";
         if (haut >= 0) {
             document.getElementById(id).style.lineHeight = wh(w * 0 / dashboard_ref_w, w * (haut - border_top_bottom_width) / dashboard_ref_w) + "px";
@@ -317,24 +346,30 @@ function set_label(id, larg, haut, fontsize, border_top_bottom_width) {
 }
 
 
-function set_label2(id, left, top, larg, haut, fontsize, border_left_right_width, border_top_bottom_width, text_orientation) {
+function set_label2(id, left, top, larg, haut, fontsize, border_left_right_width, border_top_bottom_width, text_orientation, header_position) {
     if (document.getElementById(id) != undefined) {
         //document.getElementById(id).style.left = Math.floor(w * left / dashboard_ref_w) + "px";
         document.getElementById(id).style.left = w * left / dashboard_ref_w + "px";
-        if (larg >= 0)
+        if (larg >= 0) {
             //document.getElementById(id).style.width = wh(w * 0 / dashboard_ref_w, w * larg / dashboard_ref_w) + "px";
-            document.getElementById(id).style.width = w * larg / dashboard_ref_w + "px";
+            if (header_position == 1) {  // Header à gauche
+                document.getElementById(id).style.width = w * larg / dashboard_ref_w + "px";
+            } else {
+                //document.getElementById(id).style.width = Math.min(Math.round(w * larg / dashboard_ref_w + 0.5) - w * left / dashboard_ref_w, Math.round(w * larg / dashboard_ref_w + 0.5)) + "px";
+                document.getElementById(id).style.width = "100%";
+            }
+        }
         //document.getElementById(id).style.top = Math.floor(w * top / dashboard_ref_w) + "px";
         document.getElementById(id).style.top = w * top / dashboard_ref_w + "px";
         if (haut >= 0) {
             if (text_orientation == 0) {
                 //document.getElementById(id).style.lineHeight = wh(w * 0 / dashboard_ref_w, w * (haut - border_top_bottom_width) / dashboard_ref_w) + "px";
-                document.getElementById(id).style.lineHeight = w * (haut - border_top_bottom_width) / dashboard_ref_w + 2 * 0 + "px";
+                document.getElementById(id).style.lineHeight = w * (haut - border_top_bottom_width) / dashboard_ref_w + "px";
             } else {
-                document.getElementById(id).style.lineHeight = w * (larg - border_left_right_width) / dashboard_ref_w + 2 * 0 + "px";
+                document.getElementById(id).style.lineHeight = w * (larg - border_left_right_width) / dashboard_ref_w + "px";
             }
             //document.getElementById(id).style.height = wh(w * 0 / dashboard_ref_w, w * haut / dashboard_ref_w) + "px";  // important pour les iframes qui sont affiché en block et pas en inline-block
-            document.getElementById(id).style.height = w * haut / dashboard_ref_w + 2*0 + "px";  // important pour les iframes qui sont affiché en block et pas en inline-block
+            document.getElementById(id).style.height = w * haut / dashboard_ref_w + "px";  // important pour les iframes qui sont affiché en block et pas en inline-block
         }
         if (fontsize > 0)
             document.getElementById(id).style.fontSize = w * fontsize + "px";
@@ -409,7 +444,7 @@ function set4perfs(id, left, top, larg, haut, fontsize) {
     }
 }
 
-function cc(d, num, c) {
+function cc(d, num, uid, tid, c) {
     var str = d;
     //if (str == "0xffffff" || str == "0x0") str = "0xaaaaaa";
     if (str != undefined) {
@@ -422,6 +457,14 @@ function cc(d, num, c) {
             // on change le classid si c'est le cas dans classid_by_num
             if (num != undefined && num in classid_by_num) {
                 c = classid_by_num[num];
+            } else if (uid != undefined && tid != undefined) {
+                var tmp_id = tid;
+                if (tmp_id == 0) {  // on prend en compte le team id si elle n'est pas nulle, sinon on prend l'user id
+                    tmp_id = uid;
+                }
+                if (tmp_id in classid_by_num) {
+                    c = classid_by_num[tmp_id];
+                }
             }
 
             if (num != undefined && num in bg_by_num) {
@@ -626,6 +669,7 @@ function responsive_dim() {
     $("#page").css("width", window_innerWidth + "px");
     $("#page").css("height", window_innerHeight + "px");
 
+    /* On s'en occupe plus loin avec aussi le _box, _box_border et _box_no_border
     if (carname in car_with_drs) {
         document.getElementById("drs").style.display = "inline-block";
     } else {
@@ -651,7 +695,7 @@ function responsive_dim() {
         document.getElementById("mguf").style.display = "none";
         document.getElementById("regen_lap").style.display = "none";
         document.getElementById("regen_turn").style.display = "none";
-    }
+    }*/
 
     document.getElementById("shift").style.fontSize = h * shiftlight_Hpct / 100 + "px";
     document.getElementById("shift").style.lineHeight = window_innerHeight * shiftlight_Hpct / 100 + "px";
@@ -663,7 +707,8 @@ function responsive_dim() {
     document.getElementById("shift").style.height = h * shiftlight_Hpct / 100 + "px";
 
     document.getElementById("dashboard_light").style.fontSize = h * dashboard_light_Hpct / 100 + "px";
-    document.getElementById("dashboard_light").style.lineHeight = window_innerHeight * dashboard_light_Hpct / 100 + "px";
+    //document.getElementById("dashboard_light").style.lineHeight = window_innerHeight * dashboard_light_Hpct / 100 + "px";
+    document.getElementById("dashboard_light").style.lineHeight = h * dashboard_light_Hpct / 100 + "px";
     //document.getElementById("dashboard_light").style.opacity = dashboard_light_opacity;
     document.getElementById("dashboard_light").style.opacity = 1;
     //document.getElementById("dashboard_light_bg").style.opacity = dashboard_light_opacity;
@@ -689,38 +734,47 @@ function responsive_dim() {
         } else {
             filename_loc = window_shortname + "/display" + d + ".png";
         }
-        if (filename_loc == "") filename_loc = "display_vide.png";
-        //console.log("*" +  filename_loc + "*");
 
-        if (filename_loc != filename_loc_old) {
-            imgurl = "./" + dashboard_online_folder + "displays_bg/" + filename_loc;
+        // On recharge l'image seulement si on a changé le nom de l'image ou bien la transparence
+        if (filename_loc != filename_loc_old || transparency_OBS != transparency_OBS_old) {
+            if (filename_loc != "") {
+                imgurl = "./" + dashboard_online_folder + "displays_bg/" + filename_loc;
 
-            img = new Image();
-            img.src = imgurl;
-            $(img)
-                .load(function () {
-                    imgurl = "./" + dashboard_online_folder + "displays_bg/" + filename_loc;
-                    $("#page").css("background-image", "url('" + imgurl + "?" + Math.random() + "')");
-                    //$("#page").css("background-position", x_offset + "px " + y_offset + "px");
-                    //$("#page").css("background-size", w + "px " + h + "px");
-                })
-                .error(function () {
-                    // Pas d'image de fond -> on charge une image transparente
-                    imgurl = "./" + dashboard_online_folder + "displays_bg - default/display_vide.png";
-                    $("#page").css("background-image", "url('" + imgurl + "?" + Math.random() + "')");
-                    //$("#page").css("background-position", x_offset + "px " + y_offset + "px");
-                    //$("#page").css("background-size", w + "px " + h + "px");
-                });
-            img = null;
-            filename_loc_old = filename_loc;
+                img = new Image();
+                img.src = imgurl;
+                $(img)
+                    .load(function () {
+                        imgurl = "./" + dashboard_online_folder + "displays_bg/" + filename_loc;
+                        $("#page").css("background-image", "url('" + imgurl + "?" + Math.random() + "')");
+                        //$("#page").css("background-position", x_offset + "px " + y_offset + "px");
+                        //$("#page").css("background-size", w + "px " + h + "px");
+                    })
+                    .error(function () {
+                        // Pas d'image de fond -> on charge une image transparente
+                        imgurl = "./" + dashboard_online_folder + "displays_bg - default/display_vide.png";
+                        $("#page").css("background-image", "url('" + imgurl + "?" + Math.random() + "')");
+                        //$("#page").css("background-position", x_offset + "px " + y_offset + "px");
+                        //$("#page").css("background-size", w + "px " + h + "px");
+                    });
+                img = null;
+
+                //$("#page").css("background-position", x_offset + "px " + y_offset + "px");
+                //$("#page").css("background-size", w + "px " + h + "px");
+            } else {
+                $("#page").css("background-image", "");
+            }
         }
-
-        $("#page").css("background-position", x_offset + "px " + y_offset + "px");
-        $("#page").css("background-size", w + "px " + h + "px");
-
     } else {
         $("#page").css("background-image", "");
+        filename_loc = "";
     }
+
+    // Il faut tout le temps le redimensionner
+    $("#page").css("background-position", x_offset + "px " + y_offset + "px");
+    $("#page").css("background-size", w + "px " + h + "px");
+
+    filename_loc_old = filename_loc;
+    transparency_OBS_old = transparency_OBS;
 
     // On lit l'image de premier plan si elle existe
     if ("image_de_premier_plan" + d in advanced) {
@@ -729,14 +783,12 @@ function responsive_dim() {
         filename_loc_fg = "";
     }
 
+    // On recharge l'image seulement si on a changé le nom de l'image (REM : ici on ne s'occupe pas de la transparence comme pour l'image de fond
     if (filename_loc_fg != filename_loc_fg_old) {
-        if (filename_loc_fg == "") {
-            imgurl_fg = "";
-        } else {
-            imgurl_fg = "./" + dashboard_online_folder + "displays_bg/" + filename_loc_fg;
-        }
 
-        if (imgurl_fg != "") {
+        if (filename_loc_fg != "") {
+            imgurl_fg = "./" + dashboard_online_folder + "displays_bg/" + filename_loc_fg;
+
             img_fg = new Image();
             img_fg.src = imgurl_fg;
             $(img_fg)
@@ -744,8 +796,8 @@ function responsive_dim() {
                     imgurl_fg = "./" + dashboard_online_folder + "displays_bg/" + filename_loc_fg;
                     $("#page_frontground").css("display", "block");
                     $("#page_frontground").css("background-image", "url('" + imgurl_fg + "?" + Math.random() + "')");
-                    $("#page_frontground").css("background-position", x_offset + "px " + y_offset + "px");
-                    $("#page_frontground").css("background-size", w + "px " + h + "px");
+                    //$("#page_frontground").css("background-position", x_offset + "px " + y_offset + "px");
+                    //$("#page_frontground").css("background-size", w + "px " + h + "px");
                 })
                 .error(function () {
                     // Pas d'image de fond -> on charge une image transparente
@@ -757,12 +809,14 @@ function responsive_dim() {
                     $("#page_frontground").css("display", "none");
                 });
             img_fg = null;
-            filename_loc_fg_old = filename_loc_fg;
+        } else {
+            $("#page_frontground").css("background-image", "");
+            $("#page_frontground").css("display", "none");
         }
-    } else {
-        $("#page_frontground").css("background-image", "");
-        $("#page_frontground").css("display", "none");
     }
+    $("#page_frontground").css("background-position", x_offset + "px " + y_offset + "px");
+    $("#page_frontground").css("background-size", w + "px " + h + "px");
+    filename_loc_fg_old = filename_loc_fg;
 
 
     //console.log(bg_default_value["gear"], document.getElementById("gear").style.backgroundColor);
@@ -774,7 +828,25 @@ function responsive_dim() {
     // Si certaines valeurs ne sont pas définient on règle les valeurs par défaut pour éviter les bugs si c'est undefined
     set_var_dashboard_advanced_more_options_and_list_not_defined_default(d);
 
-    for (i in modlist) {
+
+    // On définit d'abord la variable name_highlighted utilisée dans la boucle qui suit
+    for (var i in modlist) {
+        name = modlist[i];
+        if (("disp_" + name + d) in advanced) {
+            if (advanced["disp_" + name + d]) {
+                if (advanced["highlight_" + name + d]) {
+                    document.getElementById("highlight_elt_cont").style.display = "block";
+                    set("highlight_elt_cont", advanced["x_" + name + d], advanced["y_" + name + d], advanced["w_" + name + d], advanced["h_" + name + d], advanced["f_" + name + d] / dashboard_ref_w);
+                    name_highlighted = name;
+                    d_highlighted = d;
+                    document.getElementById("highlight_elt_border").style.border = 3 / dpr + "px solid #ffff00";
+                }
+            }
+        }
+    }
+
+
+    for (var i in modlist) {
         name = modlist[i];
 
         //if (name != "rpm_leds") {
@@ -803,16 +875,6 @@ function responsive_dim() {
                 if (advanced["disp_" + name + d]) {
 
                     // On traite les Options supplémentaires
-
-                    if (advanced["highlight_" + name + d]) {
-                        document.getElementById("highlight_elt_cont").style.display = "block";
-                        set("highlight_elt_cont", advanced["x_" + name + d], advanced["y_" + name + d], advanced["w_" + name + d], advanced["h_" + name + d], advanced["f_" + name + d] / dashboard_ref_w);
-                        name_highlighted = name;
-                        d_highlighted = d;
-
-                        document.getElementById("highlight_elt_border").style.border = 3 / dpr + "px solid #ffff00";
-
-                    }
 
                     // Pour les valeurs tmp_barres_with_text_list on change les propriétés de font dans name + "_text"
                     var suffixe_text = "";
@@ -874,7 +936,7 @@ function responsive_dim() {
                     }
 
 
-                    // Gestion des borders et des headers
+                    // Gestion des borders et des headers et de l'event onclick pour pouvoir activer le highlight
                     //
                     var p = document.getElementById("page");
 
@@ -883,8 +945,9 @@ function responsive_dim() {
                     if (!elt_box_no_border) {  // Pour éviter de créer l'élément plusieurs fois
                         elt_box_no_border = document.createElement("div");
                         p.appendChild(elt_box_no_border);
-                        elt_box_no_border.setAttribute("id", name + "_box_no_border")
+                        elt_box_no_border.setAttribute("id", name + "_box_no_border");
                     }
+
                     elt_box_no_border.style.position = "absolute";
                     elt_box_no_border.style.zIndex = 13 + advanced["zindex_offset_" + name + d];  // pour que le header s'affiche au-dessus du box_border
                     elt_box_no_border.style.display = "inline-block";
@@ -893,8 +956,9 @@ function responsive_dim() {
                     if (!elt_box) {  // Pour éviter de créer l'élément plusieurs fois
                         elt_box = document.createElement("div");
                         p.appendChild(elt_box);
-                        elt_box.setAttribute("id", name + "_box")
+                        elt_box.setAttribute("id", name + "_box");
                     }
+
                     elt_box.style.position = "absolute";
                     elt_box.style.zIndex = 9 + advanced["zindex_offset_" + name + d];  // pour que le border s'affiche au-dessus de l'élément principal
                     elt_box.style.display = "inline-block";
@@ -905,12 +969,43 @@ function responsive_dim() {
                     elt_box.style.borderBottomLeftRadius = (advanced["box_border_bottom_width_" + name + d] > 0 && advanced["box_border_left_width_" + name + d] > 0 ? 1.01 : 1) * advanced["box_border_bl_radius_" + name + d] * w / dashboard_ref_w + "px";
                     elt_box.style.borderBottomRightRadius = (advanced["box_border_bottom_width_" + name + d] > 0 && advanced["box_border_right_width_" + name + d] > 0 ? 1.01 : 1) * advanced["box_border_br_radius_" + name + d] * w / dashboard_ref_w + "px";
 
+
+                    // BOX HIGHLIGHT
+                    var elt_box_highlight = document.getElementById(name + "_box_highlight");
+                    if (!elt_box_highlight) {  // Pour éviter de créer l'élément plusieurs fois
+                        elt_box_highlight = document.createElement("div");
+                        p.appendChild(elt_box_highlight);
+                        elt_box_highlight.setAttribute("id", name + "_box_highlight");
+                    }
+                    elt_box_highlight.style.position = "absolute";
+                    elt_box_highlight.style.zIndex = 99999;
+                    //elt_box_highlight.style.backgroundColor = "rgba(255,0,0,0.5)";
+                    // REM : on autorise la sélection par click que si un des éléments est déjà highlighted
+                    if (name_highlighted != null) {
+                        elt_box_highlight.style.display = "inline-block";
+                    } else {
+                        elt_box_highlight.style.display = "none";
+                    }
+                    elt_box_highlight.style.pointerEvents = "auto";
+                    elt_box_highlight.value = name;
+                    // Pour activer automatiquement le highlight si on click dessus
+                    elt_box_highlight.onclick = function () {
+                        var name = this.value;
+                        //var fullname = name + d;
+                        set("highlight_elt_cont", advanced["x_" + name + d], advanced["y_" + name + d], advanced["w_" + name + d], advanced["h_" + name + d], advanced["f_" + name + d] / dashboard_ref_w);
+                        advanced["highlight_" + name_highlighted + d] = 0;
+                        advanced["highlight_" + name + d] = 1;
+                        name_highlighted = name;
+                        ws.send("dashboard_element_highlight;" + window_name + ";" + window_shortname + ";" + name + ";" + d);
+                    }
+
+
                     // On corrige le bug de l'anti-aliasing en dessinant le border par dessus avec l'élément elt_box_border
                     var elt_box_border = document.getElementById(name + "_box_border");
                     if (!elt_box_border) {  // Pour éviter de créer l'élément plusieurs fois
                         elt_box_border = document.createElement("div");
                         p.appendChild(elt_box_border);
-                        elt_box_border.setAttribute("id", name + "_box_border")
+                        elt_box_border.setAttribute("id", name + "_box_border");
                     }
                     elt_box_border.style.position = "absolute";
                     elt_box_border.style.zIndex = 11 + advanced["zindex_offset_" + name + d];  // pour que le border s'affiche au-dessus de l'élément principal
@@ -1055,21 +1150,21 @@ function responsive_dim() {
 
                     if (advanced["header_position_" + name + d] == 0) {  // Header en haut
                         if (advanced["header_is_foreground_" + name + d]) {
-                            set_label2(name + "_label", 0, 0, advanced["w_" + name + d], header_width, advanced["header_font_size_" + name + d] / dashboard_ref_w, header_left_width + header_right_width, header_top_width + header_bottom_width, advanced["header_text_orientation_" + name + d]);
+                            set_label2(name + "_label", 0, 0, advanced["w_" + name + d], header_width, advanced["header_font_size_" + name + d] / dashboard_ref_w, header_left_width + header_right_width, header_top_width + header_bottom_width, advanced["header_text_orientation_" + name + d], advanced["header_position_" + name + d]);
                         } else {
-                            set_label2(name + "_label", box_left_width, box_top_width, advanced["w_" + name + d] - box_left_width - box_right_width, header_width, advanced["header_font_size_" + name + d] / dashboard_ref_w, header_left_width + header_right_width, header_top_width + header_bottom_width, advanced["header_text_orientation_" + name + d]);
+                            set_label2(name + "_label", box_left_width, box_top_width, advanced["w_" + name + d] - box_left_width - box_right_width, header_width, advanced["header_font_size_" + name + d] / dashboard_ref_w, header_left_width + header_right_width, header_top_width + header_bottom_width, advanced["header_text_orientation_" + name + d], advanced["header_position_" + name + d]);
                         }
                     } else if (advanced["header_position_" + name + d] == 1) {  // Header à gauche
                         if (advanced["header_is_foreground_" + name + d]) {
-                            set_label2(name + "_label", 0, 0, header_width, advanced["h_" + name + d], advanced["header_font_size_" + name + d] / dashboard_ref_w, header_left_width + header_right_width, header_top_width + header_bottom_width, advanced["header_text_orientation_" + name + d]);
+                            set_label2(name + "_label", 0, 0, header_width, advanced["h_" + name + d], advanced["header_font_size_" + name + d] / dashboard_ref_w, header_left_width + header_right_width, header_top_width + header_bottom_width, advanced["header_text_orientation_" + name + d], advanced["header_position_" + name + d]);
                         } else {
-                            set_label2(name + "_label", box_left_width, box_top_width, header_width, advanced["h_" + name + d] - box_top_width - box_bottom_width, advanced["header_font_size_" + name + d] / dashboard_ref_w, header_left_width + header_right_width, header_top_width + header_bottom_width, advanced["header_text_orientation_" + name + d]);
+                            set_label2(name + "_label", box_left_width, box_top_width, header_width, advanced["h_" + name + d] - box_top_width - box_bottom_width, advanced["header_font_size_" + name + d] / dashboard_ref_w, header_left_width + header_right_width, header_top_width + header_bottom_width, advanced["header_text_orientation_" + name + d], advanced["header_position_" + name + d]);
                         }
                     } else {  // Header en bas
                         if (advanced["header_is_foreground_" + name + d]) {
-                            set_label2(name + "_label", 0, box_top_width + advanced["h_" + name + d] - header_width - box_top_width - 0, advanced["w_" + name + d] - 0 - 0, header_width, advanced["header_font_size_" + name + d] / dashboard_ref_w, header_left_width + header_right_width, header_top_width + header_bottom_width, advanced["header_text_orientation_" + name + d]);
+                            set_label2(name + "_label", 0, box_top_width + advanced["h_" + name + d] - header_width - box_top_width - 0, advanced["w_" + name + d] - 0 - 0, header_width, advanced["header_font_size_" + name + d] / dashboard_ref_w, header_left_width + header_right_width, header_top_width + header_bottom_width, advanced["header_text_orientation_" + name + d], advanced["header_position_" + name + d]);
                         } else {
-                            set_label2(name + "_label", box_left_width, box_top_width + advanced["h_" + name + d] - header_width - box_top_width - box_bottom_width, advanced["w_" + name + d] - box_left_width - box_right_width, header_width, advanced["header_font_size_" + name + d] / dashboard_ref_w, header_left_width + header_right_width, header_top_width + header_bottom_width, advanced["header_text_orientation_" + name + d]);
+                            set_label2(name + "_label", box_left_width, box_top_width + advanced["h_" + name + d] - header_width - box_top_width - box_bottom_width, advanced["w_" + name + d] - box_left_width - box_right_width, header_width, advanced["header_font_size_" + name + d] / dashboard_ref_w, header_left_width + header_right_width, header_top_width + header_bottom_width, advanced["header_text_orientation_" + name + d], advanced["header_position_" + name + d]);
                         }
                     }
 
@@ -1081,6 +1176,8 @@ function responsive_dim() {
                             elt_label.style.height = "100%";
                         }
                     }
+
+                    set(name + "_box_highlight", advanced["x_" + name + d], advanced["y_" + name + d], advanced["w_" + name + d], advanced["h_" + name + d], advanced["f_" + name + d] / dashboard_ref_w);
 
                     set(name + "_box", advanced["x_" + name + d], advanced["y_" + name + d], advanced["w_" + name + d], advanced["h_" + name + d], advanced["f_" + name + d] / dashboard_ref_w);
                     set(name + "_box_border", advanced["x_" + name + d], advanced["y_" + name + d], advanced["w_" + name + d], advanced["h_" + name + d], advanced["f_" + name + d] / dashboard_ref_w);
@@ -1112,6 +1209,11 @@ function responsive_dim() {
                         $("#" + 'mgu_margin_max_bar_').css("height", tmp_h + "%");
                         $("#" + 'ers_margin_free_bar_').css("height", tmp_h + "%");
                     }
+
+                    if (name in elt_list_with_["_text"]) {
+                        $("#" + name + "_text").css("display", "inline-block");
+                    }
+
                 } else {
 
                     var elt_box_no_border = document.getElementById(name + "_box_no_border");
@@ -1195,48 +1297,62 @@ function responsive_dim() {
         document.getElementById("canvas_grid").style.display = "none";
     }
 
-
     // Elements particuliers dont on veut forcer la couleur de fond
     if (advanced["perso_bg_color_" + "lapsremain" + d]) {
         document.getElementById("lapsremain_bg0").style.backgroundColor = advanced["bg_color_" + "lapsremain" + d];
-        // on enlève aussi la gold line ainsi que la barre orange
-        document.getElementById("lapsremain_bg1").style.opacity = 0;
-        document.getElementById("lapsremain_bg2").style.opacity = 0;
     } else {
         document.getElementById("lapsremain_bg0").style.backgroundColor = "";
-        document.getElementById("lapsremain_bg1").style.opacity = 1;
-        document.getElementById("lapsremain_bg2").style.opacity = 1;
     }
+    if (advanced["display_vertical_line_" + "lapsremain" + d]) {
+        // On montre la blue/gold line
+        document.getElementById("lapsremain_bg2").style.opacity = 1;
+    } else {
+        // On cache la blue/gold line
+        document.getElementById("lapsremain_bg2").style.opacity = 0;
+    }
+    document.getElementById("lapsremain_bg1").style.opacity = advanced["gauge_opacity_" + "lapsremain" + d];
+    document.getElementById("lapsremain_bg1").style.backgroundColor = advanced["lapsremain_gauge_color_" + "lapsremain" + d];
+    document.getElementById("lapsremain_bg2").style.backgroundColor = advanced["vertical_line_blue_color_" + "lapsremain" + d];
+
     if (advanced["perso_bg_color_" + "estlaps" + d]) {
         document.getElementById("estlaps_bg0").style.backgroundColor = advanced["bg_color_" + "estlaps" + d];
         // on enlève aussi la barre blanche
-        document.getElementById("estlaps_bg1").style.opacity = 0;
+        //document.getElementById("estlaps_bg1").style.opacity = 0;
     } else {
         document.getElementById("estlaps_bg0").style.backgroundColor = "";
-        document.getElementById("estlaps_bg1").style.opacity = 1;
+        //document.getElementById("estlaps_bg1").style.opacity = 1;
     }
+    document.getElementById("estlaps_bg1").style.opacity = advanced["gauge_opacity_" + "estlaps" + d];
+    document.getElementById("estlaps_bg1").style.backgroundColor = advanced["estlaps_gauge_color_" + "estlaps" + d];
+
     tmp_list = ['fuelneed', 'fuelneed1', 'fuelneed5'];
     for (i in tmp_list) {
         name = tmp_list[i];
         if (advanced["perso_bg_color_" + name + d]) {
             document.getElementById(name + "_bg0").style.backgroundColor = advanced["bg_color_" + name + d];
             // on enlève aussi la gauge bleue
-            document.getElementById(name + "_bg1").style.opacity = 0;
+            //document.getElementById(name + "_bg1").style.opacity = 0;
         } else {
             document.getElementById(name + "_bg0").style.backgroundColor = "";
-            document.getElementById(name + "_bg1").style.opacity = 1;
+            //document.getElementById(name + "_bg1").style.opacity = 1;
         }
+        document.getElementById(name + "_bg1").style.opacity = advanced["gauge_opacity_" + name + d];
+        document.getElementById(name + "_bg1").style.backgroundColor = advanced["fuelneedx_gauge_color_" + name + d];
     }
+
+
     if (advanced["perso_bg_color_" + "nbpits" + d]) {
         document.getElementById("nbpits_bg0").style.backgroundColor = advanced["bg_color_" + "nbpits" + d];
-        document.getElementById("nbpits_bg1").style.opacity = 0;
+        //document.getElementById("nbpits_bg1").style.opacity = 0;
     } else {
         document.getElementById("nbpits_bg0").style.backgroundColor = "";
-        document.getElementById("nbpits_bg1").style.opacity = 1;
+        //document.getElementById("nbpits_bg1").style.opacity = 1;
     }
-    tmp_list = ['pre_pos', 'me_pos', 'post_pos', 'pre_cpos', 'me_cpos', 'post_cpos'];
-    for (i in tmp_list) {
-        name = tmp_list[i];
+    document.getElementById("nbpits_bg1").style.opacity = advanced["gauge_opacity_" + "nbpits" + d];
+    document.getElementById("nbpits_bg1").style.backgroundColor = advanced["nbpits_gauge_color_" + "nbpits" + d];
+
+    tmp_list = elt_list_with_["_cont"];
+    for (var name in tmp_list) {
         if (advanced["perso_bg_color_" + name + d]) {
             document.getElementById(name + "_cont").style.backgroundColor = advanced["bg_color_" + name + d];
         } else {
@@ -1274,16 +1390,17 @@ function responsive_dim() {
     }
 
 
-    tmp_list = ['pre_pos', 'me_pos', 'post_pos', 'pre_cpos', 'me_cpos', 'post_cpos'];
-    for (i in tmp_list) {
-        name = tmp_list[i];
+    tmp_list = elt_list_with_["_cont"];
+    for (var name in tmp_list) {
         if (("disp_" + name + d) in advanced) {
             //set(name + "_cont", advanced["x_" + name + d], advanced["y_" + name + d], advanced["w_" + name + d], advanced["h_" + name + d], advanced["f_" + name + d] / dashboard_ref_w);
             RGBA(jQuery('#' + name + "_cont"), advanced["bg_" + name + d]);
-            if (advanced["disp_" + name + d])
+            //console.log(name, advanced["bg_" + name + d])
+            if (advanced["disp_" + name + d]) {
                 $("#" + name + "_cont").css("display", "inline-block");
-            else
+            } else {
                 $("#" + name + "_cont").css("display", "none");
+            }
         }
     }
 
@@ -1392,7 +1509,7 @@ function responsive_dim() {
         name = tmp_list[i];
         if (("disp_" + name + d) in advanced) {
             RGBA(jQuery('#' + name + "_bg0"), advanced["bg_" + name + d]);
-            RGBA(jQuery('#' + name + "_bg1"), advanced["bg_" + name + d]);
+            //RGBA(jQuery('#' + name + "_bg1"), advanced["bg_" + name + d]);  REM : on gère maintenant indépendemment l'opacité de la gauge
             if (advanced["disp_" + name + d]) {
                 $("#" + name + "_bg0").css("display", "inline-block");
                 $("#" + name + "_bg1").css("display", "inline-block");
@@ -1448,46 +1565,140 @@ function responsive_dim() {
     //document.getElementById("compass").style.top = Math.floor(w * 0 / 1280) + y_offset + "px";
 
     carname = donnees.carname;
+    //console.log("carname in responsive_dim :", carname)
     gear_ = {};
     maxspeed_ = {};
     for (i in donnees.gear_) {
         gear_[i] = donnees.gear_[i]
     }
 
+
+    tmp_list = ["wj"];
+    if (carname in car_with_wj) {
+        for (var i in tmp_list) {
+            name = tmp_list[i];
+            if (advanced["disp_" + name + d]) {
+                document.getElementById(name + "_box").style.display = "inline-block";
+                document.getElementById(name + "_box_border").style.display = "inline-block";
+                document.getElementById(name + "_box_no_border").style.display = "inline-block";
+            }
+        }
+    } else {
+        for (var i in tmp_list) {
+            name = tmp_list[i];
+            if (document.getElementById(name + "_box") != null) {
+                document.getElementById(name + "_box").style.display = "none";
+            }
+            if (document.getElementById(name + "_box_border") != null) {
+                document.getElementById(name + "_box_border").style.display = "none";
+            }
+            if (document.getElementById(name + "_box_no_border") != null) {
+                document.getElementById(name + "_box_no_border").style.display = "none";
+            }
+        }
+    }
+
+
+    tmp_list = ["drs"];
     if (carname in car_with_drs) {
-        tmp_list = ["drs"];
-        for (i in tmp_list) {
+        for (var i in tmp_list) {
             name = tmp_list[i];
             if (advanced["disp_" + name + d]) {
-                document.getElementById(name).style.display = "inline-block";
+                document.getElementById(name + "_box").style.display = "inline-block";
+                document.getElementById(name + "_box_border").style.display = "inline-block";
+                document.getElementById(name + "_box_no_border").style.display = "inline-block";
             }
         }
     } else {
-        document.getElementById("drs").style.display = "none";
+        for (var i in tmp_list) {
+            name = tmp_list[i];
+            if (document.getElementById(name + "_box") != null) {
+                document.getElementById(name + "_box").style.display = "none";
+            }
+            if (document.getElementById(name + "_box_border") != null) {
+                document.getElementById(name + "_box_border").style.display = "none";
+            }
+            if (document.getElementById(name + "_box_no_border") != null) {
+                document.getElementById(name + "_box_no_border").style.display = "none";
+            }
+        }
     }
+
+    tmp_list = ["ers", "ers_bar", "ersco", "ers_margin", "mgul", "mgu", "mgua", "mguf", "regen_lap", "regen_turn"];
     if (carname in car_with_ers_drs) {
-        tmp_list = ["ers", "ersco", "ers_margin", "mgul", "mgu", "mgua", "mguf", "regen_lap", "regen_turn"];
-        for (i in tmp_list) {
+        for (var i in tmp_list) {
             name = tmp_list[i];
             if (advanced["disp_" + name + d]) {
-                document.getElementById(name).style.display = "inline-block";
+                document.getElementById(name + "_box").style.display = "inline-block";
+                document.getElementById(name + "_box_border").style.display = "inline-block";
+                document.getElementById(name + "_box_no_border").style.display = "inline-block";
             }
         }
+
+        document.getElementById("ers_margin_min_bar").style.display = "inline-block";
+        document.getElementById("mgu_margin_max_bar").style.display = "inline-block";
+        document.getElementById("ers_margin_free_bar").style.display = "inline-block";
     } else {
-        document.getElementById("ers").style.display = "none";
-        document.getElementById("ersco").style.display = "none";
-        document.getElementById("ers_margin").style.display = "none";
-        document.getElementById("mgul").style.display = "none";
-        document.getElementById("mgu").style.display = "none";
-        document.getElementById("mgua").style.display = "none";
-        document.getElementById("mguf").style.display = "none";
-        document.getElementById("regen_lap").style.display = "none";
-        document.getElementById("regen_turn").style.display = "none";
+        document.getElementById("ers_margin_min_bar").style.display = "none";
+        document.getElementById("mgu_margin_max_bar").style.display = "none";
+        document.getElementById("ers_margin_free_bar").style.display = "none";
+
+        for (var i in tmp_list) {
+            name = tmp_list[i];
+            if (document.getElementById(name + "_box") != null) {
+                document.getElementById(name + "_box").style.display = "none";
+            }
+            if (document.getElementById(name + "_box_border") != null) {
+                document.getElementById(name + "_box_border").style.display = "none";
+            }
+            if (document.getElementById(name + "_box_no_border") != null) {
+                document.getElementById(name + "_box_no_border").style.display = "none";
+            }
+        }
     }
+
+
+
 
     // Utilisé pour les rpm_leds
     if (donnees.rpm_redline != undefined) {
         max_rpm = donnees.rpm_redline;
+    }
+
+    // On s'occupe de modifier les couleurs des LEDs qui sont définies dans JRT Config (si undefined on ne change pas la valeur par défaut définie dans var_default_options.js)
+    for (var i = 1; i <= 12; i++) {
+        if (advanced["led" + i + "_off_color_" + "rpm_leds" + d] != undefined) {
+            led_col_off[i - 1] = (hexToRGBA(advanced["led" + i + "_off_color_" + "rpm_leds" + d], 0.5));
+        }
+        if (advanced["led" + i + "_on_color_" + "rpm_leds" + d] != undefined) {
+            led_col_on[i - 1] = (hexToRGBA(advanced["led" + i + "_on_color_" + "rpm_leds" + d], 1));
+        }
+    }
+    // on applique les changements pour que ce soit pris en compte offline
+    for (var i = 1; i <= 12; i++) {
+        set_style_bg("led" + i, led_col_off[i - 1]);
+    }
+    // Couleurs des LEDs dans les pits
+    if (advanced["rpm_led_in_pits2_" + "rpm_leds" + d] == undefined) {
+        advanced["rpm_led_in_pits2_" + "rpm_leds" + d] = 1;  // valeur par défaut si c'est pas défini
+    }
+
+    // REM : on ne modifie les couleurs par défaut que si elles ont été modifiées
+    if (advanced["led_off_speed_low_color_" + "rpm_leds" + d] != undefined) {
+        led_off_speed_low_color = hexToRGBA(advanced["led_off_speed_low_color_" + "rpm_leds" + d], 0.5);
+    }
+    if (advanced["led_off_speed_high_color_" + "rpm_leds" + d] != undefined) {
+        led_off_speed_high_color = hexToRGBA(advanced["led_off_speed_high_color_" + "rpm_leds" + d], 0.5);
+    }
+    if (advanced["led_on_speed_low_color_" + "rpm_leds" + d] != undefined) {
+        led_on_speed_low_color = hexToRGBA(advanced["led_on_speed_low_color_" + "rpm_leds" + d], 1);
+    }
+    if (advanced["led_on_speed_high_color_" + "rpm_leds" + d] != undefined) {
+        led_on_speed_high_color = hexToRGBA(advanced["led_on_speed_high_color_" + "rpm_leds" + d], 1);
+    }
+
+    if (advanced["rpm_led_in_pits2_delta_" + "rpm_leds" + d] == undefined) {
+        advanced["rpm_led_in_pits2_delta_" + "rpm_leds" + d] = 1.4;  // valeur par défaut si c'est pas défini
     }
 
     /* PLus utilisé car géré dans les options supplémentaires
@@ -1549,6 +1760,12 @@ function responsive_dim() {
         $("#traffic_pit").css("border-radius", advanced["h_" + "traffic_pit" + d]/2 * w / dashboard_ref_w + "px")
     }
 
+    // Affichage du nom du display changé
+    document.getElementById("display_changed_name").style.left = 0 + x_offset + "px";
+    document.getElementById("display_changed_name").style.width = wh(0, w) + "px";
+    document.getElementById("display_changed_name").style.top = 0 + y_offset + "px";
+    document.getElementById("display_changed_name").style.lineHeight = wh(w * 0 / dashboard_ref_w, w * dashboard_ref_h / dashboard_ref_w) + "px";
+    document.getElementById("display_changed_name").style.fontSize = w * 0.075 + "px";
 
     // Affichage des valeurs changées (TC, ABS, ...)
     //set("setting_changed_name", 0, 0,  dashboard_ref_w, dashboard_ref_h, 0.07);
@@ -1588,7 +1805,6 @@ function responsive_dim() {
     } else {
         document.getElementById("drag_overlays_cont").style.display = "none";
     }
-
 
     // Gestion du bouton fullscreen
     setTimeout( function() {  // on reporte la fonction responsive pour laisser le temps à électron de détecter le fullscreen

@@ -188,7 +188,7 @@ function trackmap() {
                     if (i != selected_idxjs) {
                         //trackmap_context.globalAlpha = 0.75;
                         // Si le pilote a un tour de retard on rajoute du bleu, et s'il a un tour d'avance on met du rouge
-                        if (trackmap_car_ring_lapper) {
+                        if (trackmap_car_ring_lapper && donnees.styp == "Race") {
                             if (donnees.d[i].dp - dp_exit > 0.5) {
                                 driver_on_trackmap("anneau_small", "#ff4444", 1, ldp, i, 1.5, 0, 1.5);
                             }
@@ -201,8 +201,19 @@ function trackmap() {
                     // Couleur de la class du pilote
                     str = donnees.d[i].cc;
                     var tmp_num = donnees.d[i].num;
+
+                    var tmp_id = 0;
+                    if ("tid" in donnees.d[i] && "uid" in donnees.d[i]) {
+                        tmp_id = donnees.d[i].tid;
+                        if (tmp_id == 0) {  // on prend en compte le team id si elle n'est pas nulle, sinon on prend l'user id
+                            tmp_id = donnees.d[i].uid;
+                        }
+                    }
+
                     if (tmp_num in bg_by_num) {
                         str = "0x" + bg_by_num[tmp_num].slice(1);
+                    } else if (tmp_id in bg_by_num) {
+                        str = "0x" + bg_by_num[tmp_id].slice(1);
                     }
                     if (donnees.d[i].classid in bg_by_classid_corr) {
                         str = "0x" + bg_by_classid_corr[donnees.d[i].classid].slice(1);
@@ -345,276 +356,291 @@ function driver_on_trackmap(type, coul, opac, ldp, caridx, taille, plein, epaiss
         is_myclass = true;
     }
 
-    // Si l'option trackmap_car_myclass_only est activée, on n'affiche que les voitures de notre classe
-    if ( !trackmap_car_myclass_only || is_myclass ) {
+    // Indication du premier de la classe
+    if (donnees.styp == "Race") {
+        classpos = donnees.d[caridx].cpos;
+    } else {
+        classpos = donnees.d[caridx].cposbest;
+    }
 
-        var w = 0;
-        k = Math.floor(donnees.coef_k * ldp);
-        d = donnees.coef_k * ldp;
+    if (trackmap_select_drivers_number == 0 || classpos <= trackmap_select_drivers_number) {
 
-        // REM : le k ne doit être égale ni à k_max, ni à 0 pour éviter un mouvement saccadé sur la ligne
-        if (k >= donnees.k_max || k == 0) k = donnees.k_max - 1;
-        k2 = k + 1;
-        if (k2 >= donnees.k_max || k2 == 0) k2 = 1;
-        if (k2 > k) {
-            k2_minus_k = k2 - k;
-        } else {
-            k2_minus_k = k2 - 0 + donnees.coef_k - k;
-        }
-        if (d > k) {
-            d_minus_k = d - k;
-        } else {
-            d_minus_k = d - 0 + donnees.coef_k - k;
-        }
+        // Si l'option trackmap_car_myclass_only est activée, on n'affiche que les voitures de notre classe
+        if (!trackmap_car_myclass_only || is_myclass) {
 
-        if (k in track.x && k in track.y && donnees.k_max > 0) {
+            var w = 0;
+            k = Math.floor(donnees.coef_k * ldp);
+            d = donnees.coef_k * ldp;
 
-            var c = donnees.d[caridx].classid;
-
-            //rayon = taille * track_epaisseur / 2;
-            rayon = 1 * track_epaisseur / 2;
-            /*if (trackmap_disp_mode != 0) {  // on double le rayon si on affiche le n° ou les 3 premières lettres
-             rayon = 2 * rayon;
-             }*/
-            rayon = trackmap_car_coef * rayon;
-
-            x1 = ((container_w - track_w) / 2 + (-track.x[k] + track_max_x) * track_mult - container_w / 2);
-            z1 = ((container_h - track_h) / 2 + (-track.y[k] + track_max_y) * track_mult - container_h / 2);
-            y1 = (track.z[k] - track_min_z) * track_mult * trackmap_elevation_factor;
-            x2 = ((container_w - track_w) / 2 + (-track.x[k2] + track_max_x) * track_mult - container_w / 2);
-            z2 = ((container_h - track_h) / 2 + (-track.y[k2] + track_max_y) * track_mult - container_h / 2);
-            y2 = (track.z[k2] - track_min_z) * track_mult * trackmap_elevation_factor;
-
-            // On fait une interpolation
-            x = x1 + (x2 - x1) * (d_minus_k) / k2_minus_k;
-            z = z1 + (z2 - z1) * (d_minus_k) / k2_minus_k;
-            y = y1 + (y2 - y1) * (d_minus_k) / k2_minus_k + rayon;
-
-            l = Math.sqrt((x2 - x1) * (x2 - x1) + (z2 - z1) * (z2 - z1));
-
-            // Calcul de la pente et de l'altitude :
-            //track_l = Math.sqrt((track.x[k2] - track.x[k])*(track.x[k2] - track.x[k]) + (track.y[k2] - track.y[k]) * (track.y[k2] - track.y[k]) + (track.z[k2] - track.z[k]) * (track.z[k2] - track.z[k]));
-            //console.log("Altitude : ", (track.z[k] - track_min_z).toFixed(2), "m", "Pente : ", (100 * Math.tan(Math.asin((track.z[k2] - track.z[k]) / track_l ))).toFixed(2), "%");
-
-            // Indication du premier de la classe
-            if (donnees.styp == "Race") {
-                classpos = donnees.d[caridx].cpos;
+            // REM : le k ne doit être égale ni à k_max, ni à 0 pour éviter un mouvement saccadé sur la ligne
+            if (k >= donnees.k_max || k == 0) k = donnees.k_max - 1;
+            k2 = k + 1;
+            if (k2 >= donnees.k_max || k2 == 0) k2 = 1;
+            if (k2 > k) {
+                k2_minus_k = k2 - k;
             } else {
-                classpos = donnees.d[caridx].cposbest;
+                k2_minus_k = k2 - 0 + donnees.coef_k - k;
+            }
+            if (d > k) {
+                d_minus_k = d - k;
+            } else {
+                d_minus_k = d - 0 + donnees.coef_k - k;
             }
 
-            // Si le driver est dans les stands, on le décale sur le côté de la piste
-            if (donnees.d[caridx].pr && l != 0) {
-                decale_x = -(z2 - z1) / l * track_epaisseur * 1.5;
-                decale_z = (x2 - x1) / l * track_epaisseur * 1.5;
-            } else {
-                decale_x = 0;
-                decale_z = 0
-            }
-            x += decale_x;
-            z += decale_z;
+            if (k in track.x && k in track.y && donnees.k_max > 0) {
 
-            // pré-calculs utile pour l'affichage des textes
-            v_cam2.x = camera.position.x - x;
-            v_cam2.y = camera.position.y - y;
-            v_cam2.z = camera.position.z - z;
-            d_cam2 = Math.sqrt(v_cam2.x * v_cam2.x + v_cam2.y * v_cam2.y + v_cam2.z * v_cam2.z);
-            camera.getWorldDirection(v_cam);
-            d2_cam = Math.sqrt(v_cam.x * v_cam.x + v_cam.z * v_cam.z);
-            d_cam = Math.sqrt(v_cam.x * v_cam.x + v_cam.y * v_cam.y + v_cam.z * v_cam.z);
+                var c = donnees.d[caridx].classid;
 
-            if (plein != 0 && taille == 1 && classpos == 1 && trackmap_car_P1 && (trackmap_car_P1_myclass_only == 0 || is_myclass)) {
-                // Dessin d'un panneau indiquant P1
-                if (objet["sphere_p1"][c] != undefined) {
-                    objet["sphere_p1"][c].position.set(x, y, z);
-                    objet["sphere_p1"][c].scale.set(2 * rayon, 2 * rayon, 2 * rayon);
-                    objet["sphere_p1"][c].material = new THREE.MeshLambertMaterial({
-                        color: "#ffd700",
+                //rayon = taille * track_epaisseur / 2;
+                rayon = 1 * track_epaisseur / 2;
+                /*if (trackmap_disp_mode != 0) {  // on double le rayon si on affiche le n° ou les 3 premières lettres
+                 rayon = 2 * rayon;
+                 }*/
+                rayon = trackmap_car_coef * rayon;
+
+                x1 = ((container_w - track_w) / 2 + (-track.x[k] + track_max_x) * track_mult - container_w / 2);
+                z1 = ((container_h - track_h) / 2 + (-track.y[k] + track_max_y) * track_mult - container_h / 2);
+                y1 = (track.z[k] - track_min_z) * track_mult * trackmap_elevation_factor;
+                x2 = ((container_w - track_w) / 2 + (-track.x[k2] + track_max_x) * track_mult - container_w / 2);
+                z2 = ((container_h - track_h) / 2 + (-track.y[k2] + track_max_y) * track_mult - container_h / 2);
+                y2 = (track.z[k2] - track_min_z) * track_mult * trackmap_elevation_factor;
+
+                // On fait une interpolation
+                x = x1 + (x2 - x1) * (d_minus_k) / k2_minus_k;
+                z = z1 + (z2 - z1) * (d_minus_k) / k2_minus_k;
+                y = y1 + (y2 - y1) * (d_minus_k) / k2_minus_k + rayon;
+
+                l = Math.sqrt((x2 - x1) * (x2 - x1) + (z2 - z1) * (z2 - z1));
+
+                // Calcul de la pente et de l'altitude :
+                //track_l = Math.sqrt((track.x[k2] - track.x[k])*(track.x[k2] - track.x[k]) + (track.y[k2] - track.y[k]) * (track.y[k2] - track.y[k]) + (track.z[k2] - track.z[k]) * (track.z[k2] - track.z[k]));
+                //console.log("Altitude : ", (track.z[k] - track_min_z).toFixed(2), "m", "Pente : ", (100 * Math.tan(Math.asin((track.z[k2] - track.z[k]) / track_l ))).toFixed(2), "%");
+
+                // Si le driver est dans les stands, on le décale sur le côté de la piste
+                if (donnees.d[caridx].pr && l != 0) {
+                    decale_x = -(z2 - z1) / l * track_epaisseur * 1.5;
+                    decale_z = (x2 - x1) / l * track_epaisseur * 1.5;
+                } else {
+                    decale_x = 0;
+                    decale_z = 0
+                }
+                x += decale_x;
+                z += decale_z;
+
+                // pré-calculs utile pour l'affichage des textes
+                v_cam2.x = camera.position.x - x;
+                v_cam2.y = camera.position.y - y;
+                v_cam2.z = camera.position.z - z;
+                d_cam2 = Math.sqrt(v_cam2.x * v_cam2.x + v_cam2.y * v_cam2.y + v_cam2.z * v_cam2.z);
+                camera.getWorldDirection(v_cam);
+                d2_cam = Math.sqrt(v_cam.x * v_cam.x + v_cam.z * v_cam.z);
+                d_cam = Math.sqrt(v_cam.x * v_cam.x + v_cam.y * v_cam.y + v_cam.z * v_cam.z);
+
+                if (plein != 0 && taille == 1 && classpos == 1 && trackmap_car_P1 && (trackmap_car_P1_myclass_only == 0 || is_myclass)) {
+                    // Dessin d'un panneau indiquant P1
+                    if (objet["sphere_p1"][c] != undefined) {
+                        objet["sphere_p1"][c].position.set(x, y, z);
+                        objet["sphere_p1"][c].scale.set(2 * rayon, 2 * rayon, 2 * rayon);
+                        objet["sphere_p1"][c].material = new THREE.MeshLambertMaterial({
+                            color: "#ffd700",
+                            transparent: false,
+                            side: THREE.DoubleSide
+                        });
+                    }
+                    if (objet["line_p1"][c] != undefined) {
+                        objet["line_p1"][c].position.set(x, y, z);
+                        objet["line_p1"][c].scale.set(2 * rayon, 2 * rayon, 2 * rayon);
+                        objet["line_p1"][c].material = new THREE.LineBasicMaterial({color: "#ffd700"});
+                    }
+                    // On regarde si l'objet est déjà rendue ou pas
+                    if (objet_is_disp["sphere_p1"][c] == 0) {
+                        scene.add(objet["sphere_p1"][c]);
+                    }
+                    objet_is_disp["sphere_p1"][c] = objet_disp_test;
+                    if (objet_is_disp["line_p1"][c] == 0) {
+                        scene.add(objet["line_p1"][c]);
+                    }
+                    objet_is_disp["line_p1"][c] = objet_disp_test;
+
+                    if (objet["text_p1"][c] != undefined) {  // si l'objet text est défini
+                        if (objet_is_disp["text_p1"][c] == 0) {
+                            scene.add(objet["text_p1"][c]);
+                        }
+                        // On oriente le numéros dans la même direction que la caméra
+                        if (d2_cam != 0) {
+                            objet["text_p1"][c].rotation.z = -Math.PI / 2 + Math.atan(-v_cam.y / d2_cam);
+                        }
+                        if (v_cam.z < 0) {
+                            objet["text_p1"][c].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2;
+                        } else if (v_cam.z != 0) {
+                            objet["text_p1"][c].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2 + Math.PI;
+                        }
+                        objet["text_p1"][c].position.set(x + v_cam2.x / d_cam2 * rayon * 1.5, y + (1 + 0.4 + 0.6) * rayon + v_cam2.y / d_cam2 * rayon * 1.5, z + v_cam2.z / d_cam2 * rayon * 1.5);
+                        objet["text_p1"][c].scale.set(2 * rayon * 0.9, 2 * rayon * 0.9, 2 * rayon * 0.9);
+                        objet_is_disp["text_p1"][c] = objet_disp_test;
+                    }
+
+                }
+
+                // On place le pilote avec la couleur définie
+                objet[type][caridx].position.set(x, y, z);
+                objet[type][caridx].scale.set(2 * rayon, 2 * rayon, 2 * rayon);
+                if (opac < 1) {
+                    objet[type][caridx].material = new THREE.MeshLambertMaterial({
+                        color: coul,
+                        transparent: true,
+                        opacity: opac,
+                        side: THREE.DoubleSide
+                    });
+                } else {
+                    objet[type][caridx].material = new THREE.MeshLambertMaterial({
+                        color: coul,
                         transparent: false,
                         side: THREE.DoubleSide
                     });
                 }
-                if (objet["line_p1"][c] != undefined) {
-                    objet["line_p1"][c].position.set(x, y, z);
-                    objet["line_p1"][c].scale.set(2 * rayon, 2 * rayon, 2 * rayon);
-                    objet["line_p1"][c].material = new THREE.LineBasicMaterial({color: "#ffd700"});
+                // On regarde si la sphere est déjà rendue ou pas
+                if (objet_is_disp[type][caridx] == 0) {
+                    scene.add(objet[type][caridx]);
                 }
-                // On regarde si l'objet est déjà rendue ou pas
-                if (objet_is_disp["sphere_p1"][c] == 0) {
-                    scene.add(objet["sphere_p1"][c]);
-                }
-                objet_is_disp["sphere_p1"][c] = objet_disp_test;
-                if (objet_is_disp["line_p1"][c] == 0) {
-                    scene.add(objet["line_p1"][c]);
-                }
-                objet_is_disp["line_p1"][c] = objet_disp_test;
+                objet_is_disp[type][caridx] = objet_disp_test;
 
-                if (objet["text_p1"][c] != undefined) {  // si l'objet text est défini
-                    if (objet_is_disp["text_p1"][c] == 0) {
-                        scene.add(objet["text_p1"][c]);
+                // ...
+
+                // Si le driver est dans les stands, on le grise
+                /*if (donnees.d[caridx].pr && l != 0 && caridx != selected_idxjs && plein != 0 && taille == 1) {
+                 trackmap_context.beginPath(); //On démarre un nouveau tracé.
+                 trackmap_context.arc(x, y, rayon*1.65, 0, Math.PI * 2); //On trace la courbe délimitant notre forme
+                 trackmap_context.fillStyle = "#666666";
+                 trackmap_context.fill(); //On utilise la méthode fill(); si l'on veut une forme pleine
+                 trackmap_context.closePath();
+                 }*/
+
+                // On écrit le numéros du pilote ou son nom en fonction du mode choisi
+                if (plein != 0 && taille == 1 && trackmap_disp_mode != 0) {
+
+                    // On calcule la bonne couleur pour la font
+                    // REM : normalement, coul est forcément au format #xxxxxx car taille = 1
+                    var str = coul.slice(1)
+                    var r = parseInt("0x" + str.substr(0, 2));
+                    var g = parseInt("0x" + str.substr(2, 2));
+                    var b = parseInt("0x" + str.substr(4, 2));
+                    var moy = (r + g + b) / 3;
+                    var font_coul = "000000";
+                    if (moy < 150) {
+                        font_coul = "ffffff";
                     }
-                    // On oriente le numéros dans la même direction que la caméra
-                    if (d2_cam != 0) {
-                        objet["text_p1"][c].rotation.z = -Math.PI / 2 + Math.atan(-v_cam.y / d2_cam);
-                    }
-                    if (v_cam.z < 0) {
-                        objet["text_p1"][c].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2;
-                    } else if (v_cam.z != 0) {
-                        objet["text_p1"][c].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2 + Math.PI;
-                    }
-                    objet["text_p1"][c].position.set(x + v_cam2.x / d_cam2 * rayon * 1.5, y + (1 + 0.4 + 0.6) * rayon + v_cam2.y / d_cam2 * rayon * 1.5, z + v_cam2.z / d_cam2 * rayon * 1.5);
-                    objet["text_p1"][c].scale.set(2 * rayon * 0.9, 2 * rayon * 0.9, 2 * rayon * 0.9);
-                    objet_is_disp["text_p1"][c] = objet_disp_test;
-                }
+                    var tmp_num = donnees.d[caridx].num;
 
-            }
-
-            // On place le pilote avec la couleur définie
-            objet[type][caridx].position.set(x, y, z);
-            objet[type][caridx].scale.set(2 * rayon, 2 * rayon, 2 * rayon);
-            if (opac < 1) {
-                objet[type][caridx].material = new THREE.MeshLambertMaterial({
-                    color: coul,
-                    transparent: true,
-                    opacity: opac,
-                    side: THREE.DoubleSide
-                });
-            } else {
-                objet[type][caridx].material = new THREE.MeshLambertMaterial({
-                    color: coul,
-                    transparent: false,
-                    side: THREE.DoubleSide
-                });
-            }
-            // On regarde si la sphere est déjà rendue ou pas
-            if (objet_is_disp[type][caridx] == 0) {
-                scene.add(objet[type][caridx]);
-            }
-            objet_is_disp[type][caridx] = objet_disp_test;
-
-            // ...
-
-            // Si le driver est dans les stands, on le grise
-            /*if (donnees.d[caridx].pr && l != 0 && caridx != selected_idxjs && plein != 0 && taille == 1) {
-             trackmap_context.beginPath(); //On démarre un nouveau tracé.
-             trackmap_context.arc(x, y, rayon*1.65, 0, Math.PI * 2); //On trace la courbe délimitant notre forme
-             trackmap_context.fillStyle = "#666666";
-             trackmap_context.fill(); //On utilise la méthode fill(); si l'on veut une forme pleine
-             trackmap_context.closePath();
-             }*/
-
-            // On écrit le numéros du pilote ou son nom en fonction du mode choisi
-            if (plein != 0 && taille == 1 && trackmap_disp_mode != 0) {
-
-                // On calcule la bonne couleur pour la font
-                // REM : normalement, coul est forcément au format #xxxxxx car taille = 1
-                var str = coul.slice(1)
-                var r = parseInt("0x" + str.substr(0, 2));
-                var g = parseInt("0x" + str.substr(2, 2));
-                var b = parseInt("0x" + str.substr(4, 2));
-                var moy = (r + g + b) / 3;
-                var font_coul = "000000";
-                if (moy < 150) {
-                    font_coul = "ffffff";
-                }
-                var tmp_num = donnees.d[caridx].num;
-                if (tmp_num in col_by_num) {
-                    font_coul = col_by_num[tmp_num].slice(1);  // REM : on enlève le #
-                }
-                if (donnees.d[caridx].classid in col_by_classid_corr) {
-                    font_coul = col_by_classid_corr[donnees.d[caridx].classid].slice(1);
-                }
-                font_coul = "#" + font_coul;
-
-                if (!trackmap_car_font_color_auto) {  // si on n'est pas en couleur automatique on remplace par la couleur spécifiée
-                    font_coul = trackmap_car_font_color;
-                }
-
-                if (trackmap_disp_mode == 1) {
-                    //trackmap_context.font = "bold " + 1.5 * rayon + "px Arial";
-                    if (donnees.d[caridx].num != undefined) {
-                        //trackmap_context.fillText(donnees.d[caridx].num, x, y + 0.5 * rayon);
-                        if (objet["text_mode1"][caridx] != undefined) {  // si l'objet text est défini
-                            if (objet_is_disp["text_mode1"][caridx] == 0) {
-                                scene.add(objet["text_mode1"][caridx]);
-                            }
-                            // On oriente le texte dans la même direction que la caméra
-                            if (d2_cam != 0) {
-                                objet["text_mode1"][caridx].rotation.z = -Math.PI / 2 + Math.atan(-v_cam.y / d2_cam);
-                            }
-                            if (v_cam.z < 0) {
-                                objet["text_mode1"][caridx].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2;
-                            } else if (v_cam.z != 0) {
-                                objet["text_mode1"][caridx].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2 + Math.PI;
-                            }
-                            //objet["text_mode1"][caridx].position.set(x - rayon * donnees.d[caridx].num.toString().length / 2 * 0.75 , y + 1.5 * rayon, z);
-                            objet["text_mode1"][caridx].position.set(x + v_cam2.x / d_cam2 * rayon * 1.5, y + 0 * 2 * rayon + v_cam2.y / d_cam2 * rayon * 1.5, z + v_cam2.z / d_cam2 * rayon * 1.5);
-                            objet["text_mode1"][caridx].scale.set(2 * rayon * trackmap_carnum_coef, 2 * rayon * trackmap_carnum_coef, 2 * rayon * trackmap_carnum_coef);
-                            objet["text_mode1"][caridx].material = new THREE.MeshLambertMaterial({
-                                color: font_coul,
-                                transparent: false,
-                                side: THREE.DoubleSide
-                            });
-                            objet_is_disp["text_mode1"][caridx] = objet_disp_test;
+                    var tmp_id = 0;
+                    if ("tid" in donnees.d[caridx] && "uid" in donnees.d[caridx]) {
+                        tmp_id = donnees.d[caridx].tid;
+                        if (tmp_id == 0) {  // on prend en compte le team id si elle n'est pas nulle, sinon on prend l'user id
+                            tmp_id = donnees.d[caridx].uid;
                         }
                     }
-                }
-                if (trackmap_disp_mode == 2) {
-                    if (objet["text_mode2"][caridx] != undefined) {  // si l'objet text est défini
-                        if (objet_is_disp["text_mode2"][caridx] == 0) {
-                            scene.add(objet["text_mode2"][caridx]);
-                        }
-                        // On oriente le numéros dans la même direction que la caméra
-                        if (d2_cam != 0) {
-                            objet["text_mode2"][caridx].rotation.z = -Math.PI / 2 + Math.atan(-v_cam.y / d2_cam);
-                        }
-                        if (v_cam.z < 0) {
-                            objet["text_mode2"][caridx].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2;
-                        } else if (v_cam.z != 0) {
-                            objet["text_mode2"][caridx].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2 + Math.PI;
-                        }
-                        objet["text_mode2"][caridx].position.set(x + v_cam2.x / d_cam2 * rayon * 1.5, y + 0 * 2 * rayon + v_cam2.y / d_cam2 * rayon * 1.5, z + v_cam2.z / d_cam2 * rayon * 1.5);
-                        objet["text_mode2"][caridx].scale.set(2 * rayon * trackmap_carnum_coef, 2 * rayon * trackmap_carnum_coef, 2 * rayon * trackmap_carnum_coef);
-                        objet["text_mode2"][caridx].material = new THREE.MeshLambertMaterial({
-                            color: font_coul,
-                            transparent: false,
-                            side: THREE.DoubleSide
-                        });
-                        objet_is_disp["text_mode2"][caridx] = objet_disp_test;
+
+                    if (tmp_num in col_by_num) {
+                        font_coul = col_by_num[tmp_num].slice(1);  // REM : on enlève le #
+                    } else if (tmp_id in col_by_num) {
+                        font_coul = col_by_num[tmp_id].slice(1);  // REM : on enlève le #
                     }
-                }
-                if (trackmap_disp_mode == 3) {
-                    if (classpos != undefined) {
-                        if (c in objet["text_mode3"]) {
-                            if (objet["text_mode3"][c][classpos] != undefined) {  // si l'objet text est défini
-                                if (objet_is_disp["text_mode3"][c][classpos] == 0) {
-                                    scene.add(objet["text_mode3"][c][classpos]);
+                    if (donnees.d[caridx].classid in col_by_classid_corr) {
+                        font_coul = col_by_classid_corr[donnees.d[caridx].classid].slice(1);
+                    }
+                    font_coul = "#" + font_coul;
+
+                    if (!trackmap_car_font_color_auto) {  // si on n'est pas en couleur automatique on remplace par la couleur spécifiée
+                        font_coul = trackmap_car_font_color;
+                    }
+
+                    if (trackmap_disp_mode == 1) {
+                        //trackmap_context.font = "bold " + 1.5 * rayon + "px Arial";
+                        if (donnees.d[caridx].num != undefined) {
+                            //trackmap_context.fillText(donnees.d[caridx].num, x, y + 0.5 * rayon);
+                            if (objet["text_mode1"][caridx] != undefined) {  // si l'objet text est défini
+                                if (objet_is_disp["text_mode1"][caridx] == 0) {
+                                    scene.add(objet["text_mode1"][caridx]);
                                 }
-                                // On oriente le numéros dans la même direction que la caméra
+                                // On oriente le texte dans la même direction que la caméra
                                 if (d2_cam != 0) {
-                                    objet["text_mode3"][c][classpos].rotation.z = -Math.PI / 2 + Math.atan(-v_cam.y / d2_cam);
+                                    objet["text_mode1"][caridx].rotation.z = -Math.PI / 2 + Math.atan(-v_cam.y / d2_cam);
                                 }
                                 if (v_cam.z < 0) {
-                                    objet["text_mode3"][c][classpos].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2;
+                                    objet["text_mode1"][caridx].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2;
                                 } else if (v_cam.z != 0) {
-                                    objet["text_mode3"][c][classpos].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2 + Math.PI;
+                                    objet["text_mode1"][caridx].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2 + Math.PI;
                                 }
-                                objet["text_mode3"][c][classpos].position.set(x + v_cam2.x / d_cam2 * rayon * 1.5, y + 0 * 2 * rayon + v_cam2.y / d_cam2 * rayon * 1.5, z + v_cam2.z / d_cam2 * rayon * 1.5);
-                                objet["text_mode3"][c][classpos].scale.set(2 * rayon * trackmap_carnum_coef, 2 * rayon * trackmap_carnum_coef, 2 * rayon * trackmap_carnum_coef);
-                                objet["text_mode3"][c][classpos].material = new THREE.MeshLambertMaterial({
+                                //objet["text_mode1"][caridx].position.set(x - rayon * donnees.d[caridx].num.toString().length / 2 * 0.75 , y + 1.5 * rayon, z);
+                                objet["text_mode1"][caridx].position.set(x + v_cam2.x / d_cam2 * rayon * 1.5, y + 0 * 2 * rayon + v_cam2.y / d_cam2 * rayon * 1.5, z + v_cam2.z / d_cam2 * rayon * 1.5);
+                                objet["text_mode1"][caridx].scale.set(2 * rayon * trackmap_carnum_coef, 2 * rayon * trackmap_carnum_coef, 2 * rayon * trackmap_carnum_coef);
+                                objet["text_mode1"][caridx].material = new THREE.MeshLambertMaterial({
                                     color: font_coul,
                                     transparent: false,
                                     side: THREE.DoubleSide
                                 });
-                                objet_is_disp["text_mode3"][c][classpos] = objet_disp_test;
+                                objet_is_disp["text_mode1"][caridx] = objet_disp_test;
                             }
                         }
                     }
+                    if (trackmap_disp_mode == 2) {
+                        if (objet["text_mode2"][caridx] != undefined) {  // si l'objet text est défini
+                            if (objet_is_disp["text_mode2"][caridx] == 0) {
+                                scene.add(objet["text_mode2"][caridx]);
+                            }
+                            // On oriente le numéros dans la même direction que la caméra
+                            if (d2_cam != 0) {
+                                objet["text_mode2"][caridx].rotation.z = -Math.PI / 2 + Math.atan(-v_cam.y / d2_cam);
+                            }
+                            if (v_cam.z < 0) {
+                                objet["text_mode2"][caridx].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2;
+                            } else if (v_cam.z != 0) {
+                                objet["text_mode2"][caridx].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2 + Math.PI;
+                            }
+                            objet["text_mode2"][caridx].position.set(x + v_cam2.x / d_cam2 * rayon * 1.5, y + 0 * 2 * rayon + v_cam2.y / d_cam2 * rayon * 1.5, z + v_cam2.z / d_cam2 * rayon * 1.5);
+                            objet["text_mode2"][caridx].scale.set(2 * rayon * trackmap_carnum_coef, 2 * rayon * trackmap_carnum_coef, 2 * rayon * trackmap_carnum_coef);
+                            objet["text_mode2"][caridx].material = new THREE.MeshLambertMaterial({
+                                color: font_coul,
+                                transparent: false,
+                                side: THREE.DoubleSide
+                            });
+                            objet_is_disp["text_mode2"][caridx] = objet_disp_test;
+                        }
+                    }
+                    if (trackmap_disp_mode == 3) {
+                        if (classpos != undefined) {
+                            if (c in objet["text_mode3"]) {
+                                if (objet["text_mode3"][c][classpos] != undefined) {  // si l'objet text est défini
+                                    if (objet_is_disp["text_mode3"][c][classpos] == 0) {
+                                        scene.add(objet["text_mode3"][c][classpos]);
+                                    }
+                                    // On oriente le numéros dans la même direction que la caméra
+                                    if (d2_cam != 0) {
+                                        objet["text_mode3"][c][classpos].rotation.z = -Math.PI / 2 + Math.atan(-v_cam.y / d2_cam);
+                                    }
+                                    if (v_cam.z < 0) {
+                                        objet["text_mode3"][c][classpos].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2;
+                                    } else if (v_cam.z != 0) {
+                                        objet["text_mode3"][c][classpos].rotation.y = Math.atan(v_cam.x / v_cam.z) - Math.PI / 2 + Math.PI;
+                                    }
+                                    objet["text_mode3"][c][classpos].position.set(x + v_cam2.x / d_cam2 * rayon * 1.5, y + 0 * 2 * rayon + v_cam2.y / d_cam2 * rayon * 1.5, z + v_cam2.z / d_cam2 * rayon * 1.5);
+                                    objet["text_mode3"][c][classpos].scale.set(2 * rayon * trackmap_carnum_coef, 2 * rayon * trackmap_carnum_coef, 2 * rayon * trackmap_carnum_coef);
+                                    objet["text_mode3"][c][classpos].material = new THREE.MeshLambertMaterial({
+                                        color: font_coul,
+                                        transparent: false,
+                                        side: THREE.DoubleSide
+                                    });
+                                    objet_is_disp["text_mode3"][c][classpos] = objet_disp_test;
+                                }
+                            }
+                        }
+                    }
+
                 }
 
             }
-
         }
+
     }
 }
 
@@ -1160,8 +1186,19 @@ function draw_track(coul, opac, epaisseur, efface) {
                     // Couleur de la class du pilote
                     str = donnees.d[i].cc;
                     var tmp_num = donnees.d[i].num;
+
+                    var tmp_id = 0;
+                    if ("tid" in donnees.d[i] && "uid" in donnees.d[i]) {
+                        tmp_id = donnees.d[i].tid;
+                        if (tmp_id == 0) {  // on prend en compte le team id si elle n'est pas nulle, sinon on prend l'user id
+                            tmp_id = donnees.d[i].uid;
+                        }
+                    }
+
                     if (tmp_num in bg_by_num) {
                         str = "0x" + bg_by_num[tmp_num].slice(1);
+                    } else if (tmp_id in bg_by_num) {
+                        str = "0x" + bg_by_num[tmp_id].slice(1);
                     }
                     if (donnees.d[i].classid in bg_by_classid_corr) {
                         str = "0x" + bg_by_classid_corr[donnees.d[i].classid].slice(1);

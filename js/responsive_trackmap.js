@@ -11,6 +11,9 @@ function RGBA(e, alpha) { //e = jQuery element, alpha = background-opacity
 
 function responsive_dim() {
 
+    update_drivers_list();
+    document.getElementById("drivers_list").style.height = "calc(" + window.innerHeight + "px - 2.5rem)";
+
     init_html_style();  // important car sinon le set_style_top, set_inner_html, ..., ne seront pas pris en compte
 
     // On rectifie la valeur du use_css_perso qu'on avait rendu négatif pour avertir config.js qu'il fallait recharger la page

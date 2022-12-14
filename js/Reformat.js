@@ -104,7 +104,7 @@ function reformat_tires_stints(car, tires_stints, tires_stintcompounds, tires_st
             //str += tmp_debug + "<div style='background-color: black; font-size: " + h * font_coef + "px; display: inline-block; line-height: " + h * 0.8 + "px; width: " + h * 0.67 + "px; margin-top: " + h / 10 + "px; text-align: center; vertical-align: top; color: " + tmp_text_col + "; border-radius: 50%; border-left: " + tmp_border + "px solid " + tmp_col + "; border-right: " + tmp_border + "px solid " + tmp_col + "'>" + tmp_txt + "</div> ";
             str += tmp_debug + "<div style='background-color: black; font-size: " + 2 * font_coef + "em; display: inline-block; line-height: " + h * 0.8 + "px; width: " + h * 0.67 + "px; margin-top: " + h / 10 + "px; text-align: center; vertical-align: top; color: " + tmp_text_col + "; border-radius: 50%; border-left: " + tmp_border + "px solid " + tmp_col + "; border-right: " + tmp_border + "px solid " + tmp_col + "'>" + tmp_txt + "</div> ";
         } else {
-            str += tmp_debug + "<div style='background-color: black; font-size: " + 2 * font_coef + "em; display: inline-block; line-height: " + 1.14/2/font_coef + "em; width: " + 1.07/2/font_coef + "em; margin-top: -" + 0.18/2/font_coef + "em; text-align: center; vertical-align: middle; color: " + tmp_text_col + "; border-radius: 50%; border-left: " + 0.1/2/font_coef + "em solid " + tmp_col + "; border-right: " + 0.1/2/font_coef + "em solid " + tmp_col + "'>" + tmp_txt + "</div> ";
+            str += tmp_debug + "<div style='background-color: black; font-size: " + 2 * font_coef + "em; display: inline-block; line-height: " + 1.14/2/font_coef + "em; width: " + 1.07/2/font_coef*1.2 + "em; margin-top: -" + 0.18/2/font_coef + "em; text-align: center; vertical-align: middle; color: " + tmp_text_col + "; border-radius: 50%; border-left: " + 0.1/2/font_coef + "em solid " + tmp_col + "; border-right: " + 0.1/2/font_coef + "em solid " + tmp_col + "'>" + tmp_txt + "</div> ";
         }
     }
 
@@ -422,8 +422,25 @@ function reformat_name(name, teamname, disp_vW, i, is_dashboard) {
 
     if (name.length > 0) {
         nom_ = name.split(" ");
-        prenom = nom_[0];
-        lettreprenom = prenom[0];
+        if (nom_[0] != '') {
+            prenom = nom_[0];
+        } else if (nom_.length > 2)  {  // on met > 2 et pas 1 pour s'assurer que le nom et le prenom soient différents
+            // pour éviter le bug avec les noms du type [A] Joel Guez comme dans le replay iRNL PCup de J. J. Bouwm...
+            if (nom_.length > 4 && nom_[2] == '') {  // on met > 4 et pas 3 pour s'assurer que le nom et le prenom soient différents
+                prenom = nom_[3];
+            } else {
+                prenom = nom_[1];
+            }
+        } else {  // il faut toujours définir prenom dans les autres cas pour éviter un plantage
+            prenom = ' ';
+        }
+
+        if (prenom.length > 0) {
+            lettreprenom = prenom[0];
+        } else {
+            lettreprenom = ' ';
+        }
+
         nom = nom_[nom_.length - 1].toUpperCase();
         if (nom.length > 0) {
             lettrenom = nom[0];
@@ -640,7 +657,7 @@ function reformat_lic(lic, sub) {
 }
 
 
-function reformat_lic_dashboard(elt_id, lic, sub) {
+function reformat_lic_dashboard(elt_id, lic, sub, alpha) {
     var l = "?";
     if (lic == "0x8800a0") l = "IA";  // IA
     if (lic == "0xfc0706") l = "R";
@@ -658,7 +675,7 @@ function reformat_lic_dashboard(elt_id, lic, sub) {
     else col = "#FFFFFF";
     bcol = "#" + bcol;
 
-    set_style_bg(elt_id, bcol);
+    set_style_bg_alpha(elt_id, bcol, alpha);
     set_style_color(elt_id, col);
 
     return l + s

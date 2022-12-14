@@ -766,10 +766,14 @@ d_highlighted = null;
 
 filename_loc_old = null;
 filename_loc_fg_old = null;
+transparency_OBS_old = null;
 
 // Liste des noms acceptant les couleurs de class pour le bg et le font color
-add_carclasscolor_option_list = {};
-add_carclasscolor_option_list["pre"] = {
+special_options_list = {};
+
+//add_carclasscolor_option_list = {};
+//add_carclasscolor_option_list["pre"] = {
+special_options_list["add_carclasscolor_option_pre"] = {
     "pre_pos": 1,
     "pre_pos2": 1,
     "pre_cpos": 1,
@@ -794,7 +798,8 @@ add_carclasscolor_option_list["pre"] = {
     "pre_club_name": 1,
     "pre_car_name": 1,
 }
-add_carclasscolor_option_list["me"] = {
+//add_carclasscolor_option_list["me"] = {
+special_options_list["add_carclasscolor_option_me"] = {
     "me_pos": 1,
     "me_pos2": 1,
     "me_cpos": 1,
@@ -828,7 +833,8 @@ add_carclasscolor_option_list["me"] = {
     "me_club_name": 1,
     "me_car_name": 1,
 }
-add_carclasscolor_option_list["post"] = {
+//add_carclasscolor_option_list["post"] = {
+special_options_list["add_carclasscolor_option_post"] = {
     "post_pos": 1,
     "post_pos2": 1,
     "post_cpos": 1,
@@ -853,3 +859,72 @@ add_carclasscolor_option_list["post"] = {
     "post_club_name": 1,
     "post_car_name": 1,
 }
+special_options_list["add_carclasscolor_option"] = $.extend(true, special_options_list["add_carclasscolor_option_pre"], special_options_list["add_carclasscolor_option_me"], special_options_list["add_carclasscolor_option_post"]);
+
+deplacement_x = 1;
+deplacement_y = 1;
+
+
+// On permet l'utilisation des flèches pour déplacer l'élément sélectionné
+window.addEventListener('keydown', function(event) {
+    //console.log(event.key, name_highlighted, d_highlighted);
+    if (name_highlighted != null && d_highlighted != null) {
+        switch (event.key) {
+            case "Shift":
+                deplacement_x = Math.max(advanced["grid_w" + d], 1);
+                deplacement_y = Math.max(advanced["grid_h" + d], 1);
+                break;
+            case "ArrowLeft":
+                //Left pressed
+                advanced["x_" + name_highlighted + d_highlighted] -= deplacement_x;
+                responsive_dim();
+                ws.send("dashboard_element_move_or_resize;" + window_name + ";" + window_shortname + ";" + name_highlighted + d_highlighted + ";" + advanced["x_" + name_highlighted + d_highlighted] + ";" + advanced["y_" + name_highlighted + d_highlighted] + ";" + advanced["w_" + name_highlighted + d_highlighted] + ";" + advanced["h_" + name_highlighted + d_highlighted]);
+                break;
+            case "ArrowRight":
+                //Right pressed
+                advanced["x_" + name_highlighted + d_highlighted] += deplacement_x;
+                responsive_dim();
+                ws.send("dashboard_element_move_or_resize;" + window_name + ";" + window_shortname + ";" + name_highlighted + d_highlighted + ";" + advanced["x_" + name_highlighted + d_highlighted] + ";" + advanced["y_" + name_highlighted + d_highlighted] + ";" + advanced["w_" + name_highlighted + d_highlighted] + ";" + advanced["h_" + name_highlighted + d_highlighted]);
+                break;
+            case "ArrowUp":
+                //Up pressed
+                advanced["y_" + name_highlighted + d_highlighted] -= deplacement_x;
+                responsive_dim();
+                ws.send("dashboard_element_move_or_resize;" + window_name + ";" + window_shortname + ";" + name_highlighted + d_highlighted + ";" + advanced["x_" + name_highlighted + d_highlighted] + ";" + advanced["y_" + name_highlighted + d_highlighted] + ";" + advanced["w_" + name_highlighted + d_highlighted] + ";" + advanced["h_" + name_highlighted + d_highlighted]);
+                break;
+            case "ArrowDown":
+                //Down pressed
+                advanced["y_" + name_highlighted + d_highlighted] += deplacement_x;
+                responsive_dim();
+                ws.send("dashboard_element_move_or_resize;" + window_name + ";" + window_shortname + ";" + name_highlighted + d_highlighted + ";" + advanced["x_" + name_highlighted + d_highlighted] + ";" + advanced["y_" + name_highlighted + d_highlighted] + ";" + advanced["w_" + name_highlighted + d_highlighted] + ";" + advanced["h_" + name_highlighted + d_highlighted]);
+                break;
+        }
+    }
+});
+window.addEventListener('keyup', function(event) {
+    switch (event.key) {
+        case "Shift":
+            deplacement_x = 1;
+            deplacement_y = 1;
+            break;
+    }
+});
+
+
+// On initialize les couleurs
+function init_colorize() {
+    if (colorize_drivers_init == 3) {
+        if (donnees.teamracing) {
+            colorize_ = colorize_team_;
+        } else {
+            colorize_ = colorize_driver_;
+        }
+        colorize_drivers_init = 0;
+    }
+}
+
+// Variables globales ou variable à initialiser qu'au chargement de la page
+
+colorize_drivers_init = 3;
+colorize_driver_ = {};
+colorize_team_ = {};

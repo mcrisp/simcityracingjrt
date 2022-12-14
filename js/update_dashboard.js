@@ -58,27 +58,33 @@ function rpm_led_in_pits() {
 // Quand on est sous la vitesse on affiche les leds en vert (toutes les leds sont affichées si on est juste en-dessous de la vitesse)
 // Quand on est juste au-dessus, on affiche une seule led rouge
 function rpm_led_in_pits2() {
+    var speed_delta_max = advanced["rpm_led_in_pits2_delta_" + "rpm_leds" + disp_sel];
+    //console.log(speed_delta_max)
     //donnees.pitspeedlimit = 40/3.6;  // DEBUG
 
     //donnees.s = (400 + 0.5*3.3/12)/3.6;  // DEBUG
     if (donnees.s < donnees.pitspeedlimit) {
-        tmp = Math.max(0, 12.5 + (donnees.s - donnees.pitspeedlimit) * 3.6 / (3.3 / 12));  // 3.3 km/h pour les 12 leds
+        //tmp = Math.max(0, 12.5 + (donnees.s - donnees.pitspeedlimit) * 3.6 / (3.3 / 12));  // 3.3 km/h pour les 12 leds
+        //tmp = Math.max(0, 12.5 + (donnees.s - donnees.pitspeedlimit) * 3.6 / (1.4 / 12));  // 1.4 km/h pour les 12 leds
+        tmp = Math.max(0, 12.5 + (donnees.s - donnees.pitspeedlimit) * 3.6 / (speed_delta_max / 12));  // 1.4 km/h pour les 12 leds
         num_led = Math.floor(tmp);
         for (i = 1; i <= 12; i++) {
             if (i <= num_led) {
-                set_style_bg("led" + i, led_green_on);
+                set_style_bg("led" + i, led_on_speed_low_color);
             } else {
-                set_style_bg("led" + i, led_green_off);
+                set_style_bg("led" + i, led_off_speed_low_color);
             }
         }
     } else {
-        tmp = Math.min(12, (donnees.s - donnees.pitspeedlimit) * 3.6 / (3.3 / 12));  // 3.3 km/h pour les 12 leds
+        //tmp = Math.min(12, (donnees.s - donnees.pitspeedlimit) * 3.6 / (3.3 / 12));  // 3.3 km/h pour les 12 leds
+        //tmp = Math.min(12, (donnees.s - donnees.pitspeedlimit) * 3.6 / (1.4 / 12));  // 1.4 km/h pour les 12 leds
+        tmp = Math.min(12, (donnees.s - donnees.pitspeedlimit) * 3.6 / (speed_delta_max / 12));  // 1.4 km/h pour les 12 leds
         num_led = Math.floor(tmp);
         for (i = 1; i <= 12; i++) {
             if (i <= num_led) {
-                set_style_bg("led" + i, led_red_on);
+                set_style_bg("led" + i, led_on_speed_high_color);
             } else {
-                set_style_bg("led" + i, led_red_off);
+                set_style_bg("led" + i, led_off_speed_high_color);
             }
         }
     }
@@ -89,6 +95,25 @@ function rpm_led_in_pits2() {
 function update_dashboard() {
 
     //console.log(donnees.typ);
+
+    if (!donnees.is_iracing_started) {
+        donnees.fuel_accurate = 1;
+        donnees.co = 8.888;
+        donnees.co1 = 8.888;
+        donnees.co5 = 8.888;
+        donnees.estlaps_bg1_pct = 0.5;
+        donnees.lapsremain_bg1_pct = 0.5;
+        donnees.gap_pct_lastlap = 0.75;  // pour positionner la ligne bleue/or à 75%
+        donnees.lead_lap = 1;  // ligne bleue si on finit dans le même tour
+        donnees.refuelspeed = 88.888 / 5 * 2;  // pour que la barre bleue verticale soit à 50%
+        donnees.fn = 88.888;
+        donnees.fn5 = 88.888;
+        donnees.fnman = 88.888;
+        donnees.fn5 = 88.888;
+        donnees.fnMAX = 88.888;
+        donnees.fnSet = 88.888;
+        // ...
+    }
 
     disp_sel = "_" + advanced["display_selected"];
 
@@ -212,12 +237,12 @@ function update_dashboard() {
 
                     // Si on a défini la couleur de fond dans JRT Config, on force cette couleur
                     if (advanced["perso_bg_color_" + "sof_class" + c + disp_sel]) {
-                        str = advanced["bg_color_" + "sof_class" + c + disp_sel].slice(1);  // pour enlever le #
+                        str = advanced["bg_color_" + "sof_class" + c + disp_sel].slice(1);  // slice pour enlever le #
                     }
 
                     // On calcule la bonne couleur pour la font sauf si on l'a choisi dans JRT Config
                     if (advanced["perso_font_color_" + "sof_class" + c + disp_sel]) {
-                        font_coul = advanced["font_color_" + "sof_class" + c + disp_sel].slice(1);  // pour enlever le #
+                        font_coul = advanced["font_color_" + "sof_class" + c + disp_sel].slice(1);  // slice pour enlever le #
                     } else {
                         var r = parseInt("0x" + str.substr(0, 2));
                         var g = parseInt("0x" + str.substr(2, 2));
@@ -233,12 +258,12 @@ function update_dashboard() {
                     }
 
                     set_inner_html("sof_class" + c, donnees.sof[c]);
-                    set_style_bg("sof_class" + c, "#" + str);
+                    set_style_bg_alpha("sof_class" + c, "#" + str, advanced["bg_" + "sof_class" + c + disp_sel]);
                     set_style_color("sof_class" + c, "#" + font_coul);
 
                 } else {
                     set_inner_html("sof_class" + c, "&nbsp;");
-                    set_style_bg("sof_class" + c, "rgba(0,0,0,0)");
+                    set_style_bg_alpha("sof_class" + c, "#000000", 0);
                 }
             }
         }
@@ -270,34 +295,82 @@ function update_dashboard() {
 
         if (!advanced["perso_font_color_" + "pre_cpos" + disp_sel] && donnees["pre_cc" + _f3_pre] != undefined && advanced["disp_" + "pre_cpos" + disp_sel]) {
             //document.getElementById("pre_cpos").style.color = cc(donnees["pre_cc" + _f3_pre]);
-            set_style_color("pre_cpos", cc(donnees["pre_cc" + _f3_pre], donnees["pre_num" + _f3_pre], donnees["pre_classid" + _f3_pre]));
+            set_style_color("pre_cpos", cc(donnees["pre_cc" + _f3_pre], donnees["pre_num" + _f3_pre], donnees["pre_uid" + _f3_pre], donnees["pre_tid" + _f3_pre], donnees["pre_classid" + _f3_pre]));
         }
         if (!advanced["perso_font_color_" + "me_cpos" + disp_sel] && donnees.me_cc != undefined && advanced["disp_" + "me_cpos" + disp_sel]) {
             //document.getElementById("me_cpos").style.color = cc(donnees.me_cc);
-            set_style_color("me_cpos", cc(donnees.me_cc, donnees.me_num, donnees.me_classid));
+            set_style_color("me_cpos", cc(donnees.me_cc, donnees.me_num, donnees.me_uid, donnees.me_tid, donnees.me_classid));
         }
         if (!advanced["perso_font_color_" + "post_cpos" + disp_sel] && donnees["post_cc" + _f3_post] != undefined && advanced["disp_" + "post_cpos" + disp_sel]) {
             //document.getElementById("post_cpos").style.color = cc(donnees["post_cc" + _f3_post]);
-            set_style_color("post_cpos", cc(donnees["post_cc" + _f3_post], donnees["post_num" + _f3_post], donnees["post_classid" + _f3_post]));
+            set_style_color("post_cpos", cc(donnees["post_cc" + _f3_post], donnees["post_num" + _f3_post], donnees["post_uid" + _f3_post], donnees["post_tid" + _f3_post], donnees["post_classid" + _f3_post]));
         }
-
 
         // Application des couleurs de class pour certains éléments
         for (var pre_me_post in {"pre": 1, "me": 1, "post": 1}) {
-            for (var name in add_carclasscolor_option_list[pre_me_post]) {
+            //for (var name in add_carclasscolor_option_list[pre_me_post]) {
+            for (var name in special_options_list["add_carclasscolor_option_" + pre_me_post]) {
                 if (advanced["disp_" + name + disp_sel]) {
                     if (advanced["perso_bg_color_" + name + disp_sel]) {
-                        if (advanced["ccc_bg_color_" + name + disp_sel]) {
-                            set_style_bg_alpha(name, cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]), advanced["bg_" + name + disp_sel]);
-                        } else {
-                            set_style_bg_alpha(name, advanced["bg_color_" + name + disp_sel], advanced["bg_" + name + disp_sel]);
+
+                        var colorize_col = null;
+                        if (advanced["colorize_bg_color_" + name + disp_sel]) {
+                            if (colorize_drivers_init == 0) {  // pour s'assurer que le colorize_ est bien défini
+                                var nom, id;
+                                if (donnees.teamracing) {
+                                    nom = donnees[pre_me_post + "_teamname" + _f3_pre_me_post[pre_me_post]];
+                                    id = donnees[pre_me_post + "_tid" + _f3_pre_me_post[pre_me_post]];
+                                } else {
+                                    nom = donnees[pre_me_post + "_name" + _f3_pre_me_post[pre_me_post]];
+                                    id = donnees[pre_me_post + "_uid" + _f3_pre_me_post[pre_me_post]];
+                                }
+
+                                var col_ = null;
+                                for (var idx_ in colorize_) {
+                                    if (nom != undefined && nom.toUpperCase().includes(idx_.toUpperCase())) {
+                                        col_ = colorize_[idx_];
+                                    }
+                                }
+
+                                // On colorize le pilote avec les données du fichier _colorize.js (même couleur que dans le timing)
+                                if (id in colorize_) {
+                                    colorize_col = colorize_[id];
+                                } else if (col_ !== null) {
+                                    colorize_col = col_;
+                                }
+                                if (colorize_col !== null) {
+                                    if ( !(name in elt_list_with_["_cont"]) ) {
+                                        set_style_bg_alpha(name, colorize_col, advanced["bg_" + name + disp_sel]);
+                                    } else {
+                                        set_style_bg_alpha(name + "_cont", colorize_col, advanced["bg_" + name + disp_sel]);
+                                    }
+                                }
+                            }
                         }
+
+                        if (colorize_col == null) {
+                            if (!(name in elt_list_with_["_cont"])) {
+                                if (advanced["ccc_bg_color_" + name + disp_sel]) {
+                                    set_style_bg_alpha(name, cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_uid" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_tid" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]), advanced["bg_" + name + disp_sel]);
+                                } else {
+                                    set_style_bg_alpha(name, advanced["bg_color_" + name + disp_sel], advanced["bg_" + name + disp_sel]);
+                                }
+
+                            } else {
+                                if (advanced["ccc_bg_color_" + name + disp_sel]) {
+                                    set_style_bg_alpha(name + "_cont", cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_uid" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_tid" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]), advanced["bg_" + name + disp_sel]);
+                                } else {
+                                    set_style_bg_alpha(name + "_cont", advanced["bg_color_" + name + disp_sel], advanced["bg_" + name + disp_sel]);
+                                }
+                            }
+                        }
+
                     }
                     if (advanced["perso_font_color_" + name + disp_sel]) {
                         if (advanced["adapt_font_color_" + name + disp_sel]) {
                             set_style_color(name, calc_font_coul(document.getElementById(name).style.backgroundColor));
                         } else if (advanced["ccc_font_color_" + name + disp_sel]) {
-                            set_style_color(name, cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]));
+                            set_style_color(name, cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_uid" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_tid" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]));
                         } else {
                             set_style_color(name, advanced["font_color_" + name + disp_sel]);
                         }
@@ -306,24 +379,24 @@ function update_dashboard() {
                     if (advanced["ccc_box_border_color_" + name + disp_sel]) {
                         //var elt = document.getElementById(name + "_box_border");
                         //if (elt) {
-                            //elt.style.borderColor = cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]);
-                            set_style_border_color(name + "_box_border", cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]));
+                        //elt.style.borderColor = cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]);
+                        set_style_border_color(name + "_box_border", cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_uid" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_tid" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]));
                         //}
                     }
                     if (advanced["ccc_header_bg_color_" + name + disp_sel]) {
-                        set_style_bg_alpha(name + "_label", cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]), advanced["header_bg_opacity_" + name + disp_sel]);
+                        set_style_bg_alpha(name + "_label", cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_uid" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_tid" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]), advanced["header_bg_opacity_" + name + disp_sel]);
                     }
                     if (advanced["adapt_header_font_color_" + name + disp_sel]) {
                         set_style_color(name + "_label", calc_font_coul(document.getElementById(name + "_label").style.backgroundColor));
                     } else if (advanced["ccc_header_font_color_" + name + disp_sel]) {
-                        set_style_color(name + "_label", cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]));
+                        set_style_color(name + "_label", cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_uid" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_tid" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]));
                     }
                     if (advanced["ccc_header_border_color_" + name + disp_sel]) {
                         //var elt = document.getElementById(name + "_label");
                         //if (elt) {
-                            //elt.style.borderColor = cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]);
-                            //RGBA(elt, advanced["header_border_opacity_" + name + disp_sel], "border-color");
-                            set_style_border_color_alpha(name + "_label", cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]), advanced["header_border_opacity_" + name + disp_sel]);
+                        //elt.style.borderColor = cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]);
+                        //RGBA(elt, advanced["header_border_opacity_" + name + disp_sel], "border-color");
+                        set_style_border_color_alpha(name + "_label", cc(donnees[pre_me_post + "_cc" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_num" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_uid" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_tid" + _f3_pre_me_post[pre_me_post]], donnees[pre_me_post + "_classid" + _f3_pre_me_post[pre_me_post]]), advanced["header_border_opacity_" + name + disp_sel]);
                         //}
                     }
                 }
@@ -639,7 +712,11 @@ function update_dashboard() {
                 set_inner_html("time_of_day", donnees.tod);
             } else {
                 //document.getElementById("time_of_day").innerHTML = "--";
-                set_inner_html("time_of_day", "--:--:--");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("time_of_day", "--:--:--");
+                } else {
+                    set_inner_html("time_of_day", "88:88:88");
+                }
             }
         }
 
@@ -722,28 +799,29 @@ function update_dashboard() {
             p = 0;
         }
         nbpits = p;  // on enregistre la valeur pour pouvoir l'utiliser ensuite pour le calcul du nblaps_pit_window et pour l'affichage du "nbpits"
+
+        if (!donnees.is_iracing_started) {
+            nbpits = 8.539;
+            // ...
+        }
+
         if (advanced["disp_" + "fuelneed" + disp_sel]) {
             if (fn_dont_change_colors == 0) {
-                //donnees.estim_status = 1;  // DEBUG
+                var fn_bg0_col_default = "#ff9900";
+                if (advanced["perso_bg_color_" + "fuelneed" + disp_sel]) {
+                    fn_bg0_col_default = advanced["bg_color_" + "fuelneed" + disp_sel];
+                }
+                var fn_bg0_col = fn_bg0_col_default;
                 if (donnees.estim_status == 0) {
-                    if (advanced["perso_bg_color_" + "fuelneed" + disp_sel]) {
-                        change_bg("fuelneed_bg0", advanced["bg_color_" + "fuelneed" + disp_sel], advanced["bg_" + "fuelneed" + disp_sel]);
-                    } else {
-                        change_bg("fuelneed_bg0", "#999999", advanced["bg_" + "fuelneed" + disp_sel]);
-                    }
-                    change_bg("fuelneed_bg1", "#0099ff", advanced["bg_" + "fuelneed" + disp_sel]);
+                    fn_bg0_col = "#999999";
                 } else {
-                    change_bg("fuelneed_bg1", "#0099ff", advanced["bg_" + "fuelneed" + disp_sel]);
-                    if (advanced["perso_bg_color_" + "fuelneed" + disp_sel]) {
-                        change_bg("fuelneed_bg0", advanced["bg_color_" + "fuelneed" + disp_sel], advanced["bg_" + "fuelneed" + disp_sel]);
+                    if (Math.floor(p) > 0 && fuelneed < donnees.tcap * Math.floor(p) - donnees.f) {
+                        fn_bg0_col = advanced["pit_window_bg_color_" + "fuelneed" + disp_sel];
                     } else {
-                        if (Math.floor(p) > 0 && fuelneed < donnees.tcap * Math.floor(p) - donnees.f) {
-                            change_bg("fuelneed_bg0", "#ff99ff", advanced["bg_" + "fuelneed" + disp_sel]);
-                        } else {
-                            change_bg("fuelneed_bg0", "#ff9900", advanced["bg_" + "fuelneed" + disp_sel]);
-                        }
+                        fn_bg0_col = fn_bg0_col_default;
                     }
                 }
+                change_bg("fuelneed_bg0", fn_bg0_col, advanced["bg_" + "fuelneed" + disp_sel]);
             }
         }
         if (fuelneed1 > 0 && donnees.tcap > 0) {
@@ -764,25 +842,21 @@ function update_dashboard() {
             p = 0;
         }
         if (advanced["disp_" + "fuelneed1" + disp_sel]) {
+            var fn_bg0_col_default = "#ff9900";
+            if (advanced["perso_bg_color_" + "fuelneed1" + disp_sel]) {
+                fn_bg0_col_default = advanced["bg_color_" + "fuelneed1" + disp_sel];
+            }
+            var fn_bg0_col = fn_bg0_col_default;
             if (donnees.estim_status == 0) {
-                if (advanced["perso_bg_color_" + "fuelneed1" + disp_sel]) {
-                    change_bg("fuelneed1_bg0", advanced["bg_color_" + "fuelneed1" + disp_sel], advanced["bg_" + "fuelneed1" + disp_sel]);
-                } else {
-                    change_bg("fuelneed1_bg0", "#999999", advanced["bg_" + "fuelneed1" + disp_sel]);
-                }
-                change_bg("fuelneed1_bg1", "#0099ff", advanced["bg_" + "fuelneed1" + disp_sel]);
+                fn_bg0_col = "#999999";
             } else {
-                change_bg("fuelneed1_bg1", "#0099ff", advanced["bg_" + "fuelneed1" + disp_sel]);
-                if (advanced["perso_bg_color_" + "fuelneed1" + disp_sel]) {
-                    change_bg("fuelneed1_bg0", advanced["bg_color_" + "fuelneed1" + disp_sel], advanced["bg_" + "fuelneed1" + disp_sel]);
+                if (Math.floor(p) > 0 && fuelneed1 < donnees.tcap * Math.floor(p) - donnees.f) {
+                    fn_bg0_col = advanced["pit_window_bg_color_" + "fuelneed1" + disp_sel];
                 } else {
-                    if (Math.floor(p) > 0 && fuelneed1 < donnees.tcap * Math.floor(p) - donnees.f) {
-                        change_bg("fuelneed1_bg0", "#ff99ff", advanced["bg_" + "fuelneed1" + disp_sel]);
-                    } else {
-                        change_bg("fuelneed1_bg0", "#ff9900", advanced["bg_" + "fuelneed1" + disp_sel]);
-                    }
+                    fn_bg0_col = fn_bg0_col_default;
                 }
             }
+            change_bg("fuelneed1_bg0", fn_bg0_col, advanced["bg_" + "fuelneed1" + disp_sel]);
         }
         if (fuelneed5 > 0 && donnees.tcap > 0) {
             //p = ((fuelneed5 - 1*conso5) / donnees.tcap) + 1;
@@ -801,25 +875,21 @@ function update_dashboard() {
             p = 0;
         }
         if (advanced["disp_" + "fuelneed5" + disp_sel]) {
+            var fn_bg0_col_default = "#ff9900";
+            if (advanced["perso_bg_color_" + "fuelneed5" + disp_sel]) {
+                fn_bg0_col_default = advanced["bg_color_" + "fuelneed5" + disp_sel];
+            }
+            var fn_bg0_col = fn_bg0_col_default;
             if (donnees.estim_status == 0) {
-                if (advanced["perso_bg_color_" + "fuelneed5" + disp_sel]) {
-                    change_bg("fuelneed5_bg0", advanced["bg_color_" + "fuelneed5" + disp_sel], advanced["bg_" + "fuelneed5" + disp_sel]);
-                } else {
-                    change_bg("fuelneed5_bg0", "#999999", advanced["bg_" + "fuelneed5" + disp_sel]);
-                }
-                change_bg("fuelneed5_bg1", "#0099ff", advanced["bg_" + "fuelneed5" + disp_sel]);
+                fn_bg0_col = "#999999";
             } else {
-                change_bg("fuelneed5_bg1", "#0099ff", advanced["bg_" + "fuelneed5" + disp_sel]);
-                if (advanced["perso_bg_color_" + "fuelneed5" + disp_sel]) {
-                    change_bg("fuelneed5_bg0", advanced["bg_color_" + "fuelneed5" + disp_sel], advanced["bg_" + "fuelneed5" + disp_sel]);
+                if (Math.floor(p) > 0 && fuelneed5 < donnees.tcap * Math.floor(p) - donnees.f) {
+                    fn_bg0_col = advanced["pit_window_bg_color_" + "fuelneed5" + disp_sel];
                 } else {
-                    if (Math.floor(p) > 0 && fuelneed5 < donnees.tcap * Math.floor(p) - donnees.f) {
-                        change_bg("fuelneed5_bg0", "#ff99ff", advanced["bg_" + "fuelneed5" + disp_sel]);
-                    } else {
-                        change_bg("fuelneed5_bg0", "#ff9900", advanced["bg_" + "fuelneed5" + disp_sel]);
-                    }
+                    fn_bg0_col = fn_bg0_col_default;
                 }
             }
+            change_bg("fuelneed5_bg0", fn_bg0_col, advanced["bg_" + "fuelneed5" + disp_sel]);
         }
 
         if (advanced["disp_" + "timeremain" + disp_sel]) {
@@ -844,37 +914,47 @@ function update_dashboard() {
         //conso = 1.84;
         //donnees.fuel_accurate = 1;
         //donnees.f_alert = 1;
-        //donnees.estlaps_bg1_pct = 0.5
+        //donnees.estlaps_bg1_pct = 0.25
         //console.log(donnees.estlaps_bg1_pct)
 
         if (conso > 0) {
-            if (advanced["disp_" + "estlaps" + disp_sel]) {
-                if (donnees.pro_v == 1 || donnees.try_v == 1 || donnees.pro_v == undefined) {
-                    tmp_estlaps = donnees.estlaps;
-                    if (tmp_estlaps == 0 && conso > 0) { // utile pour afficher le estlaps alors que la course n'est pas commencée
-                        tmp_estlaps = donnees.f / conso;
-                    }
-                    set_inner_html("estlaps", tmp_estlaps.toFixed(estlaps_decimal));
-                } else {
-                    set_inner_html("estlaps", "buy pro");
-                }
-                if (donnees.fuel_accurate != 1) {
-                    if (advanced["perso_font_color_" + "estlaps" + disp_sel]) {
-                        set_style_color("estlaps", advanced["font_color_" + "estlaps" + disp_sel]);
+            if (advanced["disp_" + "estlaps" + disp_sel] || advanced["disp_" + "estlaps_white_bar_pct" + disp_sel]) {
+                if (advanced["disp_" + "estlaps" + disp_sel]) {
+                    if (donnees.pro_v == 1 || donnees.try_v == 1 || donnees.pro_v == undefined) {
+                        tmp_estlaps = donnees.estlaps;
+                        if (tmp_estlaps == 0 && conso > 0) { // utile pour afficher le estlaps alors que la course n'est pas commencée
+                            tmp_estlaps = donnees.f / conso;
+                        }
+                        if (tmp_estlaps != undefined) {
+                            set_inner_html("estlaps", tmp_estlaps.toFixed(estlaps_decimal));
+                        }
                     } else {
-                        set_style_color("estlaps", "#555555");
+                        set_inner_html("estlaps", "buy pro");
                     }
-                } else {
-                    if (advanced["perso_font_color_" + "estlaps" + disp_sel]) {
-                        set_style_color("estlaps", advanced["font_color_" + "estlaps" + disp_sel]);
+                    if (donnees.fuel_accurate != 1) {
+                        if (advanced["perso_font_color_" + "estlaps" + disp_sel]) {
+                            set_style_color("estlaps", advanced["font_color_" + "estlaps" + disp_sel]);
+                        } else {
+                            set_style_color("estlaps", "#555555");
+                        }
                     } else {
-                        set_style_color("estlaps", "#000000");
+                        if (advanced["perso_font_color_" + "estlaps" + disp_sel]) {
+                            set_style_color("estlaps", advanced["font_color_" + "estlaps" + disp_sel]);
+                        } else {
+                            set_style_color("estlaps", "#000000");
+                        }
                     }
                 }
                 estlaps_bg1_pct = donnees.estlaps_bg1_pct;
                 if (estlaps_bg1_pct != estlaps_bg1_pct_old) {
-                    //set("estlaps_bg1", advanced["x_" + "estlaps" + disp_sel], advanced["y_" + "estlaps" + disp_sel], Math.floor(advanced["w_" + "estlaps" + disp_sel] * estlaps_bg1_pct), advanced["h_" + "estlaps" + disp_sel], advanced["f_" + "estlaps" + disp_sel] / dashboard_ref_w);
-                    do_set_boxes("estlaps_bg1", "estlaps", disp_sel, 0, 0, estlaps_bg1_pct, 1);
+                    if (advanced["disp_" + "estlaps" + disp_sel]) {
+                        //set("estlaps_bg1", advanced["x_" + "estlaps" + disp_sel], advanced["y_" + "estlaps" + disp_sel], Math.floor(advanced["w_" + "estlaps" + disp_sel] * estlaps_bg1_pct), advanced["h_" + "estlaps" + disp_sel], advanced["f_" + "estlaps" + disp_sel] / dashboard_ref_w);
+                        do_set_boxes("estlaps_bg1", "estlaps", disp_sel, 0, 0, estlaps_bg1_pct, 1);
+                    }
+
+                    if (advanced["disp_" + "estlaps_white_bar_pct" + disp_sel]) {
+                        set_inner_html("estlaps_white_bar_pct", (estlaps_bg1_pct * 100).toFixed(1) + "%");
+                    }
                 }
                 estlaps_bg1_pct_old = estlaps_bg1_pct;
             }
@@ -919,8 +999,15 @@ function update_dashboard() {
                 }
             }
             if (advanced["disp_" + "nbpits" + disp_sel]) {
+                //nbpits = 8.539;  // DEBUG
                 if (nbpits != nbpits_old) {
-                    set_inner_html("nbpits", Math.floor(nbpits) + "");
+                    if (advanced["nbpits_nb_decimals_" + "nbpits" + disp_sel] == 0) {
+                        set_inner_html("nbpits", Math.floor(nbpits) + "");
+                    } else if (advanced["nbpits_nb_decimals_" + "nbpits" + disp_sel] == 1) {
+                        set_inner_html("nbpits", Math.floor(nbpits*10)/10 + "");
+                    } else {
+                        set_inner_html("nbpits", Math.floor(nbpits*100)/100 + "");
+                    }
                     //set("nbpits_bg1", advanced["x_" + "nbpits" + disp_sel], advanced["y_" + "nbpits" + disp_sel], advanced["w_" + "nbpits" + disp_sel] * (nbpits % 1), advanced["h_" + "nbpits" + disp_sel], advanced["f_" + "nbpits" + disp_sel] / dashboard_ref_w);
                     do_set_boxes("nbpits_bg1", "nbpits", disp_sel, 0, 0, nbpits % 1, 1);
 
@@ -938,18 +1025,20 @@ function update_dashboard() {
             }
         } else {
             if (advanced["disp_" + "estlaps" + disp_sel]) {
-                //document.getElementById("estlaps").innerHTML = "--";
-                set_inner_html("estlaps", "--");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("estlaps", "--");
+                } else {
+                    set_inner_html("estlaps", (88.888).toFixed(estlaps_decimal));
+                }
             }
             if (advanced["disp_" + "nbpits" + disp_sel]) {
-                //document.getElementById("nbpits").innerHTML = "--";
                 set_inner_html("nbpits", "--");
             }
         }
 
-        if (advanced["disp_" + "lapsremain" + disp_sel]) {
+        if (advanced["disp_" + "lapsremain" + disp_sel] || advanced["disp_" + "lapsremain_orange_bar_pct" + disp_sel] || advanced["disp_" + "lapsremain_gold_line_pct" + disp_sel]) {
 
-            if (donnees.lr != undefined) {
+            if (advanced["disp_" + "lapsremain" + disp_sel] && donnees.lr != undefined) {
                 if (donnees.pro_v == 1 || donnees.try_v == 1 || donnees.pro_v == undefined) {
                     //document.getElementById("lapsremain").innerHTML = reformat_lapsremain(donnees.lr);
                     set_inner_html("lapsremain", reformat_lapsremain(donnees.lr));
@@ -967,10 +1056,14 @@ function update_dashboard() {
                 lapsremain_bg1_pct = donnees.lapsremain_bg1_pct;
                 //lapsremain_bg1_pct = 0.8;  // DEBUG
                 if (lapsremain_bg1_pct != lapsremain_bg1_pct_old) {
-                    //set("lapsremain_bg1", advanced["x_" + "lapsremain" + disp_sel], advanced["y_" + "lapsremain" + disp_sel], Math.floor(advanced["w_" + "lapsremain" + disp_sel] * lapsremain_bg1_pct), advanced["h_" + "lapsremain" + disp_sel], advanced["f_" + "lapsremain" + disp_sel] / dashboard_ref_w);
-                    do_set_boxes("lapsremain_bg1", "lapsremain", disp_sel, 0, 0, lapsremain_bg1_pct, 1);
+                    if (advanced["disp_" + "lapsremain" + disp_sel]) {
+                        //set("lapsremain_bg1", advanced["x_" + "lapsremain" + disp_sel], advanced["y_" + "lapsremain" + disp_sel], Math.floor(advanced["w_" + "lapsremain" + disp_sel] * lapsremain_bg1_pct), advanced["h_" + "lapsremain" + disp_sel], advanced["f_" + "lapsremain" + disp_sel] / dashboard_ref_w);
+                        do_set_boxes("lapsremain_bg1", "lapsremain", disp_sel, 0, 0, lapsremain_bg1_pct, 1);
+                    }
 
-                    set_inner_html("lapsremain_orange_bar_pct", (lapsremain_bg1_pct * 100).toFixed(1) + "%");
+                    if (advanced["disp_" + "lapsremain_orange_bar_pct" + disp_sel]) {
+                        set_inner_html("lapsremain_orange_bar_pct", (lapsremain_bg1_pct * 100).toFixed(1) + "%");
+                    }
                 }
                 lapsremain_bg1_pct_old = lapsremain_bg1_pct;
 
@@ -991,28 +1084,42 @@ function update_dashboard() {
                     //tmp_x = 128
                     //console.log(tmp_x)
 
-                    //set("lapsremain_bg2", advanced["x_" + "lapsremain" + disp_sel] + tmp_x, advanced["y_" + "lapsremain" + disp_sel], 1, advanced["h_" + "lapsremain" + disp_sel], advanced["f_" + "lapsremain" + disp_sel] / dashboard_ref_w);
-                    do_set_boxes("lapsremain_bg2", "lapsremain", disp_sel, tmp_x/advanced["w_" + "lapsremain" + disp_sel], 0, 1/advanced["w_" + "lapsremain" + disp_sel], 1);
+                    if (advanced["disp_" + "lapsremain" + disp_sel]) {
+                        //set("lapsremain_bg2", advanced["x_" + "lapsremain" + disp_sel] + tmp_x, advanced["y_" + "lapsremain" + disp_sel], 1, advanced["h_" + "lapsremain" + disp_sel], advanced["f_" + "lapsremain" + disp_sel] / dashboard_ref_w);
+                        do_set_boxes("lapsremain_bg2", "lapsremain", disp_sel, tmp_x / advanced["w_" + "lapsremain" + disp_sel], 0, 1 / advanced["w_" + "lapsremain" + disp_sel], 1);
 
-                    //if (gap_pct_lastlap == 0) {
-                    //document.getElementById("lapsremain_bg2").style.width = 0 + "px";
-                    //} else {
-                    document.getElementById("lapsremain_bg2").style.width = 2 + "px";
-                    //}
+                        //if (gap_pct_lastlap == 0) {
+                        //document.getElementById("lapsremain_bg2").style.width = 0 + "px";
+                        //} else {
+                        document.getElementById("lapsremain_bg2").style.width = 2 + "px";
+                        //}
+                    }
 
-                    set_inner_html("lapsremain_gold_line_pct", (gap_pct_lastlap * 100).toFixed(1) + "%");
+                    if (advanced["disp_" + "lapsremain_gold_line_pct" + disp_sel]) {
+                        set_inner_html("lapsremain_gold_line_pct", (gap_pct_lastlap * 100).toFixed(1) + "%");
+                    }
                 }
                 gap_pct_lastlap_old = gap_pct_lastlap;
 
                 // Si on doit finir dans le même tour que le leader alors on n'affiche la gold line d'une autre couleur
                 if (donnees.lead_lap == 1) {
-                    //document.getElementById("lapsremain_bg2").style.backgroundColor = "#0088ff";
-                    set_style_bg("lapsremain_bg2", "#0088ff");
-                    set_style_color("lapsremain_gold_line_pct", "#0088ff");
+                    if (advanced["disp_" + "lapsremain" + disp_sel]) {
+                        //set_style_bg("lapsremain_bg2", "#0088ff");
+                        set_style_bg("lapsremain_bg2", advanced["vertical_line_blue_color_" + "lapsremain" + disp_sel]);
+                    }
+                    if (advanced["disp_" + "lapsremain_gold_line_pct" + disp_sel]) {
+                        //set_style_color("lapsremain_gold_line_pct", "#0088ff");
+                        set_style_color("lapsremain_gold_line_pct", advanced["vertical_line_blue_color_" + "lapsremain" + disp_sel]);
+                    }
                 } else {
-                    //document.getElementById("lapsremain_bg2").style.backgroundColor = "#ffd700";
-                    set_style_bg("lapsremain_bg2", "#ffd700");
-                    set_style_color("lapsremain_gold_line_pct", "#ffd700");
+                    if (advanced["disp_" + "lapsremain" + disp_sel]) {
+                        //set_style_bg("lapsremain_bg2", "#ffd700");
+                        set_style_bg("lapsremain_bg2", advanced["vertical_line_gold_color_" + "lapsremain" + disp_sel]);
+                    }
+                    if (advanced["disp_" + "lapsremain_gold_line_pct" + disp_sel]) {
+                        //set_style_color("lapsremain_gold_line_pct", "#ffd700");
+                        set_style_color("lapsremain_gold_line_pct", advanced["vertical_line_gold_color_" + "lapsremain" + disp_sel]);
+                    }
                 }
             }
         }
@@ -1032,8 +1139,11 @@ function update_dashboard() {
                     set_inner_html("refuel_min", "buy pro");
                 }
             else {
-                //document.getElementById("refuel_min").innerHTML = "--";
-                set_inner_html("refuel_min", "--");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("refuel_min", "--");
+                } else {
+                    set_inner_html("refuel_min", (88.888).toFixed(fuel_decimal));
+                }
             }
         }
         if (advanced["disp_" + "refuel_avg" + disp_sel]) {
@@ -1051,8 +1161,11 @@ function update_dashboard() {
                     set_inner_html("refuel_avg", "buy pro");
                 }
             else {
-                //document.getElementById("refuel_avg").innerHTML = "--";
-                set_inner_html("refuel_avg", "--");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("refuel_avg", "--");
+                } else {
+                    set_inner_html("refuel_avg", (88.888).toFixed(fuel_decimal));
+                }
             }
         }
         if (advanced["disp_" + "refuel_avg_now" + disp_sel]) {
@@ -1070,8 +1183,11 @@ function update_dashboard() {
                     set_inner_html("refuel_avg_now", "buy pro");
                 }
             else {
-                //document.getElementById("refuel_avg_now").innerHTML = "--";
-                set_inner_html("refuel_avg_now", "--");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("refuel_avg_now", "--");
+                } else {
+                    set_inner_html("refuel_avg_now", (88.888).toFixed(fuel_decimal));
+                }
             }
         }
 
@@ -1088,7 +1204,11 @@ function update_dashboard() {
                     set_inner_html("last_partial_fuel_fill", "buy pro");
                 }
             } else {
-                set_inner_html("last_partial_fuel_fill", "--");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("last_partial_fuel_fill", "--");
+                } else {
+                    set_inner_html("last_partial_fuel_fill", (88.888).toFixed(fuel_decimal));
+                }
             }
         }
 
@@ -1118,33 +1238,56 @@ function update_dashboard() {
                     set_inner_html("pre_pos", donnees["pre_pos" + _f3_pre] + ".");
                     //set_inner_html("pre_pos", donnees["pre_pos" + _f3_pre]);
                 } else {
-                    set_inner_html("pre_pos", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("pre_pos", "");
+                    } else {
+                        set_inner_html("pre_pos", "8.");
+                    }
                 }
                 if (donnees.me_pos != undefined) {
                     set_inner_html("me_pos", donnees.me_pos + ".");
-                    //set_inner_html("me_pos", donnees.me_pos);
+                } else {
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_pos", "");
+                    } else {
+                        set_inner_html("me_pos", "8.");
+                    }
                 }
                 if (donnees["post_pos" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
                     set_inner_html("post_pos", donnees["post_pos" + _f3_post] + ".");
-                    //set_inner_html("post_pos", donnees["post_pos" + _f3_post]);
                 } else {
-                    set_inner_html("post_pos", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("post_pos", "");
+                    } else {
+                        set_inner_html("post_pos", "8.");
+                    }
                 }
                 if (donnees["pre_cpos" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
                     set_inner_html("pre_cpos", donnees["pre_cpos" + _f3_pre] + ".");
-                    //set_inner_html("pre_cpos", donnees["pre_cpos" + _f3_pre]);
                 } else {
-                    set_inner_html("pre_cpos", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("pre_cpos", "");
+                    } else {
+                        set_inner_html("pre_cpos", "8.");
+                    }
                 }
                 if (donnees.me_cpos != undefined) {
                     set_inner_html("me_cpos", donnees.me_cpos + ".");
-                    //set_inner_html("me_cpos", donnees.me_cpos);
+                } else {
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_cpos", "");
+                    } else {
+                        set_inner_html("me_cpos", "8.");
+                    }
                 }
                 if (donnees["post_cpos" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
                     set_inner_html("post_cpos", donnees["post_cpos" + _f3_post] + ".");
-                    //set_inner_html("post_cpos", donnees["post_cpos" + _f3_post]);
                 } else {
-                    set_inner_html("post_cpos", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("post_cpos", "");
+                    } else {
+                        set_inner_html("post_cpos", "8.");
+                    }
                 }
             }
 
@@ -1152,28 +1295,56 @@ function update_dashboard() {
                 if (donnees["pre_pos" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
                     set_inner_html("pre_pos2", donnees["pre_pos" + _f3_pre]);
                 } else {
-                    set_inner_html("pre_pos2", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("pre_pos2", "");
+                    } else {
+                        set_inner_html("pre_pos2", "8");
+                    }
                 }
                 if (donnees.me_pos != undefined) {
                     set_inner_html("me_pos2", donnees.me_pos);
+                } else {
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_pos2", "");
+                    } else {
+                        set_inner_html("me_pos2", "8");
+                    }
                 }
                 if (donnees["post_pos" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
                     set_inner_html("post_pos2", donnees["post_pos" + _f3_post]);
                 } else {
-                    set_inner_html("post_pos2", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("post_pos2", "");
+                    } else {
+                        set_inner_html("post_pos2", "8");
+                    }
                 }
                 if (donnees["pre_cpos" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
                     set_inner_html("pre_cpos2", donnees["pre_cpos" + _f3_pre]);
                 } else {
-                    set_inner_html("pre_cpos2", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("pre_cpos2", "");
+                    } else {
+                        set_inner_html("pre_cpos2", "8");
+                    }
                 }
                 if (donnees.me_cpos != undefined) {
                     set_inner_html("me_cpos2", donnees.me_cpos);
+                } else {
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_cpos2", "");
+                    } else {
+                        set_inner_html("me_cpos2", "8");
+                    }
                 }
                 if (donnees["post_cpos" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
                     set_inner_html("post_cpos2", donnees["post_cpos" + _f3_post]);
                 } else {
-                    set_inner_html("post_cpos2", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("post_cpos2", "");
+                    } else {
+                        set_inner_html("post_cpos2", "8");
+                    }
                 }
             }
 
@@ -1182,37 +1353,62 @@ function update_dashboard() {
                     //document.getElementById("pre_gain").innerHTML = reformat_gain(donnees["pre_gain" + _f3_pre]);
                     set_inner_html("pre_gain", reformat_gain(donnees["pre_gain" + _f3_pre]));
                 } else {
-                    //document.getElementById("pre_gain").innerHTML = "";
-                    set_inner_html("pre_gain", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("pre_gain", "");
+                    } else {
+                        set_inner_html("pre_gain", "+8");
+                    }
                 }
                 if (donnees.me_gain != undefined) {
                     //document.getElementById("me_gain").innerHTML = reformat_gain(donnees.me_gain);
                     set_inner_html("me_gain", reformat_gain(donnees.me_gain));
+                } else {
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_gain", "");
+                    } else {
+                        set_inner_html("me_gain", "+8");
+                    }
                 }
                 if (donnees["post_gain" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
                     //document.getElementById("post_gain").innerHTML = reformat_gain(donnees["post_gain" + _f3_post]);
                     set_inner_html("post_gain", reformat_gain(donnees["post_gain" + _f3_post]));
                 } else {
-                    //document.getElementById("post_gain").innerHTML = "";
-                    set_inner_html("post_gain", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("post_gain", "");
+                    } else {
+                        set_inner_html("post_gain", "+8");
+                    }
                 }
                 if (donnees["pre_cgain" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
                     //document.getElementById("pre_cgain").innerHTML = reformat_gain(donnees["pre_cgain" + _f3_pre]);
                     set_inner_html("pre_cgain", reformat_gain(donnees["pre_cgain" + _f3_pre]));
                 } else {
                     //document.getElementById("pre_cgain").innerHTML = "";
-                    set_inner_html("pre_cgain", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("pre_cgain", "");
+                    } else {
+                        set_inner_html("pre_cgain", "+8");
+                    }
                 }
                 if (donnees.me_cgain != undefined) {
                     //document.getElementById("me_cgain").innerHTML = reformat_gain(donnees.me_cgain);
                     set_inner_html("me_cgain", reformat_gain(donnees.me_cgain));
+                } else {
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_cgain", "");
+                    } else {
+                        set_inner_html("me_cgain", "+8");
+                    }
                 }
                 if (donnees["post_cgain" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
                     //document.getElementById("post_cgain").innerHTML = reformat_gain(donnees["post_cgain" + _f3_post]);
                     set_inner_html("post_cgain", reformat_gain(donnees["post_cgain" + _f3_post]));
                 } else {
-                    //document.getElementById("post_cgain").innerHTML = "";
-                    set_inner_html("post_cgain", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("post_cgain", "");
+                    } else {
+                        set_inner_html("post_cgain", "+8");
+                    }
                 }
             }
         } else {
@@ -1222,33 +1418,61 @@ function update_dashboard() {
                     set_inner_html("pre_pos", donnees["pre_posb" + _f3_pre] + ".");
                     //set_inner_html("pre_pos", donnees["pre_posb" + _f3_pre]);
                 } else {
-                    set_inner_html("pre_pos", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("pre_pos", "");
+                    } else {
+                        set_inner_html("pre_pos", "8.");
+                    }
                 }
                 if (donnees.me_posb != undefined) {
                     set_inner_html("me_pos", donnees.me_posb + ".");
                     //set_inner_html("me_pos", donnees.me_posb);
+                } else {
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_pos", "");
+                    } else {
+                        set_inner_html("me_pos", "8.");
+                    }
                 }
                 if (donnees["post_posb" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
                     set_inner_html("post_pos", donnees["post_posb" + _f3_post] + ".");
                     //set_inner_html("post_pos", donnees["post_posb" + _f3_post]);
                 } else {
-                    set_inner_html("post_pos", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("post_pos", "");
+                    } else {
+                        set_inner_html("post_pos", "8.");
+                    }
                 }
                 if (donnees["pre_cposb" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
                     set_inner_html("pre_cpos", donnees["pre_cposb" + _f3_pre] + ".");
                     //set_inner_html("pre_cpos", donnees["pre_cposb" + _f3_pre]);
                 } else {
-                    set_inner_html("pre_cpos", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("pre_cpos", "");
+                    } else {
+                        set_inner_html("pre_cpos", "8.");
+                    }
                 }
                 if (donnees.me_cposb != undefined) {
                     set_inner_html("me_cpos", donnees.me_cposb + ".");
                     //set_inner_html("me_cpos", donnees.me_cposb);
+                } else {
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_cpos", "");
+                    } else {
+                        set_inner_html("me_cpos", "8.");
+                    }
                 }
                 if (donnees["post_cposb" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
                     set_inner_html("post_cpos", donnees["post_cposb" + _f3_post] + ".");
                     //set_inner_html("post_cpos", donnees["post_cposb" + _f3_post]);
                 } else {
-                    set_inner_html("post_cpos", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("post_cpos", "");
+                    } else {
+                        set_inner_html("post_cpos", "8.");
+                    }
                 }
             }
 
@@ -1257,66 +1481,156 @@ function update_dashboard() {
                 if (donnees["pre_posb" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
                     set_inner_html("pre_pos2", donnees["pre_posb" + _f3_pre]);
                 } else {
-                    set_inner_html("pre_pos2", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("pre_pos2", "");
+                    } else {
+                        set_inner_html("pre_pos2", "8");
+                    }
                 }
                 if (donnees.me_posb != undefined) {
                     set_inner_html("me_pos2", donnees.me_posb);
+                } else {
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_pos2", "");
+                    } else {
+                        set_inner_html("me_pos2", "8");
+                    }
                 }
                 if (donnees["post_posb" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
                     set_inner_html("post_pos2", donnees["post_posb" + _f3_post]);
                 } else {
-                    set_inner_html("post_pos2", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("post_pos2", "");
+                    } else {
+                        set_inner_html("post_pos2", "8");
+                    }
                 }
                 if (donnees["pre_cposb" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
                     set_inner_html("pre_cpos2", donnees["pre_cposb" + _f3_pre]);
                 } else {
-                    set_inner_html("pre_cpos2", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("pre_cpos2", "");
+                    } else {
+                        set_inner_html("pre_cpos2", "8");
+                    }
                 }
                 if (donnees.me_cposb != undefined) {
                     set_inner_html("me_cpos2", donnees.me_cposb);
+                } else {
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_cpos2", "");
+                    } else {
+                        set_inner_html("me_cpos2", "8");
+                    }
                 }
                 if (donnees["post_cposb" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
                     set_inner_html("post_cpos2", donnees["post_cposb" + _f3_post]);
                 } else {
-                    set_inner_html("post_cpos2", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("post_cpos2", "");
+                    } else {
+                        set_inner_html("post_cpos2", "8");
+                    }
                 }
             }
 
             if (advanced["disp_" + "pre_gain" + disp_sel] || advanced["disp_" + "me_gain" + disp_sel] || advanced["disp_" + "post_gain" + disp_sel] || advanced["disp_" + "pre_cgain" + disp_sel] || advanced["disp_" + "me_cgain" + disp_sel] || advanced["disp_" + "post_cgain" + disp_sel]) {
-                // En dehors des courses, on n'affiche pas le gain des positions
-                //document.getElementById("pre_gain").innerHTML = "&nbsp";
-                set_inner_html("pre_gain", "&nbsp;");
-                //document.getElementById("me_gain").innerHTML = "&nbsp";
-                set_inner_html("me_gain", "&nbsp;");
-                //document.getElementById("post_gain").innerHTML = "&nbsp";
-                set_inner_html("post_gain", "&nbsp;");
-                //document.getElementById("pre_cgain").innerHTML = "&nbsp";
-                set_inner_html("pre_cgain", "&nbsp;");
-                //document.getElementById("me_cgain").innerHTML = "&nbsp";
-                set_inner_html("me_cgain", "&nbsp;");
-                //document.getElementById("post_cgain").innerHTML = "&nbsp";
-                set_inner_html("post_cgain", "&nbsp;");
+                // En dehors des courses, on n'affiche pas le gain des positions sauf hors ligne
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_gain", "&nbsp;");
+                    set_inner_html("me_gain", "&nbsp;");
+                    set_inner_html("post_gain", "&nbsp;");
+                    set_inner_html("pre_cgain", "&nbsp;");
+                    set_inner_html("me_cgain", "&nbsp;");
+                    set_inner_html("post_cgain", "&nbsp;");
+                } else {
+                    set_inner_html("pre_gain", "+8");
+                    set_inner_html("me_gain", "+8");
+                    set_inner_html("post_gain", "+8");
+                    set_inner_html("pre_cgain", "+8");
+                    set_inner_html("me_cgain", "+8");
+                    set_inner_html("post_cgain", "+8");
+                }
             }
         }
+
+
+        if (advanced["disp_" + "leader_best" + disp_sel]) {
+            if (donnees.leader_best != undefined) {
+                set_inner_html("leader_best", reformat_laptime(donnees.leader_best));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("leader_best", "-'--.---");
+                } else {
+                    set_inner_html("leader_best", "8'88.888");
+                }
+            }
+        }
+        if (advanced["disp_" + "cleader_best" + disp_sel]) {
+            if (donnees.cleader_best != undefined) {
+                set_inner_html("cleader_best", reformat_laptime(donnees.cleader_best));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("cleader_best", "-'--.---");
+                } else {
+                    set_inner_html("cleader_best", "8'88.888");
+                }
+            }
+        }
+        if (advanced["disp_" + "leader_last" + disp_sel]) {
+            if (donnees.leader_last != undefined) {
+                set_inner_html("leader_last", reformat_laptime(donnees.leader_last));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("leader_last", "-'--.---");
+                } else {
+                    set_inner_html("leader_last", "8'88.888");
+                }
+            }
+        }
+        if (advanced["disp_" + "cleader_last" + disp_sel]) {
+            if (donnees.cleader_last != undefined) {
+                set_inner_html("cleader_last", reformat_laptime(donnees.cleader_last));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("cleader_last", "-'--.---");
+                } else {
+                    set_inner_html("cleader_last", "8'88.888");
+                }
+            }
+        }
+
 
         if (advanced["disp_" + "pre_best" + disp_sel] || advanced["disp_" + "pre_last" + disp_sel] || advanced["disp_" + "me_best" + disp_sel] || advanced["disp_" + "me_last" + disp_sel] || advanced["disp_" + "post_best" + disp_sel] || advanced["disp_" + "post_last" + disp_sel]) {
             if (donnees["pre_b" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
                 //document.getElementById("pre_best").innerHTML = reformat_laptime(donnees["pre_b" + _f3_pre]);
                 set_inner_html("pre_best", reformat_laptime(donnees["pre_b" + _f3_pre]));
             } else {
-                //document.getElementById("pre_best").innerHTML = "";
-                set_inner_html("pre_best", "");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_best", "-'--.---");
+                } else {
+                    set_inner_html("pre_best", "8'88.888");
+                }
             }
             if (donnees["pre_l" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
                 //document.getElementById("pre_last").innerHTML = reformat_laptime(donnees["pre_l" + _f3_pre]);
                 set_inner_html("pre_last", reformat_laptime(donnees["pre_l" + _f3_pre]));
             } else {
-                //document.getElementById("pre_last").innerHTML = "";
-                set_inner_html("pre_last", "");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_last", "-'--.---");
+                } else {
+                    set_inner_html("pre_last", "8'88.888");
+                }
             }
             if (donnees.me_b != undefined) {
                 //document.getElementById("me_best").innerHTML = reformat_laptime(donnees.me_b);
                 set_inner_html("me_best", reformat_laptime(donnees.me_b));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_best", "-'--.---");
+                } else {
+                    set_inner_html("me_best", "8'88.888");
+                }
             }
             if (donnees.me_l != undefined) {
                 //document.getElementById("me_last").innerHTML = reformat_laptime(donnees.me_l);
@@ -1326,15 +1640,21 @@ function update_dashboard() {
                 //document.getElementById("post_best").innerHTML = reformat_laptime(donnees["post_b" + _f3_post]);
                 set_inner_html("post_best", reformat_laptime(donnees["post_b" + _f3_post]));
             } else {
-                //document.getElementById("post_best").innerHTML = "";
-                set_inner_html("post_best", "");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_best", "-'--.---");
+                } else {
+                    set_inner_html("post_best", "8'88.888");
+                }
             }
             if (donnees["post_l" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
                 //document.getElementById("post_last").innerHTML = reformat_laptime(donnees["post_l" + _f3_post]);
                 set_inner_html("post_last", reformat_laptime(donnees["post_l" + _f3_post]));
             } else {
-                //document.getElementById("post_last").innerHTML = "";
-                set_inner_html("post_last", "");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_last", "-'--.---");
+                } else {
+                    set_inner_html("post_last", "8'88.888");
+                }
             }
         }
 
@@ -1343,256 +1663,549 @@ function update_dashboard() {
                 //document.getElementById("pre_stint").innerHTML = donnees["pre_sti" + _f3_pre];
                 set_inner_html("pre_stint", donnees["pre_sti" + _f3_pre]);
             } else {
-                //document.getElementById("pre_stint").innerHTML = "";
-                set_inner_html("pre_stint", "");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_stint", "");
+                } else {
+                    set_inner_html("pre_stint", "8.8");
+                }
             }
             if (donnees.me_sti != undefined) {
                 //document.getElementById("me_stint").innerHTML = donnees.me_sti;
                 set_inner_html("me_stint", donnees.me_sti);
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_stint", "");
+                } else {
+                    set_inner_html("me_stint", "8.8");
+                }
             }
             if (donnees["post_sti" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
                 //document.getElementById("post_stint").innerHTML = donnees["post_sti" + _f3_post];
                 set_inner_html("post_stint", donnees["post_sti" + _f3_post]);
             } else {
-                //document.getElementById("post_stint").innerHTML = "";
-                set_inner_html("post_stint", "");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_stint", "");
+                } else {
+                    set_inner_html("post_stint", "8.8");
+                }
             }
         }
 
-        if (donnees.me_lc != undefined && advanced["disp_" + "me_lc" + disp_sel]) {
-            //document.getElementById("me_lc").innerHTML = donnees.me_lc;
-            set_inner_html("me_lc", donnees.me_lc);
+        if (advanced["disp_" + "me_lc" + disp_sel]) {
+            if (donnees.me_lc != undefined) {
+                set_inner_html("me_lc", donnees.me_lc);
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_lc", "");
+                } else {
+                    set_inner_html("me_lc", "88");
+                }
+            }
+        }
+
+        if (advanced["disp_" + "leader_name" + disp_sel]) {
+            if (donnees.leader_name != undefined) {
+                set_inner_html("leader_name", "&nbsp;" + reformat_name(donnees.leader_name, donnees.leader_teamname, 0, 0, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("leader_name", "");
+                } else {
+                    set_inner_html("leader_name", "&nbsp;" + reformat_name("Name Leader", "Team Leader", 0, 0, 1));
+                }
+            }
+        }
+        if (advanced["disp_" + "cleader_name" + disp_sel]) {
+            if (donnees.cleader_name != undefined) {
+                set_inner_html("cleader_name", "&nbsp;" + reformat_name(donnees.cleader_name, donnees.cleader_teamname, 0, 0, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("cleader_name", "");
+                } else {
+                    set_inner_html("cleader_name", "&nbsp;" + reformat_name("Name Class Leader", "Team Class Leader", 0, 0, 1));
+                }
+            }
         }
 
 
-        if (donnees.me_name != undefined && advanced["disp_" + "me_name" + disp_sel]) {
-            //set_inner_html("me_name", "&nbsp;" + donnees.me_name);
-            set_inner_html("me_name", "&nbsp;" + reformat_name(donnees.me_name, donnees.me_teamname, 0, 0, 1));
+        if (advanced["disp_" + "me_name" + disp_sel]) {
+            if (donnees.me_name != undefined) {
+                set_inner_html("me_name", "&nbsp;" + reformat_name(donnees.me_name, donnees.me_teamname, 0, 0, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_name", "&nbsp;");
+                } else {
+                    set_inner_html("me_name", "&nbsp;" + _f3_pre_tag + reformat_name("Name Focused", "Team focused", 0, 0, 1));
+                }
+            }
         }
-        if (donnees["pre_name" + _f3_pre] != undefined && advanced["disp_" + "pre_name" + disp_sel] && donnees_new["pre_rc" + _f3_pre] != undefined) {
-            //set_inner_html("pre_name", "&nbsp;" + _f3_pre_tag + donnees["pre_name" + _f3_pre]);
-            set_inner_html("pre_name", "&nbsp;" + _f3_pre_tag + reformat_name(donnees["pre_name" + _f3_pre], donnees["pre_teamname" + _f3_pre], 0, 0, 1));
-        } else {
-            set_inner_html("pre_name", "&nbsp;");
+        if (advanced["disp_" + "pre_name" + disp_sel]) {
+            if (donnees["pre_name" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
+                set_inner_html("pre_name", "&nbsp;" + _f3_pre_tag + reformat_name(donnees["pre_name" + _f3_pre], donnees["pre_teamname" + _f3_pre], 0, 0, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_name", "&nbsp;");
+                } else {
+                    set_inner_html("pre_name", "&nbsp;" + _f3_pre_tag + reformat_name("Name Ahead", "Team Ahead", 0, 0, 1));
+                }
+            }
         }
-        if (donnees["post_name" + _f3_post] != undefined && advanced["disp_" + "post_name" + disp_sel] && donnees_new["post_rc" + _f3_post] != undefined) {
-            //set_inner_html("post_name", "&nbsp;" + _f3_post_tag + donnees["post_name" + _f3_post]);
-            set_inner_html("post_name", "&nbsp;" + _f3_post_tag + reformat_name(donnees["post_name" + _f3_post], donnees["post_teamname" + _f3_post], 0, 0, 1));
-        } else {
-            set_inner_html("post_name", "&nbsp;");
-        }
-
-
-        if ( !((donnees["pre_eq_me" + _f3_pre] == 1 || cache_pre)) && donnees["pre_liccolor" + _f3_pre] != undefined && donnees["pre_licsub" + _f3_pre] != undefined && advanced["disp_" + "pre_lic" + disp_sel] && donnees_new["pre_rc" + _f3_pre] != undefined) {
-            set_inner_html("pre_lic", reformat_lic_dashboard("pre_lic", donnees["pre_liccolor" + _f3_pre], donnees["pre_licsub" + _f3_pre]));
-        } else {
-            set_inner_html("pre_lic", "");
-            set_style_bg("pre_lic", "#000000");
-        }
-        if ( !((donnees["post_eq_me" + _f3_post] == 1 || cache_post)) && donnees["post_liccolor" + _f3_post] != undefined && donnees["post_licsub" + _f3_post] != undefined && advanced["disp_" + "post_lic" + disp_sel] && donnees_new["post_rc" + _f3_post] != undefined) {
-            set_inner_html("post_lic", reformat_lic_dashboard("post_lic", donnees["post_liccolor" + _f3_post], donnees["post_licsub" + _f3_post]));
-        } else {
-            set_inner_html("post_lic", "");
-            set_style_bg("post_lic", "#000000");
-        }
-
-        if (donnees["pre_ir" + _f3_pre] != undefined && advanced["disp_" + "pre_ir" + disp_sel] && donnees_new["pre_rc" + _f3_pre] != undefined) {
-            set_inner_html("pre_ir", donnees["pre_ir" + _f3_pre]);
-        } else {
-            set_inner_html("pre_ir", "");
-        }
-        if (donnees["post_ir" + _f3_post] != undefined && advanced["disp_" + "post_ir" + disp_sel] && donnees_new["post_rc" + _f3_post] != undefined) {
-            set_inner_html("post_ir", donnees["post_ir" + _f3_post]);
-        } else {
-            set_inner_html("post_ir", "");
+        if (advanced["disp_" + "post_name" + disp_sel]) {
+            if (donnees["post_name" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
+                set_inner_html("post_name", "&nbsp;" + _f3_post_tag + reformat_name(donnees["post_name" + _f3_post], donnees["post_teamname" + _f3_post], 0, 0, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_name", "&nbsp;");
+                } else {
+                    set_inner_html("post_name", "&nbsp;" + _f3_pre_tag + reformat_name("Name Behind", "Team Behind", 0, 0, 1));
+                }
+            }
         }
 
-        if (donnees["pre_tires_nb_changes" + _f3_pre] != undefined && advanced["disp_" + "pre_tires_nb_changes" + disp_sel] && donnees_new["pre_rc" + _f3_pre] != undefined) {
-            set_inner_html("pre_tires_nb_changes", donnees["pre_tires_nb_changes" + _f3_pre]);
-        } else {
-            set_inner_html("pre_tires_nb_changes", "");
+
+        if (advanced["disp_" + "pre_lic" + disp_sel]) {
+            if (!((donnees["pre_eq_me" + _f3_pre] == 1 || cache_pre)) && donnees["pre_liccolor" + _f3_pre] != undefined && donnees["pre_licsub" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
+                set_inner_html("pre_lic", reformat_lic_dashboard("pre_lic", donnees["pre_liccolor" + _f3_pre], donnees["pre_licsub" + _f3_pre], advanced["bg_" + "pre_lic" + disp_sel]));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_lic", "");
+                    set_style_bg_alpha("pre_lic", "#000000", advanced["bg_" + "pre_lic" + disp_sel]);
+                } else {
+                    set_inner_html("pre_lic", reformat_lic_dashboard("pre_lic", "0xfc0706", 888, advanced["bg_" + "pre_lic" + disp_sel]));
+                }
+            }
         }
-        if (donnees["me_tires_nb_changes"] != undefined && advanced["disp_" + "me_tires_nb_changes" + disp_sel]) {
-            set_inner_html("me_tires_nb_changes", donnees["me_tires_nb_changes"]);
-        } else {
-            set_inner_html("me_tires_nb_changes", "");
-        }
-        if (donnees["post_tires_nb_changes" + _f3_post] != undefined && advanced["disp_" + "post_tires_nb_changes" + disp_sel] && donnees_new["post_rc" + _f3_post] != undefined) {
-            set_inner_html("post_tires_nb_changes", donnees["post_tires_nb_changes" + _f3_post]);
-        } else {
-            set_inner_html("post_tires_nb_changes", "");
+        if (advanced["disp_" + "post_lic" + disp_sel]) {
+            if (!((donnees["post_eq_me" + _f3_post] == 1 || cache_post)) && donnees["post_liccolor" + _f3_post] != undefined && donnees["post_licsub" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
+                set_inner_html("post_lic", reformat_lic_dashboard("post_lic", donnees["post_liccolor" + _f3_post], donnees["post_licsub" + _f3_post], advanced["bg_" + "post_lic" + disp_sel]));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_lic", "");
+                    set_style_bg_alpha("post_lic", "#000000", advanced["bg_" + "post_lic" + disp_sel]);
+                } else {
+                    set_inner_html("post_lic", reformat_lic_dashboard("post_lic", "0x153db", 888, advanced["bg_" + "post_lic" + disp_sel]));
+                }
+            }
         }
 
-        if (donnees["pre_tire_compound" + _f3_pre] != undefined && donnees["pre_car" + _f3_pre] != undefined && advanced["disp_" + "pre_tire_compound" + disp_sel] && donnees_new["pre_rc" + _f3_pre] != undefined) {
-            set_inner_html("pre_tire_compound", reformat_tire_compound(donnees["pre_car" + _f3_pre], donnees["pre_tire_compound" + _f3_pre], 3, 1));
-        } else {
-            set_inner_html("pre_tire_compound", "");
+        if (advanced["disp_" + "pre_ir" + disp_sel]) {
+            if (donnees["pre_ir" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
+                set_inner_html("pre_ir", donnees["pre_ir" + _f3_pre]);
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_ir", "");
+                } else {
+                    set_inner_html("pre_ir", "8888");
+                }
+            }
         }
-        if (donnees["me_tire_compound"] != undefined && donnees["me_car"] != undefined && advanced["disp_" + "me_tire_compound" + disp_sel]) {
-            set_inner_html("me_tire_compound", reformat_tire_compound(donnees["me_car"], donnees["me_tire_compound"], 3, 1));
-        } else {
-            set_inner_html("me_tire_compound", "");
-        }
-        if (donnees["post_tire_compound" + _f3_post] != undefined && donnees["post_car" + _f3_post] != undefined  && advanced["disp_" + "post_tire_compound" + disp_sel] && donnees_new["post_rc" + _f3_post] != undefined) {
-            set_inner_html("post_tire_compound", reformat_tire_compound(donnees["post_car" + _f3_post], donnees["post_tire_compound" + _f3_post], 3, 1))
-        } else {
-            set_inner_html("post_tire_compound", "");
-        }
-
-        if (donnees["pre_tires_stints" + _f3_pre] != undefined && donnees["pre_car" + _f3_pre] != undefined && advanced["disp_" + "pre_tires_stints" + disp_sel] && donnees_new["pre_rc" + _f3_pre] != undefined) {
-            set_inner_html("pre_tires_stints", reformat_tires_stints(donnees["pre_car" + _f3_pre], donnees["pre_tires_stints" + _f3_pre],  donnees["pre_tires_stintcompounds" + _f3_pre], 1, 1));
-        } else {
-            set_inner_html("pre_tires_stints", "");
-        }
-        if (donnees["me_tires_stints"] != undefined && donnees["me_car"] != undefined && advanced["disp_" + "me_tires_stints" + disp_sel]) {
-            set_inner_html("me_tires_stints", reformat_tires_stints(donnees["me_car"], donnees["me_tires_stints"],  donnees["me_tires_stintcompounds"], 1, 1));
-        } else {
-            set_inner_html("me_tires_stints", "");
-        }
-        if (donnees["post_tires_stints" + _f3_post] != undefined && donnees["post_car" + _f3_post] != undefined  && advanced["disp_" + "post_tires_stints" + disp_sel] && donnees_new["post_rc" + _f3_post] != undefined) {
-            set_inner_html("post_tires_stints", reformat_tires_stints(donnees["post_car" + _f3_post], donnees["post_tires_stints" + _f3_post], donnees["post_tires_stintcompounds" + _f3_post], 1, 1))
-        } else {
-            set_inner_html("post_tires_stints", "");
+        if (advanced["disp_" + "post_ir" + disp_sel]) {
+            if (donnees["post_ir" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
+                set_inner_html("post_ir", donnees["post_ir" + _f3_post]);
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_ir", "");
+                } else {
+                    set_inner_html("post_ir", "8888");
+                }
+            }
         }
 
-        if (donnees["pre_clubname" + _f3_pre] != undefined && advanced["disp_" + "pre_club_name" + disp_sel] && donnees_new["pre_rc" + _f3_pre] != undefined) {
-            set_inner_html("pre_club_name", reformat_clubname(donnees["pre_clubname" + _f3_pre], 1, 1));
-        } else {
-            set_inner_html("pre_club_name", "");
+        if (advanced["disp_" + "pre_tires_nb_changes" + disp_sel]) {
+            if (donnees["pre_tires_nb_changes" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
+                set_inner_html("pre_tires_nb_changes", donnees["pre_tires_nb_changes" + _f3_pre]);
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_tires_nb_changes", "");
+                } else {
+                    set_inner_html("pre_tires_nb_changes", "8");
+                }
+            }
         }
-        if (donnees["me_clubname"] != undefined && advanced["disp_" + "me_club_name" + disp_sel]) {
-            set_inner_html("me_club_name", reformat_clubname(donnees["me_clubname"], 1, 1));
-        } else {
-            set_inner_html("me_club_name", "");
+        if (advanced["disp_" + "me_tires_nb_changes" + disp_sel]) {
+            if (donnees["me_tires_nb_changes"] != undefined) {
+                set_inner_html("me_tires_nb_changes", donnees["me_tires_nb_changes"]);
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_tires_nb_changes", "");
+                } else {
+                    set_inner_html("me_tires_nb_changes", "8");
+                }
+            }
         }
-        if (donnees["post_clubname" + _f3_post] != undefined && advanced["disp_" + "post_club_name" + disp_sel] && donnees_new["post_rc" + _f3_pre] != undefined) {
-            set_inner_html("post_club_name", reformat_clubname(donnees["post_clubname" + _f3_post], 1, 1));
-        } else {
-            set_inner_html("post_club_name", "");
-        }
-
-        if (donnees["pre_clubname" + _f3_pre] != undefined && advanced["disp_" + "pre_club_logo" + disp_sel] && donnees_new["pre_rc" + _f3_pre] != undefined) {
-            set_inner_html("pre_club_logo", reformat_clubname(donnees["pre_clubname" + _f3_pre], 2, 1));
-        } else {
-            set_inner_html("pre_club_logo", "");
-        }
-        if (donnees["me_clubname"] != undefined && advanced["disp_" + "me_club_logo" + disp_sel]) {
-            set_inner_html("me_club_logo", reformat_clubname(donnees["me_clubname"], 2, 1));
-        } else {
-            set_inner_html("me_club_logo", "");
-        }
-        if (donnees["post_clubname" + _f3_post] != undefined && advanced["disp_" + "post_club_logo" + disp_sel] && donnees_new["post_rc" + _f3_pre] != undefined) {
-            set_inner_html("post_club_logo", reformat_clubname(donnees["post_clubname" + _f3_post], 2, 1));
-        } else {
-            set_inner_html("post_club_logo", "");
-        }
-
-        if (donnees["pre_clubname" + _f3_pre] != undefined && advanced["disp_" + "pre_club_flag" + disp_sel] && donnees_new["pre_rc" + _f3_pre] != undefined) {
-            set_inner_html("pre_club_flag", reformat_clubname(donnees["pre_clubname" + _f3_pre], 3, 1));
-        } else {
-            set_inner_html("pre_club_flag", "");
-        }
-        if (donnees["me_clubname"] != undefined && advanced["disp_" + "me_club_flag" + disp_sel]) {
-            set_inner_html("me_club_flag", reformat_clubname(donnees["me_clubname"], 3, 1));
-        } else {
-            set_inner_html("me_club_flag", "");
-        }
-        if (donnees["post_clubname" + _f3_post] != undefined && advanced["disp_" + "post_club_flag" + disp_sel] && donnees_new["post_rc" + _f3_pre] != undefined) {
-            set_inner_html("post_club_flag", reformat_clubname(donnees["post_clubname" + _f3_post], 3, 1));
-        } else {
-            set_inner_html("post_club_flag", "");
+        if (advanced["disp_" + "post_tires_nb_changes" + disp_sel]) {
+            if (donnees["post_tires_nb_changes" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
+                set_inner_html("post_tires_nb_changes", donnees["post_tires_nb_changes" + _f3_post]);
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_tires_nb_changes", "");
+                } else {
+                    set_inner_html("post_tires_nb_changes", "8");
+                }
+            }
         }
 
-        if (donnees["pre_car" + _f3_pre] != undefined && advanced["disp_" + "pre_car_name" + disp_sel] && donnees_new["pre_rc" + _f3_pre] != undefined) {
-            set_inner_html("pre_car_name", reformat_car(donnees["pre_car" + _f3_pre], 0, 1, 1));
-        } else {
-            set_inner_html("pre_car_name", "");
+        if (advanced["disp_" + "pre_tire_compound" + disp_sel]) {
+            if (donnees["pre_tire_compound" + _f3_pre] != undefined && donnees["pre_car" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
+                set_inner_html("pre_tire_compound", reformat_tire_compound(donnees["pre_car" + _f3_pre], donnees["pre_tire_compound" + _f3_pre], 3, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_tire_compound", "");
+                } else {
+                    set_inner_html("pre_tire_compound", "<div style='background-color: black; font-size: 1em; display: inline-block; width: 1em; margin-top: -0.18em; line-height: 1.14em; text-align: center; vertical-align: middle; color: #ff0000; border-radius: 50%; border-left: 0.1em solid #ff0000; border-right: 0.1em solid #ff0000'>S</div>");
+                }
+            }
         }
-        if (donnees["me_car"] != undefined && advanced["disp_" + "me_car_name" + disp_sel]) {
-            set_inner_html("me_car_name", reformat_car(donnees["me_car"], 0, 1, 1));
-        } else {
-            set_inner_html("me_car_name", "");
+        if (advanced["disp_" + "me_tire_compound" + disp_sel]) {
+            if (donnees["me_tire_compound"] != undefined && donnees["me_car"] != undefined) {
+                set_inner_html("me_tire_compound", reformat_tire_compound(donnees["me_car"], donnees["me_tire_compound"], 3, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_tire_compound", "");
+                } else {
+                    set_inner_html("me_tire_compound", "<div style='background-color: black; font-size: 1em; display: inline-block; width: 1em; margin-top: -0.18em; line-height: 1.14em; text-align: center; vertical-align: middle; color: #ff0000; border-radius: 50%; border-left: 0.1em solid #ff0000; border-right: 0.1em solid #ff0000'>S</div>");
+                }
+            }
         }
-        if (donnees["post_car" + _f3_post] != undefined && advanced["disp_" + "post_car_name" + disp_sel] && donnees_new["post_rc" + _f3_pre] != undefined) {
-            set_inner_html("post_car_name", reformat_car(donnees["post_car" + _f3_post], 0, 1, 1));
-        } else {
-            set_inner_html("post_car_name", "");
+        if (advanced["disp_" + "post_tire_compound" + disp_sel]) {
+            if (donnees["post_tire_compound" + _f3_post] != undefined && donnees["post_car" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
+                set_inner_html("post_tire_compound", reformat_tire_compound(donnees["post_car" + _f3_post], donnees["post_tire_compound" + _f3_post], 3, 1))
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_tire_compound", "");
+                } else {
+                    set_inner_html("post_tire_compound", "<div style='background-color: black; font-size: 1em; display: inline-block; width: 1em; margin-top: -0.18em; line-height: 1.14em; text-align: center; vertical-align: middle; color: #ff0000; border-radius: 50%; border-left: 0.1em solid #ff0000; border-right: 0.1em solid #ff0000'>S</div>");
+                }
+            }
         }
 
-        if (donnees["pre_car" + _f3_pre] != undefined && advanced["disp_" + "pre_car_logo" + disp_sel] && donnees_new["pre_rc" + _f3_pre] != undefined) {
-            set_inner_html("pre_car_logo", reformat_car(donnees["pre_car" + _f3_pre], 0, 8, 1));
-        } else {
-            set_inner_html("pre_car_logo", "");
+        if (advanced["disp_" + "pre_tires_stints" + disp_sel]) {
+            if (donnees["pre_tires_stints" + _f3_pre] != undefined && donnees["pre_car" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
+                set_inner_html("pre_tires_stints", reformat_tires_stints(donnees["pre_car" + _f3_pre], donnees["pre_tires_stints" + _f3_pre], donnees["pre_tires_stintcompounds" + _f3_pre], 1, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_tires_stints", "");
+                } else {
+                    set_inner_html("pre_tires_stints", reformat_tires_stints("Dallara IR18", [888, 88, 8], [0, 1, 0], 1, 1));
+                }
+            }
         }
-        if (donnees["me_car"] != undefined && advanced["disp_" + "me_car_logo" + disp_sel]) {
-            set_inner_html("me_car_logo", reformat_car(donnees["me_car"], 0, 8, 1));
-        } else {
-            set_inner_html("me_car_logo", "");
+        if (advanced["disp_" + "me_tires_stints" + disp_sel]) {
+            if (donnees["me_tires_stints"] != undefined && donnees["me_car"] != undefined) {
+                set_inner_html("me_tires_stints", reformat_tires_stints(donnees["me_car"], donnees["me_tires_stints"], donnees["me_tires_stintcompounds"], 1, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_tires_stints", "");
+                } else {
+                    set_inner_html("me_tires_stints", reformat_tires_stints("Dallara IR18", [888, 88, 8], [0, 1, 0], 1, 1));
+                }
+            }
         }
-        if (donnees["post_car" + _f3_post] != undefined && advanced["disp_" + "post_car_logo" + disp_sel] && donnees_new["post_rc" + _f3_pre] != undefined) {
-            set_inner_html("post_car_logo", reformat_car(donnees["post_car" + _f3_post], 0, 8, 1));
-        } else {
-            set_inner_html("post_car_logo", "");
+        if (advanced["disp_" + "post_tires_stints" + disp_sel]) {
+            if (donnees["post_tires_stints" + _f3_post] != undefined && donnees["post_car" + _f3_post] != undefined && donnees_new["post_rc" + _f3_post] != undefined) {
+                set_inner_html("post_tires_stints", reformat_tires_stints(donnees["post_car" + _f3_post], donnees["post_tires_stints" + _f3_post], donnees["post_tires_stintcompounds" + _f3_post], 1, 1))
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_tires_stints", "");
+                } else {
+                    set_inner_html("post_tires_stints", reformat_tires_stints("Dallara IR18", [888, 88, 8], [0, 1, 0], 1, 1));
+                }
+            }
         }
 
-        if (donnees["pre_track_status" + _f3_pre] != undefined && advanced["disp_" + "pre_track_status" + disp_sel] && donnees_new["pre_rc" + _f3_pre] != undefined) {
-            set_inner_html("pre_track_status", reformat_track_status(donnees["pre_track_status" + _f3_pre]));
-        } else {
-            set_inner_html("pre_track_status", "");
+        if (advanced["disp_" + "pre_club_name" + disp_sel]) {
+            if (donnees["pre_clubname" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
+                set_inner_html("pre_club_name", reformat_clubname(donnees["pre_clubname" + _f3_pre], 1, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_club_name", "");
+                } else {
+                    set_inner_html("pre_club_name", "Club name");
+                }
+            }
         }
-        if (donnees["post_track_status" + _f3_post] != undefined && advanced["disp_" + "post_track_status" + disp_sel] && donnees_new["post_rc" + _f3_pre] != undefined) {
-            set_inner_html("post_track_status", reformat_track_status(donnees["post_track_status" + _f3_post]));
-        } else {
-            set_inner_html("post_track_status", "");
+        if (advanced["disp_" + "me_club_name" + disp_sel]) {
+            if (donnees["me_clubname"] != undefined) {
+                set_inner_html("me_club_name", reformat_clubname(donnees["me_clubname"], 1, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_club_name", "");
+                } else {
+                    set_inner_html("me_club_name", "Club name");
+                }
+            }
+        }
+        if (advanced["disp_" + "post_club_name" + disp_sel]) {
+            if (donnees["post_clubname" + _f3_post] != undefined && donnees_new["post_rc" + _f3_pre] != undefined) {
+                set_inner_html("post_club_name", reformat_clubname(donnees["post_clubname" + _f3_post], 1, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_club_name", "");
+                } else {
+                    set_inner_html("post_club_name", "Club name");
+                }
+            }
+        }
+
+        if (advanced["disp_" + "pre_club_logo" + disp_sel]) {
+            if (donnees["pre_clubname" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
+                set_inner_html("pre_club_logo", reformat_clubname(donnees["pre_clubname" + _f3_pre], 2, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_club_logo", "");
+                } else {
+                    set_inner_html("pre_club_logo", reformat_clubname("France", 2, 1));
+                }
+            }
+        }
+        if (advanced["disp_" + "me_club_logo" + disp_sel]) {
+            if (donnees["me_clubname"] != undefined) {
+                set_inner_html("me_club_logo", reformat_clubname(donnees["me_clubname"], 2, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_club_logo", "");
+                } else {
+                    set_inner_html("me_club_logo", reformat_clubname("France", 2, 1));
+                }
+            }
+        }
+        if (advanced["disp_" + "post_club_logo" + disp_sel]) {
+            if (donnees["post_clubname" + _f3_post] != undefined && donnees_new["post_rc" + _f3_pre] != undefined) {
+                set_inner_html("post_club_logo", reformat_clubname(donnees["post_clubname" + _f3_post], 2, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_club_logo", "");
+                } else {
+                    set_inner_html("post_club_logo", reformat_clubname("France", 2, 1));
+                }
+            }
+        }
+
+        if (advanced["disp_" + "pre_club_flag" + disp_sel]) {
+            if (donnees["pre_clubname" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
+                set_inner_html("pre_club_flag", reformat_clubname(donnees["pre_clubname" + _f3_pre], 3, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_club_flag", "");
+                } else {
+                    set_inner_html("pre_club_flag", reformat_clubname("France", 3, 1));
+                }
+            }
+        }
+        if (advanced["disp_" + "me_club_flag" + disp_sel]) {
+            if (donnees["me_clubname"] != undefined) {
+                set_inner_html("me_club_flag", reformat_clubname(donnees["me_clubname"], 3, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_club_flag", "");
+                } else {
+                    set_inner_html("me_club_flag", reformat_clubname("France", 3, 1));
+                }
+            }
+        }
+        if (advanced["disp_" + "post_club_flag" + disp_sel]) {
+            if (donnees["post_clubname" + _f3_post] != undefined && donnees_new["post_rc" + _f3_pre] != undefined) {
+                set_inner_html("post_club_flag", reformat_clubname(donnees["post_clubname" + _f3_post], 3, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_club_flag", "");
+                } else {
+                    set_inner_html("post_club_flag", reformat_clubname("France", 3, 1));
+                }
+            }
+        }
+
+        if (advanced["disp_" + "pre_car_name" + disp_sel]) {
+            if (donnees["pre_car" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
+                set_inner_html("pre_car_name", reformat_car(donnees["pre_car" + _f3_pre], 0, 1, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_car_name", "");
+                } else {
+                    set_inner_html("pre_car_name", reformat_car("Dallara IR18", 0, 1, 1));
+                }
+            }
+        }
+        if (advanced["disp_" + "me_car_name" + disp_sel]) {
+            if (donnees["me_car"] != undefined) {
+                set_inner_html("me_car_name", reformat_car(donnees["me_car"], 0, 1, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_car_name", "");
+                } else {
+                    set_inner_html("me_car_name", reformat_car("Dallara IR18", 0, 1, 1));
+                }
+            }
+        }
+        if (advanced["disp_" + "post_car_name" + disp_sel]) {
+            if (donnees["post_car" + _f3_post] != undefined && donnees_new["post_rc" + _f3_pre] != undefined) {
+                set_inner_html("post_car_name", reformat_car(donnees["post_car" + _f3_post], 0, 1, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_car_name", "");
+                } else {
+                    set_inner_html("post_car_name", reformat_car("Dallara IR18", 0, 1, 1));
+                }
+            }
+        }
+
+        if (advanced["disp_" + "pre_car_logo" + disp_sel]) {
+            if (donnees["pre_car" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
+                set_inner_html("pre_car_logo", reformat_car(donnees["pre_car" + _f3_pre], 0, 8, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_car_logo", "");
+                } else {
+                    set_inner_html("pre_car_logo", reformat_car("BMW M4 GT4", 0, 8, 1));
+                }
+            }
+        }
+        if (advanced["disp_" + "me_car_logo" + disp_sel]) {
+            if (donnees["me_car"] != undefined) {
+                set_inner_html("me_car_logo", reformat_car(donnees["me_car"], 0, 8, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_car_logo", "");
+                } else {
+                    set_inner_html("me_car_logo", reformat_car("BMW M4 GT4", 0, 8, 1));
+                }
+            }
+        }
+        if (advanced["disp_" + "post_car_logo" + disp_sel]) {
+            if (donnees["post_car" + _f3_post] != undefined && donnees_new["post_rc" + _f3_pre] != undefined) {
+                set_inner_html("post_car_logo", reformat_car(donnees["post_car" + _f3_post], 0, 8, 1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_car_logo", "");
+                } else {
+                    set_inner_html("post_car_logo", reformat_car("BMW M4 GT4", 0, 8, 1));
+                }
+            }
+        }
+
+        if (advanced["disp_" + "pre_track_status" + disp_sel]) {
+            if (donnees["pre_track_status" + _f3_pre] != undefined && donnees_new["pre_rc" + _f3_pre] != undefined) {
+                set_inner_html("pre_track_status", reformat_track_status(donnees["pre_track_status" + _f3_pre]));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_track_status", "");
+                } else {
+                    set_inner_html("pre_track_status", reformat_track_status(0));
+                }
+            }
+        }
+        if (advanced["disp_" + "post_track_status" + disp_sel]) {
+            if (donnees["post_track_status" + _f3_post] != undefined && donnees_new["post_rc" + _f3_pre] != undefined) {
+                set_inner_html("post_track_status", reformat_track_status(donnees["post_track_status" + _f3_post]));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_track_status", "");
+                } else {
+                    set_inner_html("post_track_status", reformat_track_status(0));
+                }
+            }
         }
 
         // topspeed
-        if (donnees["pre_topspeed" + _f3_pre] != undefined && donnees["pre_topspeed" + _f3_pre] != 0 && advanced["disp_" + "pre_topspeed" + disp_sel] && donnees_new["pre_rc" + _f3_pre] != undefined) {
-            set_inner_html("pre_topspeed", (speedfactor*donnees["pre_topspeed" + _f3_pre]).toFixed(1));
-        } else {
-            set_inner_html("pre_topspeed", "&nbsp;");
+        if (advanced["disp_" + "pre_topspeed" + disp_sel]) {
+            if (donnees["pre_topspeed" + _f3_pre] != undefined && donnees["pre_topspeed" + _f3_pre] != 0 && donnees_new["pre_rc" + _f3_pre] != undefined) {
+                set_inner_html("pre_topspeed", (speedfactor * donnees["pre_topspeed" + _f3_pre]).toFixed(1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_topspeed", "&nbsp;");
+                } else {
+                    set_inner_html("pre_topspeed", "888.8");
+                }
+            }
         }
-        if (donnees["me_topspeed"] != undefined && donnees["me_topspeed"] != 0 && advanced["disp_" + "me_topspeed" + disp_sel]) {
-            set_inner_html("me_topspeed", (speedfactor*donnees["me_topspeed"]).toFixed(1));
-        } else {
-            set_inner_html("me_topspeed", "&nbsp;");
+        if (advanced["disp_" + "me_topspeed" + disp_sel]) {
+            if (donnees["me_topspeed"] != undefined && donnees["me_topspeed"] != 0) {
+                set_inner_html("me_topspeed", (speedfactor * donnees["me_topspeed"]).toFixed(1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_topspeed", "&nbsp;");
+                } else {
+                    set_inner_html("me_topspeed", "888.8");
+                }
+            }
         }
-        if (donnees["post_topspeed" + _f3_pre] != undefined && donnees["post_topspeed" + _f3_pre] != 0 && advanced["disp_" + "post_topspeed" + disp_sel] && donnees_new["post_rc" + _f3_pre] != undefined) {
-            set_inner_html("post_topspeed", (speedfactor*donnees["post_topspeed" + _f3_pre]).toFixed(1));
-        } else {
-            set_inner_html("post_topspeed", "&nbsp;");
+        if (advanced["disp_" + "post_topspeed" + disp_sel]) {
+            if (donnees["post_topspeed" + _f3_pre] != undefined && donnees["post_topspeed" + _f3_pre] != 0 && donnees_new["post_rc" + _f3_pre] != undefined) {
+                set_inner_html("post_topspeed", (speedfactor * donnees["post_topspeed" + _f3_pre]).toFixed(1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_topspeed", "&nbsp;");
+                } else {
+                    set_inner_html("post_topspeed", "888.8");
+                }
+            }
         }
         // max_speed
-        if (donnees["pre_max_speed" + _f3_pre] != undefined && donnees["pre_max_speed" + _f3_pre] !=  0 && advanced["disp_" + "pre_max_speed" + disp_sel] && donnees_new["pre_rc" + _f3_pre] != undefined) {
-            set_inner_html("pre_max_speed", (speedfactor*donnees["pre_max_speed" + _f3_pre]).toFixed(1));
-        } else {
-            set_inner_html("pre_max_speed", "&nbsp;");
+        if (advanced["disp_" + "pre_max_speed" + disp_sel]) {
+            if (donnees["pre_max_speed" + _f3_pre] != undefined && donnees["pre_max_speed" + _f3_pre] != 0 && donnees_new["pre_rc" + _f3_pre] != undefined) {
+                set_inner_html("pre_max_speed", (speedfactor * donnees["pre_max_speed" + _f3_pre]).toFixed(1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_max_speed", "&nbsp;");
+                } else {
+                    set_inner_html("pre_max_speed", "888.8");
+                }
+            }
         }
-        if (donnees["me_max_speed"] != undefined && donnees["me_max_speed"] != 0 && advanced["disp_" + "me_max_speed" + disp_sel]) {
-            set_inner_html("me_max_speed", (speedfactor*donnees["me_max_speed"]).toFixed(1));
-        } else {
-            set_inner_html("me_max_speed", "&nbsp;");
+        if (advanced["disp_" + "me_max_speed" + disp_sel]) {
+            if (donnees["me_max_speed"] != undefined && donnees["me_max_speed"] != 0) {
+                set_inner_html("me_max_speed", (speedfactor * donnees["me_max_speed"]).toFixed(1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_max_speed", "&nbsp;");
+                } else {
+                    set_inner_html("me_max_speed", "888.8");
+                }
+            }
         }
-        if (donnees["post_max_speed" + _f3_pre] != undefined && donnees["post_max_speed" + _f3_pre] != 0 && advanced["disp_" + "post_max_speed" + disp_sel] && donnees_new["post_rc" + _f3_pre] != undefined) {
-            set_inner_html("post_max_speed", (speedfactor*donnees["post_max_speed" + _f3_pre]).toFixed(1));
-        } else {
-            set_inner_html("post_max_speed", "&nbsp;");
+        if (advanced["disp_" + "post_max_speed" + disp_sel]) {
+            if (donnees["post_max_speed" + _f3_pre] != undefined && donnees["post_max_speed" + _f3_pre] != 0 && donnees_new["post_rc" + _f3_pre] != undefined) {
+                set_inner_html("post_max_speed", (speedfactor * donnees["post_max_speed" + _f3_pre]).toFixed(1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_max_speed", "&nbsp;");
+                } else {
+                    set_inner_html("post_max_speed", "888.8");
+                }
+            }
         }
         // apex_speed
-        if (donnees["pre_apex_speed" + _f3_pre] != undefined && donnees["pre_apex_speed" + _f3_pre] != 0 && advanced["disp_" + "pre_apex_speed" + disp_sel] && donnees_new["pre_rc" + _f3_pre] != undefined) {
-            set_inner_html("pre_apex_speed", (speedfactor*donnees["pre_apex_speed" + _f3_pre]).toFixed(1));
-        } else {
-            set_inner_html("pre_apex_speed", "&nbsp;");
+        if (advanced["disp_" + "pre_apex_speed" + disp_sel]) {
+            if (donnees["pre_apex_speed" + _f3_pre] != undefined && donnees["pre_apex_speed" + _f3_pre] != 0 && donnees_new["pre_rc" + _f3_pre] != undefined) {
+                set_inner_html("pre_apex_speed", (speedfactor * donnees["pre_apex_speed" + _f3_pre]).toFixed(1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("pre_apex_speed", "&nbsp;");
+                } else {
+                    set_inner_html("pre_apex_speed", "888.8");
+                }
+            }
         }
-        if (donnees["me_apex_speed"] != undefined && donnees["me_apex_speed"] != 0 && advanced["disp_" + "me_apex_speed" + disp_sel]) {
-            set_inner_html("me_apex_speed", (speedfactor*donnees["me_apex_speed"]).toFixed(1));
-        } else {
-            set_inner_html("me_apex_speed", "&nbsp;");
+        if (advanced["disp_" + "me_apex_speed" + disp_sel]) {
+            if (donnees["me_apex_speed"] != undefined && donnees["me_apex_speed"] != 0) {
+                set_inner_html("me_apex_speed", (speedfactor * donnees["me_apex_speed"]).toFixed(1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_apex_speed", "&nbsp;");
+                } else {
+                    set_inner_html("me_apex_speed", "888.8");
+                }
+            }
         }
-        if (donnees["post_apex_speed" + _f3_pre] != undefined && donnees["post_apex_speed" + _f3_pre] != 0 && advanced["disp_" + "post_apex_speed" + disp_sel] && donnees_new["post_rc" + _f3_pre] != undefined) {
-            set_inner_html("post_apex_speed", (speedfactor*donnees["post_apex_speed" + _f3_pre]).toFixed(1));
-        } else {
-            set_inner_html("post_apex_speed", "&nbsp;");
+        if (advanced["disp_" + "post_apex_speed" + disp_sel]) {
+            if (donnees["post_apex_speed" + _f3_pre] != undefined && donnees["post_apex_speed" + _f3_pre] != 0 && donnees_new["post_rc" + _f3_pre] != undefined) {
+                set_inner_html("post_apex_speed", (speedfactor * donnees["post_apex_speed" + _f3_pre]).toFixed(1));
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("post_apex_speed", "&nbsp;");
+                } else {
+                    set_inner_html("post_apex_speed", "888.8");
+                }
+            }
         }
 
 
@@ -1610,37 +2223,61 @@ function update_dashboard() {
             }
         }
 
-        if (donnees.f_sf != undefined && donnees.lr != undefined && donnees.lr != 0 && advanced["disp_" + "target_conso" + disp_sel]) {
-            //document.getElementById("target_conso").innerHTML = (fuelfactor * coef_fuel * donnees.f_sf / (Math.floor(donnees.lr) + 1)).toFixed(3);
-            set_inner_html("target_conso", (fuelfactor * coef_fuel * donnees.f_sf / (Math.floor(donnees.lr) + 1)).toFixed(conso_decimal));
+        if (advanced["disp_" + "target_conso" + disp_sel]) {
+            if (donnees.f_sf != undefined && donnees.lr != undefined && donnees.lr != 0) {
+                set_inner_html("target_conso", (fuelfactor * coef_fuel * donnees.f_sf / (Math.floor(donnees.lr) + 1)).toFixed(conso_decimal));
+            } else {
+                if (!donnees.is_iracing_started) {
+                    set_inner_html("target_conso", (8.888).toFixed(conso_decimal));
+                }
+            }
         }
 
         if (advanced["disp_" + "est_conso" + disp_sel]) {
             if (donnees.est_co != undefined) {
                 set_inner_html("est_conso", (fuelfactor * coef_fuel * donnees.est_co).toFixed(conso_decimal));
             } else {
-                set_inner_html("est_conso", (8.888).toFixed(conso_decimal));
+                if (!donnees.is_iracing_started) {
+                    set_inner_html("est_conso", (8.888).toFixed(conso_decimal));
+                }
             }
         }
 
-        if (donnees.f_sf != undefined && donnees.lr != undefined && advanced["disp_" + "fuel_end" + disp_sel]) {
-            //document.getElementById("fuel_end").innerHTML = (fuelfactor * coef_fuel * (donnees.f_sf - conso * (Math.floor(donnees.lr) + 1))).toFixed(1);
-            set_inner_html("fuel_end", (fuelfactor * coef_fuel * (donnees.f_sf - conso * (Math.floor(donnees.lr) + 1))).toFixed(fuel_decimal));
-        }
-
-        if (donnees.nblaps_race_winner != undefined && advanced["disp_" + "nblaps_race_winner" + disp_sel]) {
-            if (donnees.nblaps_race_winner != 0) {
-                set_inner_html("nblaps_race_winner", (donnees.nblaps_race_winner).toFixed(0));
+        if (advanced["disp_" + "fuel_end" + disp_sel]) {
+            if (donnees.f_sf != undefined && donnees.lr != undefined) {
+                set_inner_html("fuel_end", (fuelfactor * coef_fuel * (donnees.f_sf - conso * (Math.floor(donnees.lr) + 1))).toFixed(fuel_decimal));
             } else {
-                set_inner_html("nblaps_race_winner", "--");
+                if (!donnees.is_iracing_started) {
+                    set_inner_html("fuel_end", (88.888).toFixed(fuel_decimal));
+                }
             }
         }
 
-        if (donnees.nblaps_race_driver != undefined && advanced["disp_" + "nblaps_race_driver" + disp_sel]) {
-            if (donnees.nblaps_race_driver != 0) {
-                set_inner_html("nblaps_race_driver", (donnees.nblaps_race_driver).toFixed(0));
+        if (advanced["disp_" + "nblaps_race_winner" + disp_sel]) {
+            if (donnees.nblaps_race_winner != undefined) {
+                if (donnees.nblaps_race_winner != 0) {
+                    set_inner_html("nblaps_race_winner", (donnees.nblaps_race_winner).toFixed(0));
+                } else {
+                    set_inner_html("nblaps_race_winner", "--");
+                }
             } else {
-                set_inner_html("nblaps_race_driver", "--");
+                if (!donnees.is_iracing_started) {
+                    set_inner_html("nblaps_race_winner", 88);
+                }
+            }
+        }
+
+        if (advanced["disp_" + "nblaps_race_driver" + disp_sel]) {
+            if (donnees.nblaps_race_driver != undefined) {
+                if (donnees.nblaps_race_driver != 0) {
+                    set_inner_html("nblaps_race_driver", (donnees.nblaps_race_driver).toFixed(0));
+                } else {
+                    set_inner_html("nblaps_race_driver", "--");
+                }
+            } else {
+                if (!donnees.is_iracing_started) {
+                    set_inner_html("nblaps_race_driver", 88);
+                }
             }
         }
 
@@ -1655,7 +2292,11 @@ function update_dashboard() {
                 tmp_nb_laps = tmp_nb_laps_after_this_lap + 1 - tmp_lapdistpct;
                 set_inner_html("time_with_fuel", reformat_timeremain(tmp_nb_laps * donnees.laptime_avg5));
             } else {
-                set_inner_html("time_with_fuel", "--");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("time_with_fuel", "--");
+                } else {
+                    set_inner_html("time_with_fuel", "8:88:88");
+                }
             }
         }
 
@@ -1663,7 +2304,11 @@ function update_dashboard() {
             if (conso > 0 && donnees.laptime_avg5 != undefined && donnees.full_plost != undefined && donnees.tcap != undefined) {
                 set_inner_html("predicted_stint_time", reformat_timeremain(Math.floor(donnees.tcap / conso) * donnees.laptime_avg5 + donnees.full_plost));
             } else {
-                set_inner_html("predicted_stint_time", "--");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("predicted_stint_time", "--");
+                } else {
+                    set_inner_html("predicted_stint_time", "8:88:88");
+                }
             }
         }
 
@@ -1672,7 +2317,11 @@ function update_dashboard() {
             if (conso > 0 && donnees.tcap != undefined) {
                 set_inner_html("nblaps_per_tank", (donnees.tcap / conso).toFixed(1));
             } else {
-                set_inner_html("nblaps_per_tank", "--");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("nblaps_per_tank", "--");
+                } else {
+                    set_inner_html("nblaps_per_tank", 88.8);
+                }
             }
         }
 
@@ -1682,7 +2331,11 @@ function update_dashboard() {
                 tmp_nblaps_before_pit_window = (fuelneed - donnees.tcap * tmp_nbpits + donnees.f) / conso;
                 set_inner_html("nblaps_before_pit_window", (tmp_nblaps_before_pit_window).toFixed(1));
             } else {
-                set_inner_html("nblaps_before_pit_window", "--");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("nblaps_before_pit_window", "--");
+                } else {
+                    set_inner_html("nblaps_before_pit_window", 88.8);
+                }
             }
         }
 
@@ -1723,10 +2376,18 @@ function update_dashboard() {
 
                     set_inner_html("nblaps_to_equalize_stints", (tmp_nblaps).toFixed(1));
                 } else {
-                    set_inner_html("nblaps_to_equalize_stints", "--");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("nblaps_to_equalize_stints", "--");
+                    } else {
+                        set_inner_html("nblaps_to_equalize_stints", 88.8);
+                    }
                 }
             } else {
-                set_inner_html("nblaps_to_equalize_stints", "--");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("nblaps_to_equalize_stints", "--");
+                } else {
+                    set_inner_html("nblaps_to_equalize_stints", 88.8);
+                }
             }
         }
 
@@ -1739,6 +2400,10 @@ function update_dashboard() {
             if (donnees.pss != undefined) {
                 //document.getElementById("perfs_dist").innerHTML = donnees.pss;
                 set_inner_html("perfs_dist", donnees.pss);
+            } else {
+                if (!donnees.is_iracing_started) {
+                    set_inner_html("perfs_dist", 888);
+                }
             }
             if (donnees.p100 != undefined && donnees.p400 != undefined && donnees.p1000 != undefined) {
                 //document.getElementById("perfs_100kmh").innerHTML = donnees.p100.toFixed(1);
@@ -1759,6 +2424,20 @@ function update_dashboard() {
                     set_inner_html("perfs_400m_speed", (speedfactor * donnees.p400s * 3.6).toFixed(0) + tmp_unit);
                     //document.getElementById("perfs_1000m_speed").innerHTML = (speedfactor * donnees.p1000s * 3.6).toFixed(0) + tmp_unit;
                     set_inner_html("perfs_1000m_speed", (speedfactor * donnees.p1000s * 3.6).toFixed(0) + tmp_unit);
+                }
+            } else {
+                if (!donnees.is_iracing_started) {
+                    if (speedfactor == 1) {
+                        tmp_unit = " km/h";
+                    } else {
+                        tmp_unit = " MPH";
+                    }
+                    set_inner_html("perfs_100kmh", 88.8);
+                    set_inner_html("perfs_400m", 88.8);
+                    set_inner_html("perfs_1000m", 88.8);
+                    set_inner_html("perfs_100kmh_dist", "888 m");
+                    set_inner_html("perfs_400m_speed", 888 + tmp_unit);
+                    set_inner_html("perfs_1000m_speed", 888 + tmp_unit);
                 }
             }
         }
@@ -1811,12 +2490,16 @@ function update_dashboard() {
             }
         }
         if (advanced["disp_" + "conso5" + disp_sel]) {
-            if (donnees.pro_v == 1 || donnees.try_v == 1 || donnees.pro_v == undefined) {
-                //document.getElementById("conso5").innerHTML = (fuelfactor * coef_fuel * donnees.co5).toFixed(3);
-                set_inner_html("conso5", (fuelfactor * coef_fuel * donnees.co5).toFixed(conso_decimal));
+            if (donnees.co5 != undefined) {
+                if (donnees.pro_v == 1 || donnees.try_v == 1 || donnees.pro_v == undefined) {
+                    //document.getElementById("conso5").innerHTML = (fuelfactor * coef_fuel * donnees.co5).toFixed(3);
+                    set_inner_html("conso5", (fuelfactor * coef_fuel * donnees.co5).toFixed(conso_decimal));
+                } else {
+                    //document.getElementById("conso5").innerHTML = "buy pro";
+                    set_inner_html("conso5", "buy pro");
+                }
             } else {
-                //document.getElementById("conso5").innerHTML = "buy pro";
-                set_inner_html("conso5", "buy pro");
+                set_inner_html("conso5", 8.888.toFixed(conso_decimal));
             }
             if (advanced["perso_font_color_" + "conso5" + disp_sel]) {
                 set_style_color("conso5", advanced["font_color_" + "conso5" + disp_sel]);
@@ -1836,6 +2519,12 @@ function update_dashboard() {
                 }else {
                     //document.getElementById("points").innerHTML = "--";
                     set_inner_html("points", "--");
+                }
+            } else {
+                if (donnees.is_iracing_started) {
+                    set_inner_html("points", "--");
+                } else {
+                    set_inner_html("points", "888");
                 }
             }
         }
@@ -1901,6 +2590,10 @@ function update_dashboard() {
                 if (c2 == 9999) c2 = ".";
                 //document.getElementById("traffic").innerHTML = "<span class='shadow' style='color: " + donnees.cc_0.slice(1,8) + "; vertical-align: top; font-size:100%'> " + c0 + ccs_0 + "</span><span class='shadow' style='opacity:1; color: " + donnees.cc_1.slice(1,8) + "; vertical-align: top; font-size:75%'> " + c1 + ccs_1 + "</span><span class='shadow' style='opacity: 1; color: " + donnees.cc_2.slice(1,8) + "; vertical-align: top; font-size:50%'> " + c2 + ccs_2 + "</span>";
                 set_inner_html("traffic", "<span class='shadow' style='color: " + donnees.cc_0.slice(1,8) + "; vertical-align: top; font-size:100%'> " + c0 + ccs_0 + "</span><span class='shadow' style='opacity:1; color: " + donnees.cc_1.slice(1,8) + "; vertical-align: top; font-size:75%'> " + c1 + ccs_1 + "</span><span class='shadow' style='opacity: 1; color: " + donnees.cc_2.slice(1,8) + "; vertical-align: top; font-size:50%'> " + c2 + ccs_2 + "</span>");
+            } else {
+                if (!donnees.is_iracing_started) {
+                    set_inner_html("traffic", "<span class='shadow' style='color: " + 88 + "; vertical-align: top; font-size:100%'> " + 88 + "</span><span class='shadow' style='opacity:1; color: " + 88 + "; vertical-align: top; font-size:75%'> " + 88 + "</span><span class='shadow' style='opacity: 1; color: " + 88 + "; vertical-align: top; font-size:50%'> " + 88 + "</span>");
+                }
             }
         }
         if (advanced["disp_" + "traffic_pit" + disp_sel]) {
@@ -1922,6 +2615,10 @@ function update_dashboard() {
                 if (c2 == 9999) c2 = ".";
                 //document.getElementById("traffic_pit").innerHTML = "<span class='shadow' style='color: " + donnees.ccpit_0.slice(1,8) + "; vertical-align: top; font-size:100%'> " + c0 + ccs_0 + "</span><span class='shadow' style='opacity:1; color: " + donnees.ccpit_1.slice(1,8) + "; vertical-align: top; font-size:75%'> " + c1 + ccs_1 + "</span><span class='shadow' style='opacity:1; color: " + donnees.ccpit_2.slice(1,8) + "; vertical-align: top; font-size:50%'> " + c2 + ccs_2 + "</span>";
                 set_inner_html("traffic_pit", "<span class='shadow' style='color: " + donnees.ccpit_0.slice(1,8) + "; vertical-align: top; font-size:100%'> " + c0 + ccs_0 + "</span><span class='shadow' style='opacity:1; color: " + donnees.ccpit_1.slice(1,8) + "; vertical-align: top; font-size:75%'> " + c1 + ccs_1 + "</span><span class='shadow' style='opacity:1; color: " + donnees.ccpit_2.slice(1,8) + "; vertical-align: top; font-size:50%'> " + c2 + ccs_2 + "</span>");
+            } else {
+                if (!donnees.is_iracing_started) {
+                    set_inner_html("traffic_pit", "<span class='shadow' style='color: " + 88 + "; vertical-align: top; font-size:100%'> " + 88 + "</span><span class='shadow' style='opacity:1; color: " + 88 + "; vertical-align: top; font-size:75%'> " + 88 + "</span><span class='shadow' style='opacity:1; color: " + 88 + "; vertical-align: top; font-size:50%'> " + 88 + "</span>");
+                }
             }
         }
 
@@ -1959,6 +2656,8 @@ function update_dashboard() {
                     }
                 }
                 regen_status_old = donnees.regen_status;
+            } else {
+                set_inner_html("regen_lap", "+" + (88.888).toFixed(hybrid_decimal));
             }
         }
 
@@ -1970,6 +2669,8 @@ function update_dashboard() {
                 }
                 //document.getElementById("regen_turn").innerHTML = signe + donnees.regen_turn.toFixed(hybrid_decimal);
                 set_inner_html("regen_turn", signe + donnees.regen_turn.toFixed(hybrid_decimal));
+            } else {
+                set_inner_html("regen_turn", "+" + (88.888).toFixed(hybrid_decimal));
             }
         }
 
@@ -2044,23 +2745,39 @@ function update_dashboard() {
                 if (donnees.iR_gain >= 0) tmp_prefixe = "+";
                 //document.getElementById("iR_gain").innerHTML = tmp_prefixe + donnees.iR_gain;
                 set_inner_html("iR_gain", tmp_prefixe + donnees.iR_gain);
+            } else {
+                if (!donnees.is_iracing_started) {
+                    set_inner_html("iR_gain", "+88");
+                }
             }
         }
         if (advanced["disp_" + "iR_proj" + disp_sel]) {
             if (donnees.iR_proj != undefined) {
                 //document.getElementById("iR_proj").innerHTML = donnees.iR_proj;
                 set_inner_html("iR_proj", donnees.iR_proj);
+            } else {
+                if (!donnees.is_iracing_started) {
+                    set_inner_html("iR_proj", "8888");
+                }
             }
         }
         if (advanced["disp_" + "apex_speed" + disp_sel]) {
             if (donnees.apex_speed != undefined) {
                 //document.getElementById("apex_speed").innerHTML = donnees.apex_speed;
                 set_inner_html("apex_speed", donnees.apex_speed);
+            } else {
+                if (!donnees.is_iracing_started) {
+                    set_inner_html("apex_speed", 888);
+                }
             }
         }
         if (advanced["disp_" + "peak_brake_pressure" + disp_sel]) {
             if (donnees.peak_brake_pressure != undefined) {
                 set_inner_html("peak_brake_pressure", donnees.peak_brake_pressure);
+            } else {
+                if (!donnees.is_iracing_started) {
+                    set_inner_html("peak_brake_pressure", 88.8);
+                }
             }
         }
         tmp_list_var = {
@@ -2075,7 +2792,11 @@ function update_dashboard() {
                     if (donnees[name] == 255) {
                         set_inner_html(name, "&infin;");
                     } else {
-                        set_inner_html(name, "--");
+                        if (donnees.is_iracing_started) {
+                            set_inner_html(name, "--");
+                        } else {
+                            set_inner_html(name, 8);
+                        }
                     }
                 }
             }
@@ -2085,6 +2806,16 @@ function update_dashboard() {
 
 
     if (donnees.typ <= 33) {  // toutes les <refresh rate> secondes
+
+        if (!donnees.is_iracing_started) {
+            donnees.b = 88;
+            donnees.t = 88;
+            donnees.clutch = 88;
+            donnees.ffb = 88;
+            donnees.ffbpct = 88;
+            donnees.yaw = Math.PI/2;
+            donnees.winddir = Math.PI/2;
+        }
 
         conso = 0;
         conso1 = donnees.co;
@@ -2217,7 +2948,8 @@ function update_dashboard() {
                     if (donnees[name] != -1) {
                         if (name in tmp_list_var_box) {
                             if (donnees[name] == 1) {
-                                tmp_val = "X";
+                                //tmp_val = "X";
+                                tmp_val = "&#10004;";
                             } else {
                                 tmp_val = "";
                             }
@@ -2231,19 +2963,25 @@ function update_dashboard() {
         }
 
 
-        if (donnees.f != undefined && advanced["disp_" + "tank" + disp_sel]) {
-            set_inner_html("tank", (fuelfactor * coef_fuel * donnees.f).toFixed(fuel_decimal));
-            if (donnees.fuel_accurate != 1) {
-                if (advanced["perso_font_color_" + "tank" + disp_sel]) {
-                    set_style_color("tank", advanced["font_color_" + "tank" + disp_sel]);
+        if (advanced["disp_" + "tank" + disp_sel]) {
+            if (donnees.f != undefined) {
+                set_inner_html("tank", (fuelfactor * coef_fuel * donnees.f).toFixed(fuel_decimal));
+                if (donnees.fuel_accurate != 1) {
+                    if (advanced["perso_font_color_" + "tank" + disp_sel]) {
+                        set_style_color("tank", advanced["font_color_" + "tank" + disp_sel]);
+                    } else {
+                        set_style_color("tank", "#bbbbbb");
+                    }
                 } else {
-                    set_style_color("tank", "#bbbbbb");
+                    if (advanced["perso_font_color_" + "tank" + disp_sel]) {
+                        set_style_color("tank", advanced["font_color_" + "tank" + disp_sel]);
+                    } else {
+                        set_style_color("tank", "#ffffff");
+                    }
                 }
             } else {
-                if (advanced["perso_font_color_" + "tank" + disp_sel]) {
-                    set_style_color("tank", advanced["font_color_" + "tank" + disp_sel]);
-                } else {
-                    set_style_color("tank", "#ffffff");
+                if (!donnees.is_iracing_started) {
+                    set_inner_html("tank", (88.888).toFixed(fuel_decimal));
                 }
             }
         }
@@ -2268,7 +3006,11 @@ function update_dashboard() {
         } else {
             if (advanced["disp_" + "conso" + disp_sel]) {
                 if (donnees.pro_v == 1 || donnees.try_v == 1 || donnees.pro_v == undefined) {
-                    set_inner_html("conso", "-- " + "<span style='font-size:0.75em; vertical-align: middle; line-height: 1em; font-weight:normal'>" + text_conso + "</span>");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("conso", "-- " + "<span style='font-size:0.75em; vertical-align: middle; line-height: 1em; font-weight:normal'>" + text_conso + "</span>");
+                    } else {
+                        set_inner_html("conso", (8.888).toFixed(conso_decimal) + " " + "<span style='font-size:0.75em; vertical-align: middle; line-height: 1em; font-weight:normal'>" + text_conso + "</span>");
+                    }
                 } else {
                     set_inner_html("conso", "buy pro");
                 }
@@ -2281,22 +3023,22 @@ function update_dashboard() {
                 if (fuelneed_bg1_pct != fuelneed_bg1_pct_old) {
                     //set("fuelneed_bg1", advanced["x_" + "fuelneed" + disp_sel], advanced["y_" + "fuelneed" + disp_sel] + Math.floor(fuelneed_bg1_pct * advanced["h_" + "fuelneed" + disp_sel]), Math.floor(advanced["w_" + "fuelneed" + disp_sel]), advanced["h_" + "fuelneed" + disp_sel] - Math.floor(fuelneed_bg1_pct * advanced["h_" + "fuelneed" + disp_sel]), advanced["f_" + "fuelneed" + disp_sel] / dashboard_ref_w);
                     do_set_boxes("fuelneed_bg1", "fuelneed", disp_sel, 0, fuelneed_bg1_pct, 1, 1);
+                }
+                fuelneed_bg1_pct_old = fuelneed_bg1_pct;
 
-                    if (advanced["perso_font_color_" + "fuelneed" + disp_sel]) {
-                        set_style_color("fuelneed", advanced["font_color_" + "fuelneed" + disp_sel]);
+                if (advanced["perso_font_color_" + "fuelneed" + disp_sel]) {
+                    set_style_color("fuelneed", advanced["font_color_" + "fuelneed" + disp_sel]);
+                } else {
+                    if (donnees.estim_status == 0 || donnees.fuel_accurate != 1) {
+                        set_style_color("fuelneed", "#666666");
                     } else {
-                        if (donnees.estim_status == 0 || donnees.fuel_accurate != 1) {
-                            set_style_color("fuelneed", "#666666");
+                        if (fuelneed_bg1_pct == 0) {
+                            set_style_color("fuelneed", "#ffffff");
                         } else {
-                            if (fuelneed_bg1_pct == 0) {
-                                set_style_color("fuelneed", "#ffffff");
-                            } else {
-                                set_style_color("fuelneed", "#000000");
-                            }
+                            set_style_color("fuelneed", "#000000");
                         }
                     }
                 }
-                fuelneed_bg1_pct_old = fuelneed_bg1_pct;
             }
         }
 
@@ -2304,46 +3046,47 @@ function update_dashboard() {
             if (fuelneed1_bg1_pct != fuelneed1_bg1_pct_old) {
                 //set("fuelneed1_bg1", advanced["x_" + "fuelneed1" + disp_sel], advanced["y_" + "fuelneed1" + disp_sel] + Math.floor(fuelneed1_bg1_pct * advanced["h_" + "fuelneed1" + disp_sel]), Math.floor(advanced["w_" + "fuelneed1" + disp_sel]), advanced["h_" + "fuelneed1" + disp_sel] - Math.floor(fuelneed1_bg1_pct * advanced["h_" + "fuelneed1" + disp_sel]), advanced["f_" + "fuelneed1" + disp_sel] / dashboard_ref_w);
                 do_set_boxes("fuelneed1_bg1", "fuelneed1", disp_sel, 0, fuelneed1_bg1_pct, 1, 1);
+            }
+            fuelneed1_bg1_pct_old = fuelneed1_bg1_pct;
 
-                if (advanced["perso_font_color_" + "fuelneed1" + disp_sel]) {
-                    set_style_color("fuelneed1", advanced["font_color_" + "fuelneed1" + disp_sel]);
+            if (advanced["perso_font_color_" + "fuelneed1" + disp_sel]) {
+                set_style_color("fuelneed1", advanced["font_color_" + "fuelneed1" + disp_sel]);
+            } else {
+                if (donnees.estim_status == 0 || donnees.fuel_accurate != 1) {
+                    set_style_color("fuelneed1", "#666666");
                 } else {
-                    if (donnees.estim_status == 0 || donnees.fuel_accurate != 1) {
-                        set_style_color("fuelneed1", "#666666");
+                    if (fuelneed1_bg1_pct == 0) {
+                        set_style_color("fuelneed1", "#ffffff");
                     } else {
-                        if (fuelneed1_bg1_pct == 0) {
-                            set_style_color("fuelneed1", "#ffffff");
-                        } else {
-                            set_style_color("fuelneed1", "#000000");
-                        }
+                        set_style_color("fuelneed1", "#000000");
                     }
                 }
             }
-            fuelneed1_bg1_pct_old = fuelneed1_bg1_pct;
+        }
+
+        if (advanced["disp_" + "fuelneed5" + disp_sel]) {
+            if (fuelneed5_bg1_pct != fuelneed5_bg1_pct_old) {
+                //set("fuelneed5_bg1", advanced["x_" + "fuelneed5" + disp_sel], advanced["y_" + "fuelneed5" + disp_sel] + Math.floor(fuelneed5_bg1_pct * advanced["h_" + "fuelneed5" + disp_sel]), Math.floor(advanced["w_" + "fuelneed5" + disp_sel]), advanced["h_" + "fuelneed5" + disp_sel] - Math.floor(fuelneed5_bg1_pct * advanced["h_" + "fuelneed5" + disp_sel]), advanced["f_" + "fuelneed5" + disp_sel] / dashboard_ref_w);
+                do_set_boxes("fuelneed5_bg1", "fuelneed5", disp_sel, 0, fuelneed5_bg1_pct, 1, 1);
+            }
+            fuelneed5_bg1_pct_old = fuelneed5_bg1_pct;
+
+            if (advanced["perso_font_color_" + "fuelneed5" + disp_sel]) {
+                set_style_color("fuelneed5", advanced["font_color_" + "fuelneed5" + disp_sel]);
+            } else {
+                if (donnees.estim_status == 0 || donnees.fuel_accurate != 1) {
+                    set_style_color("fuelneed5", "#666666");
+                } else {
+                    if (fuelneed5_bg1_pct == 0) {
+                        set_style_color("fuelneed5", "#ffffff");
+                    } else {
+                        set_style_color("fuelneed5", "#000000");
+                    }
+                }
+            }
         }
 
         if (donnees.pro_v == 1 || donnees.try_v == 1 || donnees.pro_v == undefined) {
-            if (advanced["disp_" + "fuelneed5" + disp_sel]) {
-                if (fuelneed5_bg1_pct != fuelneed5_bg1_pct_old) {
-                    //set("fuelneed5_bg1", advanced["x_" + "fuelneed5" + disp_sel], advanced["y_" + "fuelneed5" + disp_sel] + Math.floor(fuelneed5_bg1_pct * advanced["h_" + "fuelneed5" + disp_sel]), Math.floor(advanced["w_" + "fuelneed5" + disp_sel]), advanced["h_" + "fuelneed5" + disp_sel] - Math.floor(fuelneed5_bg1_pct * advanced["h_" + "fuelneed5" + disp_sel]), advanced["f_" + "fuelneed5" + disp_sel] / dashboard_ref_w);
-                    do_set_boxes("fuelneed5_bg1", "fuelneed5", disp_sel, 0, fuelneed5_bg1_pct, 1, 1);
-
-                    if (advanced["perso_font_color_" + "fuelneed5" + disp_sel]) {
-                        set_style_color("fuelneed5", advanced["font_color_" + "fuelneed5" + disp_sel]);
-                    } else {
-                        if (donnees.estim_status == 0 || donnees.fuel_accurate != 1) {
-                            set_style_color("fuelneed5", "#666666");
-                        } else {
-                            if (fuelneed5_bg1_pct == 0) {
-                                set_style_color("fuelneed5", "#ffffff");
-                            } else {
-                                set_style_color("fuelneed5", "#000000");
-                            }
-                        }
-                    }
-                }
-                fuelneed5_bg1_pct_old = fuelneed5_bg1_pct;
-            }
 
             if (advanced["disp_" + "fuelneed" + disp_sel] && !fuelneed_replaced) {
                 if (conso > 0.01) {
@@ -2355,7 +3098,11 @@ function update_dashboard() {
                         set_inner_html("fuelneed", (fuelfactor * coef_fuel * fuelneed).toFixed(fuel_decimal));
                     }
                 } else {
-                    set_inner_html("fuelneed", "--");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("fuelneed", "--");
+                    } else {
+                        set_inner_html("fuelneed", (88.888).toFixed(fuel_decimal));
+                    }
                 }
             }
             if (advanced["disp_" + "fuelneed1" + disp_sel]) {
@@ -2368,7 +3115,11 @@ function update_dashboard() {
                         set_inner_html("fuelneed1", (fuelfactor * coef_fuel * fuelneed1).toFixed(fuel_decimal));
                     }
                 else {
-                    set_inner_html("fuelneed1", "--");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("fuelneed1", "--");
+                    } else {
+                        set_inner_html("fuelneed1", (88.888).toFixed(fuel_decimal));
+                    }
                 }
             }
             if (advanced["disp_" + "fuelneed5" + disp_sel]) {
@@ -2381,7 +3132,11 @@ function update_dashboard() {
                         set_inner_html("fuelneed5", (fuelfactor * coef_fuel * fuelneed5).toFixed(fuel_decimal));
                     }
                 else {
-                    set_inner_html("fuelneed5", "--");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("fuelneed5", "--");
+                    } else {
+                        set_inner_html("fuelneed5", (88.888).toFixed(fuel_decimal));
+                    }
                 }
             }
         } else {
@@ -2390,96 +3145,110 @@ function update_dashboard() {
             set_inner_html("fuelneed5", "buy pro");
         }
 
-        if (donnees.b != undefined && advanced["disp_" + "brake2" + disp_sel]) {
-            document.getElementById("brake2_").style.right = (100 - donnees.b) + "%";
-            if (donnees.b == 0) {
-                //document.getElementById("brake2_text").style.color = "#000000";
-                set_style_color("brake2_text", "#000000");
-            } else if (donnees.b == 100) {
-                //document.getElementById("brake2_text").style.color = "#c80000";
-                set_style_color("brake2_text", "#c80000");
-            } else {
-                //document.getElementById("brake2_text").style.color = "#ffffff";
-                set_style_color("brake2_text", "#ffffff");
+
+        if (advanced["disp_" + "brake2" + disp_sel]) {
+            if (donnees.b != undefined) {
+                document.getElementById("brake2_").style.right = (100 - donnees.b) + "%";
+                if (donnees.b == 0) {
+                    //document.getElementById("brake2_text").style.color = "#000000";
+                    set_style_color("brake2_text", "#000000");
+                } else if (donnees.b == 100) {
+                    //document.getElementById("brake2_text").style.color = "#c80000";
+                    set_style_color("brake2_text", "#c80000");
+                } else {
+                    //document.getElementById("brake2_text").style.color = "#ffffff";
+                    set_style_color("brake2_text", "#ffffff");
+                }
             }
         }
-        if (donnees.b != undefined && advanced["disp_" + "brake3" + disp_sel]) {
-            document.getElementById("brake3_").style.right = (100 - donnees.b) + "%";
-            //document.getElementById("brake3_text").innerHTML = (100 - donnees.b).toFixed(1) + "%&nbsp;";
-            set_inner_html("brake3_text", (donnees.b).toFixed(1) + "%&nbsp;");
-            if (donnees.b == 0) {
-                //document.getElementById("brake3_text").style.color = "#000000";
-                set_style_color("brake3_text", "#000000");
-            } else if (donnees.b == 100) {
-                //document.getElementById("brake3_text").style.color = "#0000c8";
-                set_style_color("brake3_text", "#c80000");
-            } else {
-                //document.getElementById("brake3_text").style.color = "#ffffff";
-                set_style_color("brake3_text", "#ffffff");
+        if (advanced["disp_" + "brake3" + disp_sel]) {
+            if (donnees.b != undefined) {
+                document.getElementById("brake3_").style.right = (100 - donnees.b) + "%";
+                //document.getElementById("brake3_text").innerHTML = (100 - donnees.b).toFixed(1) + "%&nbsp;";
+                set_inner_html("brake3_text", (donnees.b).toFixed(1) + "%&nbsp;");
+                if (donnees.b == 0) {
+                    //document.getElementById("brake3_text").style.color = "#000000";
+                    set_style_color("brake3_text", "#000000");
+                } else if (donnees.b == 100) {
+                    //document.getElementById("brake3_text").style.color = "#0000c8";
+                    set_style_color("brake3_text", "#c80000");
+                } else {
+                    //document.getElementById("brake3_text").style.color = "#ffffff";
+                    set_style_color("brake3_text", "#ffffff");
+                }
             }
         }
-        if (donnees.t != undefined && advanced["disp_" + "throttle2" + disp_sel]) {
-            document.getElementById("throttle2_").style.right = (100 - donnees.t) + "%";
-            if (donnees.t == 0) {
-                //document.getElementById("throttle2_text").style.color = "#000000";
-                set_style_color("throttle2_text", "#000000");
-            } else if (donnees.t == 100) {
-                //document.getElementById("throttle2_text").style.color = "#00a800";
-                set_style_color("throttle2_text", "#00a800");
-            } else {
-                //document.getElementById("throttle2_text").style.color = "#ffffff";
-                set_style_color("throttle2_text", "#ffffff");
+        if (advanced["disp_" + "throttle2" + disp_sel]) {
+            if (donnees.t != undefined) {
+                document.getElementById("throttle2_").style.right = (100 - donnees.t) + "%";
+                if (donnees.t == 0) {
+                    //document.getElementById("throttle2_text").style.color = "#000000";
+                    set_style_color("throttle2_text", "#000000");
+                } else if (donnees.t == 100) {
+                    //document.getElementById("throttle2_text").style.color = "#00a800";
+                    set_style_color("throttle2_text", "#00a800");
+                } else {
+                    //document.getElementById("throttle2_text").style.color = "#ffffff";
+                    set_style_color("throttle2_text", "#ffffff");
+                }
             }
         }
-        if (donnees.t != undefined && advanced["disp_" + "throttle3" + disp_sel]) {
-            document.getElementById("throttle3_").style.right = (100 - donnees.t) + "%";
-            //document.getElementById("throttle3_text").innerHTML = (100 - donnees.b).toFixed(1) + "%&nbsp;";
-            set_inner_html("throttle3_text", (donnees.t).toFixed(1) + "%&nbsp;");
-            if (donnees.t == 0) {
-                //document.getElementById("throttle3_text").style.color = "#000000";
-                set_style_color("throttle3_text", "#000000");
-            } else if (donnees.t == 100) {
-                //document.getElementById("throttle3_text").style.color = "#0000c8";
-                set_style_color("throttle3_text", "#00a800");
-            } else {
-                //document.getElementById("throttle3_text").style.color = "#ffffff";
-                set_style_color("throttle3_text", "#ffffff");
+        if (advanced["disp_" + "throttle3" + disp_sel]) {
+            if (donnees.t != undefined) {
+                document.getElementById("throttle3_").style.right = (100 - donnees.t) + "%";
+                //document.getElementById("throttle3_text").innerHTML = (100 - donnees.b).toFixed(1) + "%&nbsp;";
+                set_inner_html("throttle3_text", (donnees.t).toFixed(1) + "%&nbsp;");
+                if (donnees.t == 0) {
+                    //document.getElementById("throttle3_text").style.color = "#000000";
+                    set_style_color("throttle3_text", "#000000");
+                } else if (donnees.t == 100) {
+                    //document.getElementById("throttle3_text").style.color = "#0000c8";
+                    set_style_color("throttle3_text", "#00a800");
+                } else {
+                    //document.getElementById("throttle3_text").style.color = "#ffffff";
+                    set_style_color("throttle3_text", "#ffffff");
+                }
             }
         }
-        if (donnees.clutch != undefined && advanced["disp_" + "clutch2" + disp_sel]) {
-            document.getElementById("clutch2_").style.right = (donnees.clutch) + "%";
-            //document.getElementById("clutch2_text").innerHTML = (100 - donnees.clutch).toFixed(1) + "%&nbsp;";
-            set_inner_html("clutch2_text", (100 - donnees.clutch).toFixed(1) + "%&nbsp;");
-            if (donnees.clutch == 100) {
-                //document.getElementById("clutch2_text").style.color = "#000000";
-                set_style_color("clutch2_text", "#000000");
-            } else if (donnees.clutch == 0) {
-                //document.getElementById("clutch2_text").style.color = "#0000c8";
-                set_style_color("clutch2_text", "#0000c8");
-            } else {
-                //document.getElementById("clutch2_text").style.color = "#ffffff";
-                set_style_color("clutch2_text", "#ffffff");
+        if (advanced["disp_" + "clutch2" + disp_sel]) {
+            if (donnees.clutch != undefined) {
+                document.getElementById("clutch2_").style.right = (donnees.clutch) + "%";
+                //document.getElementById("clutch2_text").innerHTML = (100 - donnees.clutch).toFixed(1) + "%&nbsp;";
+                set_inner_html("clutch2_text", (100 - donnees.clutch).toFixed(1) + "%&nbsp;");
+                if (donnees.clutch == 100) {
+                    //document.getElementById("clutch2_text").style.color = "#000000";
+                    set_style_color("clutch2_text", "#000000");
+                } else if (donnees.clutch == 0) {
+                    //document.getElementById("clutch2_text").style.color = "#0000c8";
+                    set_style_color("clutch2_text", "#0000c8");
+                } else {
+                    //document.getElementById("clutch2_text").style.color = "#ffffff";
+                    set_style_color("clutch2_text", "#ffffff");
+                }
             }
         }
-        if (donnees.ffb != undefined && donnees.ffbpct != undefined && advanced["disp_" + "ffb2" + disp_sel]) {
-            document.getElementById("ffb2_").style.right = (100 - donnees.ffbpct) + "%";
-            //document.getElementById("ffb2_text").innerHTML = donnees.ffb + " Nm&nbsp;";
-            set_inner_html("ffb2_text", donnees.ffb + " Nm&nbsp;");
-            if (donnees.ffbpct == 0) {
-                //document.getElementById("ffb2_text").style.color = "#000000";
-                set_style_color("ffb2_text", "#000000");
-            } else if (donnees.ffbpct == 100) {
-                //document.getElementById("ffb2_text").style.color = "#1757ee";
-                set_style_color("ffb2_text", "#1757ee");
-            } else {
-                //document.getElementById("ffb2_text").style.color = "#ffffff";
-                set_style_color("ffb2_text", "#ffffff");
+        if (advanced["disp_" + "ffb2" + disp_sel]) {
+            if (donnees.ffb != undefined && donnees.ffbpct != undefined) {
+                document.getElementById("ffb2_").style.right = (100 - donnees.ffbpct) + "%";
+                //document.getElementById("ffb2_text").innerHTML = donnees.ffb + " Nm&nbsp;";
+                set_inner_html("ffb2_text", donnees.ffb + " Nm&nbsp;");
+                if (donnees.ffbpct == 0) {
+                    //document.getElementById("ffb2_text").style.color = "#000000";
+                    set_style_color("ffb2_text", "#000000");
+                } else if (donnees.ffbpct == 100) {
+                    //document.getElementById("ffb2_text").style.color = "#1757ee";
+                    set_style_color("ffb2_text", "#1757ee");
+                } else {
+                    //document.getElementById("ffb2_text").style.color = "#ffffff";
+                    set_style_color("ffb2_text", "#ffffff");
+                }
             }
         }
 
-        if (donnees.pss != undefined && advanced["disp_" + "perfs" + disp_sel]) {
-            //document.getElementById("perfs_dist").innerHTML = donnees.pss;
-            set_inner_html("perfs_dist", donnees.pss);
+        if (advanced["disp_" + "perfs" + disp_sel]) {
+            if (donnees.pss != undefined) {
+                set_inner_html("perfs_dist", donnees.pss);
+            }
         }
 
         // Indication des pits
@@ -2538,57 +3307,32 @@ function update_dashboard() {
         // Et on affiche ou efface certains blocs en fonction de la voiture
         if (donnees.carname != carname) {
             carname = donnees.carname;
-            gear_ = {};
-            maxspeed_ = {};
-            for (i in donnees.gear_) {
-                gear_[i] = donnees.gear_[i]
-            }
-
-            if (carname in car_with_drs) {
-                tmp_list = ["drs"];
-                d = disp_sel;
-                for (i in tmp_list) {
-                    name = tmp_list[i];
-                    if (advanced["disp_" + name + disp_sel]) {
-                        document.getElementById(name).style.display = "inline-block";
-                    }
-                }
-            } else {
-                document.getElementById("drs").style.display = "none";
-            }
-            if (carname in car_with_ers_drs) {
-                tmp_list = ["ers", "ersco", "ers_margin", "mgul", "mgu", "mgua", "mguf", "regen_lap", "regen_turn"];
-                d = disp_sel;
-                for (i in tmp_list) {
-                    name = tmp_list[i];
-                    if (advanced["disp_" + name + disp_sel]) {
-                        document.getElementById(name).style.display = "inline-block";
-                    }
-                }
-                document.getElementById("ers_bar").style.display = "inline-block";
-                document.getElementById("ers_margin_min_bar").style.display = "inline-block";
-                document.getElementById("mgu_margin_max_bar").style.display = "inline-block";
-            } else {
-                document.getElementById("ers").style.display = "none";
-                document.getElementById("ers_bar").style.display = "none";
-                document.getElementById("ersco").style.display = "none";
-                document.getElementById("ers_margin").style.display = "none";
-                document.getElementById("ers_margin_min_bar").style.display = "none";
-                document.getElementById("mgu_margin_max_bar").style.display = "none";
-                document.getElementById("mgul").style.display = "none";
-                document.getElementById("mgu").style.display = "none";
-                document.getElementById("mgua").style.display = "none";
-                document.getElementById("mguf").style.display = "none";
-                document.getElementById("regen_lap").style.display = "none";
-                document.getElementById("regen_turn").style.display = "none";
-            }
-
             responsive_dim();
         }
 
+
+        // On regarde s'il faut afficher l'overview du dashboard light
+        // REM : list_param_id est défini dans config.js
+        for (var name in list_param_id) {
+            if (name in param_overview_tstamp && (Date.now() - param_overview_tstamp[name] < 2000)) {
+                //console.log(name)
+                //console.log(name, param_overview_tstamp[name])
+                param_overview[name] = 1;
+            } else {
+                param_overview[name] = 0;
+            }
+        }
+
+
         // Engine Warnings
         water_warn = 0;
+        if (param_overview["water_temp_alert"]) {
+            water_warn = 2;  // le 2 c'est pour qu'on sache que c'est une preview
+        }
         oil_warn = 0;
+        if (param_overview["oil_temp_alert"]) {
+            oil_warn = 2;  // le 2 c'est pour qu'on sache que c'est une preview
+        }
         pit_speed_limiter = 0;
         if (donnees.warn != undefined) {
             //if (donnees.warn.slice(-1) == "1") water_warn = 1;
@@ -2596,35 +3340,44 @@ function update_dashboard() {
             if (donnees.warn.slice(-5, -4) == "1") pit_speed_limiter = 1;
         }
         // OIL > 140° C et WATER > 130° C
-        if (donnees.oil >= 140 && (Date.now() % 500) <= 250) {  // on fait clignotter
+        if ((donnees.oil >= 140 || oil_warn == 2) && (!(advanced["oil_temp_alert_light_blink"]) || (Date.now() % 500) <= 250)) {  // on fait clignotter
             oil_warn = 1;
         }
-        if (donnees.w >= 130 && Math.abs((Date.now() % 500) - 375) <= 125) {
+        if (oil_warn == 2) {  // si on est resté à 2 c'est qu'on ne l'active pas
+            oil_warn = 0;
+        }
+        //if ((donnees.w >= 130 || water_warn == 2) && Math.abs((Date.now() % 500) - 375) <= 125) {
+        if ((donnees.w >= 130 || water_warn == 2) && (!(advanced["water_temp_alert_light_blink"]) || Math.abs((Date.now() % 500) - 375) <= 125)) {
             water_warn = 1;
+        }
+        if (water_warn == 2) {  // si on est resté à 2 c'est qu'on ne l'active pas
+            water_warn = 0;
         }
 
         // Boussole
-        if(donnees.north != 99 && advanced["disp_" + "compass" + disp_sel]) {
-            //compass_w = w * 128 / 1280;  // valeur du dashboard par défaut
+        if(advanced["disp_" + "compass" + disp_sel]) {
+            if (donnees.north != 99) {
+                //compass_w = w * 128 / 1280;  // valeur du dashboard par défaut
 
-            //compass_w = Math.max(1, wh(w * advanced["x_" + "compass" + disp_sel] / dashboard_ref_w, w * advanced["w_" + "compass" + disp_sel] / dashboard_ref_w));
-            //compass_h = Math.max(1, wh(w * advanced["y_" + "compass" + disp_sel] / dashboard_ref_w, w * advanced["h_" + "compass" + disp_sel] / dashboard_ref_w));
-            compass_w = context_compass.canvas.width;
-            compass_h = context_compass.canvas.height;
+                //compass_w = Math.max(1, wh(w * advanced["x_" + "compass" + disp_sel] / dashboard_ref_w, w * advanced["w_" + "compass" + disp_sel] / dashboard_ref_w));
+                //compass_h = Math.max(1, wh(w * advanced["y_" + "compass" + disp_sel] / dashboard_ref_w, w * advanced["h_" + "compass" + disp_sel] / dashboard_ref_w));
+                compass_w = context_compass.canvas.width;
+                compass_h = context_compass.canvas.height;
 
-            compass_rayon = Math.min(compass_w, compass_h) / 2;
+                compass_rayon = Math.min(compass_w, compass_h) / 2;
 
-            context_compass.clearRect(0, 0, compass_w, compass_h);
+                context_compass.clearRect(0, 0, compass_w, compass_h);
 
-            // Dessin de la flèche indiquant la direction du nord
-            compass = coord_compass(donnees.yaw + donnees.north, compass_rayon, "northL");
-            draw(compass, "#ff0000", 0);
-            compass = coord_compass(donnees.yaw + donnees.north, compass_rayon, "northR");
-            draw(compass, "#ff0000", 0);
+                // Dessin de la flèche indiquant la direction du nord
+                compass = coord_compass(donnees.yaw + donnees.north, compass_rayon, "northL");
+                draw(compass, "#ff0000", 0);
+                compass = coord_compass(donnees.yaw + donnees.north, compass_rayon, "northR");
+                draw(compass, "#ff0000", 0);
 
-            // Dessin de la flèche indiquant la direction du vent
-            compass = coord_compass(donnees.yaw + donnees.north + donnees.winddir, compass_rayon, "wind");
-            draw(compass, "rgba(0,128,255,0.75)", 0);
+                // Dessin de la flèche indiquant la direction du vent
+                compass = coord_compass(donnees.yaw + donnees.north + donnees.winddir, compass_rayon, "wind");
+                draw(compass, "rgba(0,128,255,0.75)", 0);
+            }
         }
 
         if (advanced["disp_" + "delta_pre" + disp_sel] || advanced["disp_" + "delta_post" + disp_sel] || advanced["disp_" + "pre_rel" + disp_sel] || advanced["disp_" + "post_rel" + disp_sel]) {
@@ -2673,31 +3426,62 @@ function update_dashboard() {
         var tmp_dashboard_flag_type = "none";
         var dashboard_light_highest_order_priority = -1;
         var tmp_order_priority = -1;
-        if (donnees.flag != undefined || is_cars_stopped_ontrack) {
 
-            // DEBUG
-            //donnees.flag = "0b10000000000000000000000100000";  // blue flag
-            //donnees.flag = "0b100000000000000000000000000100";  // green flag
-            //donnees.flag = "0b100000000000001000000000100100";  // yellow, blue & green flags
-            //donnees.flag = "0b100000000000000000000000000010";  // white flags
+        // Valeurs par défaut si iRacing n'est pas lancé pour éviter d'avoir l'overview bloqué
+        if (!donnees.is_iracing_started) {
+            donnees.flag = "0b000000000000000000000000000000";
+            is_cars_stopped_ontrack = 0;
+        }
+
+        if (param_overview["yellowflag"]) {
+            donnees.flag = "0b100000000000001000000000000000";
+        }
+        if (param_overview["greenflag"]) {
+            donnees.flag = "0b100000000000000000000000000100";
+        }
+        if (param_overview["blueflag"]) {
+            donnees.flag = "0b100000000000000000000000100000";
+        }
+        if (param_overview["whiteflag"]) {
+            donnees.flag = "0b100000000000000000000000000010";
+        }
+        if (param_overview["car_stopped_ontrack"] || param_overview["dashboard_light"]) {
+            donnees.flag = "0b100000000000000000000000000000";
+            is_cars_stopped_ontrack = 1;
+            cars_stopped_dist = 888;
+        }
+
+        // DEBUG
+        //donnees.flag = "0b10000000000000000000000100000";  // blue flag
+        //donnees.flag = "0b100000000000000000000000000100";  // green flag
+        //donnees.flag = "0b100000000000001000000000100100";  // yellow, blue & green flags
+        //donnees.flag = "0b100000000000001000000000000000";  // yellow
+        //donnees.flag = "0b100000000000000000000000000010";  // white flags
+        //is_cars_stopped_ontrack = 1;
+
+        if (donnees.flag != undefined || is_cars_stopped_ontrack) {
 
             text_flag = "";
 
             if (is_cars_stopped_ontrack) {
                 tmp_dashboard_flag_type = "car_stopped_ontrack";
                 tmp_order_priority = Math.max(0, advanced[tmp_dashboard_flag_type + "_light_priority"]);  // REM: on ignore les valeurs inférieures à 0
+                //if (advanced["car_stopped_ontrack_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) && ( !(advanced[tmp_dashboard_flag_type + "_light_blink"]) || (Date.now() % 500) <= 250)) {
+                // REM le blink est gérer plus loin
                 if (advanced["car_stopped_ontrack_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority)) {
                     disp_flag_light = 1;
                     dashboard_flag_type = "car_stopped_ontrack";
                     //bg = "#ffcc00";
                     bg = advanced[dashboard_flag_type + "_light_color"];
-                    text_flag = '<div style="vertical-align:middle;display:inline-block;font-size: 0.2em; line-height:1.2em;">SLOW CAR<br/>' + cars_stopped_dist.toFixed(0) + 'm<br/>&nbsp;</div>';  // Car stopped on track (Slow Car)
+                    text_flag = '<div style="vertical-align:middle; display:inline-block;font-size: ' + 0.2*advanced["car_stopped_ontrack_light_text_coef"] + 'em; line-height:100%;">SLOW CAR<br/>' + cars_stopped_dist.toFixed(0) + 'm<br/>&nbsp;</div>';  // Car stopped on track (Slow Car)
                     dashboard_light_highest_order_priority = tmp_order_priority;
                 }
             }
             if (donnees.flag.slice(-4, -3) == "1") {
                 tmp_dashboard_flag_type = "yellowflag";
                 tmp_order_priority = Math.max(0, advanced[tmp_dashboard_flag_type + "_light_priority"]);  // REM: on ignore les valeurs inférieures à 0
+                //if (advanced["yellowflag_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) && ( !(advanced[tmp_dashboard_flag_type + "_light_blink"]) || (Date.now() % 500) <= 250)) {
+                // REM le blink est gérer plus loin
                 if (advanced["yellowflag_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority)) {
                     disp_flag_light = 1;
                     dashboard_flag_type = "yellowflag";
@@ -2710,6 +3494,8 @@ function update_dashboard() {
             if (donnees.flag.slice(-9, -8) == "1") {
                 tmp_dashboard_flag_type = "yellowflag";
                 tmp_order_priority = Math.max(0, advanced[tmp_dashboard_flag_type + "_light_priority"]);  // REM: on ignore les valeurs inférieures à 0
+                //if (advanced["yellowflag_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) && ( !(advanced[tmp_dashboard_flag_type + "_light_blink"]) || (Date.now() % 500) <= 250)) {
+                // REM le blink est gérer plus loin
                 if (advanced["yellowflag_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority)) {
                     disp_flag_light = 1;
                     dashboard_flag_type = "yellowflag";
@@ -2722,30 +3508,36 @@ function update_dashboard() {
             if (donnees.flag.slice(-15, -14) == "1") {
                 tmp_dashboard_flag_type = "yellowflag";
                 tmp_order_priority = Math.max(0, advanced[tmp_dashboard_flag_type + "_light_priority"]);  // REM: on ignore les valeurs inférieures à 0
+                //if (advanced["yellowflag_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) && ( !(advanced[tmp_dashboard_flag_type + "_light_blink"]) || (Date.now() % 500) <= 250)) {
+                // REM le blink est gérer plus loin
                 if (advanced["yellowflag_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority)) {
                     disp_flag_light = 1;
                     dashboard_flag_type = "yellowflag";
                     //bg = "#ffff00";  // caution
                     bg = advanced[dashboard_flag_type + "_light_color"];
-                    text_flag = "SC";  // Safety Car
+                    text_flag = "<div style='font-size: " + advanced["yellowflag_light_text_coef"] + "em;'>SC</div>";  // Safety Car
                     dashboard_light_highest_order_priority = tmp_order_priority;
                 }
             }
             if (donnees.flag.slice(-16, -15) == "1") {
                 tmp_dashboard_flag_type = "yellowflag";
                 tmp_order_priority = Math.max(0, advanced[tmp_dashboard_flag_type + "_light_priority"]);  // REM: on ignore les valeurs inférieures à 0
+                //if (advanced["yellowflag_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) && ( !(advanced[tmp_dashboard_flag_type + "_light_blink"]) || (Date.now() % 500) <= 250)) {
+                // REM le blink est gérer plus loin
                 if (advanced["yellowflag_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority)) {
                     disp_flag_light = 1;
                     dashboard_flag_type = "yellowflag";
                     //bg = "#ffff00";  // caution waving
                     bg = advanced[dashboard_flag_type + "_light_color"];
-                    text_flag = "SC";  // Safety Car
+                    text_flag = "<div style='font-size: " + advanced["yellowflag_light_text_coef"] + "em;'>SC</div>";  // Safety Car
                     dashboard_light_highest_order_priority = tmp_order_priority;
                 }
             }
             if (donnees.flag.slice(-6, -5) == "1") {
                 tmp_dashboard_flag_type = "blueflag";
                 tmp_order_priority = Math.max(0, advanced[tmp_dashboard_flag_type + "_light_priority"]);  // REM: on ignore les valeurs inférieures à 0
+                //if (advanced["blueflag_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) && ( !(advanced[tmp_dashboard_flag_type + "_light_blink"]) || (Date.now() % 500) <= 250)) {
+                // REM le blink est gérer plus loin
                 if (advanced["blueflag_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority)) {
                     disp_flag_light = 1;
                     dashboard_flag_type = "blueflag";
@@ -2758,6 +3550,8 @@ function update_dashboard() {
             if (donnees.flag.slice(-2, -1) == "1") {
                 tmp_dashboard_flag_type = "whiteflag";
                 tmp_order_priority = Math.max(0, advanced[tmp_dashboard_flag_type + "_light_priority"]);  // REM: on ignore les valeurs inférieures à 0
+                //if (advanced["whiteflag_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) && ( !(advanced[tmp_dashboard_flag_type + "_light_blink"]) || (Date.now() % 500) <= 250)) {
+                // REM le blink est gérer plus loin
                 if (advanced["whiteflag_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority)) {
                     disp_flag_light = 1;
                     dashboard_flag_type = "whiteflag";
@@ -2770,6 +3564,8 @@ function update_dashboard() {
             if (donnees.flag.slice(-3, -2) == "1") {
                 tmp_dashboard_flag_type = "greenflag";
                 tmp_order_priority = Math.max(0, advanced[tmp_dashboard_flag_type + "_light_priority"]);  // REM: on ignore les valeurs inférieures à 0
+                //if (advanced["greenflag_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) && ( !(advanced[tmp_dashboard_flag_type + "_light_blink"]) || (Date.now() % 500) <= 250)) {
+                // REM le blink est gérer plus loin
                 if (advanced["greenflag_light_activated"] && (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority)) {
                     disp_flag_light = 1;
                     dashboard_flag_type = "greenflag";
@@ -2909,19 +3705,21 @@ function update_dashboard() {
             //console.log(donnees.rpm, num_led)
             //console.log(num_led)
 
-            if (pit_speed_limiter == 1 && donnees.isontrack == 1) {
+            if (pit_speed_limiter == 1 && donnees.isontrack == 1 && advanced["rpm_led_in_pits2_" + "rpm_leds" + disp_sel]) {
                 // Si pit limiter activé
                 if(donnees.p) {
                     for (i = 1; i <= 12; i++) {
-                        set_style_bg("led" + i, "#ff0088");
+                        //set_style_bg("led" + i, "#ff0088");
+                        set_style_bg("led" + i, led_on_speed_high_color);
                     }
                 } else {  // Dès qu'on sort des pits on affiche les leds en vert
                     for (i = 1; i <= 12; i++) {
-                        set_style_bg("led" + i, "#00ff00");
+                        //set_style_bg("led" + i, "#00ff00");
+                        set_style_bg("led" + i, led_on_speed_low_color);
                     }
                 }
             } else {
-                if(donnees.p) {  // Dans les pits, on indique notre vitesse par rapport à la vitesse limite
+                if (pit_speed_limiter == 0 && donnees.p && advanced["rpm_led_in_pits2_" + "rpm_leds" + disp_sel]) {  // Dans les pits, on indique notre vitesse par rapport à la vitesse limite
                 //if (true) {  // DEBUG
                     //rpm_led_in_pits();  // ancienne méthode
                     rpm_led_in_pits2();
@@ -2956,6 +3754,22 @@ function update_dashboard() {
 
         }
         // else
+
+        // Pour les overviews :
+        if (param_overview["shiftlight"]) {
+            shift2 = 1;
+            donnees.gr = 8;
+        }
+        if (param_overview["shiftlight_pitlimiter_inpit"]) {
+            pit_speed_limiter = 1;
+            donnees.isontrack = 1;
+            donnees.p = 1;
+        }
+        if (param_overview["shiftlight_pitlimiter_outpit"]) {
+            pit_speed_limiter = 1;
+            donnees.isontrack = 1;
+            donnees.p = 0;
+        }
 
         if ((shift2 == 1 && donnees.gr > 0) || (pit_speed_limiter == 1 && donnees.isontrack == 1)) {
         //if (((shift2 == 1 && donnees.gr > 0) || pit_speed_limiter == 1) && (!advanced["disp_" + "rpm_leds" + disp_sel])) {  // On n'affiche pas le shiftlight si les leds sont utilisées
@@ -2993,51 +3807,51 @@ function update_dashboard() {
         dashboard_light_highest_order_priority = -1;
         tmp_order_priority = -1;
 
-        if (advanced["math_channel_light_activated"] && donnees.math_channel_formula != undefined && window_shortname in donnees.math_channel_formula && donnees.math_channel_formula[window_shortname] != undefined && donnees.math_channel_formula[window_shortname] && donnees.isontrack == 1) {
+        if (advanced["math_channel_light_activated"] && (param_overview["math_channel"] || (donnees.math_channel_formula != undefined && window_shortname in donnees.math_channel_formula && donnees.math_channel_formula[window_shortname] != undefined && donnees.math_channel_formula[window_shortname] && donnees.isontrack == 1))) {
             tmp_order_priority = Math.max(0, advanced["math_channel_light_priority"]);  // REM: on ignore les valeurs inférieures à 0
-            if (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) {
+            if ((dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) && ( !(advanced["math_channel_light_blink"]) || (Date.now() % 500) <= 250)) {
                 dashboard_light(advanced["math_channel_light_color"], "");
                 dashboard_light_highest_order_priority = tmp_order_priority;
             }
         }
-        if (advanced["abs_active_light_activated"] && donnees.abs_active != undefined && donnees.abs_active && donnees.isontrack == 1) {
+        if (advanced["abs_active_light_activated"] && (param_overview["abs_active"] || (donnees.abs_active != undefined && donnees.abs_active && donnees.isontrack == 1))) {
             tmp_order_priority = Math.max(0, advanced["abs_active_light_priority"]);  // REM: on ignore les valeurs inférieures à 0
-            if (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) {
+            if ((dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) && ( !(advanced["abs_active_light_blink"]) || (Date.now() % 500) <= 250)) {
                 dashboard_light(advanced["abs_active_light_color"], "");
                 dashboard_light_highest_order_priority = tmp_order_priority;
             }
         }
-        if (advanced["fuel_alert_light_activated"] && donnees.isontrack == 1 && donnees.f_alert == 1 && (Date.now() % 500) <= 250) {
+        if (advanced["fuel_alert_light_activated"] && (param_overview["fuel_alert"] || (donnees.isontrack == 1 && donnees.f_alert == 1)) && (Date.now() % 500) <= 250) {
             tmp_order_priority = Math.max(0, advanced["fuel_alert_light_priority"]);  // REM: on ignore les valeurs inférieures à 0
-            if (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) {
+            if ((dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) && ( !(advanced["fuel_alert_light_blink"]) || (Date.now() % 500) <= 250)) {
                 dashboard_light(advanced["fuel_alert_light_color"], "");
                 dashboard_light_highest_order_priority = tmp_order_priority;
             }
         }
         if (dashboard_flag_type != "none" && disp_flag_light) {
             tmp_order_priority = Math.max(0, advanced[dashboard_flag_type + "_light_priority"]);  // REM: on ignore les valeurs inférieures à 0
-            if (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) {
+            if ((dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) && ( !(advanced[dashboard_flag_type + "_light_blink"]) || (Date.now() % 500) <= 250)) {
                 dashboard_light(bg_flag, text_flag);
                 dashboard_light_highest_order_priority = tmp_order_priority;
             }
         }
         if (oil_warn && advanced["oil_temp_alert_light_activated"]) {
             tmp_order_priority = Math.max(0, advanced["oil_temp_alert_light_priority"]);  // REM: on ignore les valeurs inférieures à 0
-            if (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) {
+            if ((dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) && ( !(advanced["oil_temp_alert_light_blink"]) || (Date.now() % 500) <= 250)) {
                 dashboard_light(advanced["oil_temp_alert_light_color"], "");
                 dashboard_light_highest_order_priority = tmp_order_priority;
             }
         }
         if (water_warn && advanced["water_temp_alert_light_activated"]) {
             tmp_order_priority = Math.max(0, advanced["water_temp_alert_light_priority"]);  // REM: on ignore les valeurs inférieures à 0
-            if (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) {
+            if ((dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) && ( !(advanced["water_temp_alert_light_blink"]) || Math.abs((Date.now() % 500) - 375) <= 125)) {
                 dashboard_light(advanced["water_temp_alert_light_color"], "");
                 dashboard_light_highest_order_priority = tmp_order_priority;
             }
         }
-        if ((donnees.styp == "Open Qualify" || donnees.styp == "Lone Qualify") && (donnees.qinv) && advanced["qualy_not_valid_light_activated"]) {
+        if ( (param_overview["qualy_not_valid"] || (donnees.styp == "Open Qualify" || donnees.styp == "Lone Qualify") && (donnees.qinv)) && advanced["qualy_not_valid_light_activated"]) {
             tmp_order_priority = Math.max(0, advanced["qualy_not_valid_light_priority"]);  // REM: on ignore les valeurs inférieures à 0
-            if (dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) {
+            if ((dashboard_light_highest_order_priority == -1 || tmp_order_priority < dashboard_light_highest_order_priority) && ( !(advanced["qualy_not_valid_light_blink"]) || (Date.now() % 500) <= 250)) {
                 dashboard_light(advanced["qualy_not_valid_light_color"], "");  // On allume le dashboard en rouge si le temps de qualif est invalidé suite à un off-track
                 dashboard_light_highest_order_priority = tmp_order_priority;
             }
@@ -3066,8 +3880,12 @@ function update_dashboard() {
         }*/
 
         if (advanced["disp_" + "abs_light" + disp_sel]) {
-            if (donnees.abs_active != undefined && donnees.abs_active && donnees.isontrack == 1) {
-                change_bg("abs_light", "#0088ff", advanced["bg_" + "abs_light" + disp_sel]);
+            if ( ("abs_light" in param_overview && param_overview["abs_light"]) || (donnees.abs_active != undefined && donnees.abs_active && donnees.isontrack == 1) ) {
+                if (advanced["perso_bg_color_" + "abs_light" + disp_sel]) {
+                    change_bg("abs_light", advanced["bg_color_" + "abs_light" + disp_sel], advanced["bg_" + "abs_light" + disp_sel]);
+                } else {
+                    change_bg("abs_light", "#0088ff", advanced["bg_" + "abs_light" + disp_sel]);
+                }
             } else {
                 change_bg("abs_light", "#000000", 0);  // on rend le abs light transparent pour qu'il soit invisible
             }
@@ -3232,7 +4050,11 @@ function update_dashboard() {
                     set_inner_html("pre_rel", reformat_gap(donnees_new.pre_rc));
                 } else {
                     //document.getElementById("pre_rel").innerHTML = "";
-                    set_inner_html("pre_rel", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("pre_rel", "");
+                    } else {
+                        set_inner_html("pre_rel", "+8.88");
+                    }
                 }
             } else {
                 // En dehors des courses, on affiche l'écart sur la piste
@@ -3240,8 +4062,11 @@ function update_dashboard() {
                     //document.getElementById("pre_rel").innerHTML = reformat_gap(donnees_new.pre_rcf3_f3);
                     set_inner_html("pre_rel", reformat_gap(donnees_new.pre_rcf3_f3));
                 } else {
-                    //document.getElementById("pre_rel").innerHTML = "";
-                    set_inner_html("pre_rel", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("pre_rel", "");
+                    } else {
+                        set_inner_html("pre_rel", "+8.88");
+                    }
                 }
             }
             if (donnees.styp == "Race" && f3_mode_in_race_dashboard == 0) {
@@ -3249,16 +4074,22 @@ function update_dashboard() {
                     //document.getElementById("post_rel").innerHTML = reformat_gap(donnees_new.post_rc);
                     set_inner_html("post_rel", reformat_gap(donnees_new.post_rc));
                 } else {
-                    //document.getElementById("post_rel").innerHTML = "";
-                    set_inner_html("post_rel", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("post_rel", "");
+                    } else {
+                        set_inner_html("post_rel", "-8.88");
+                    }
                 }
             } else {
                 if (donnees_new.post_rcf3_f3 != undefined) {
                     //document.getElementById("post_rel").innerHTML = reformat_gap(donnees_new.post_rcf3_f3);
                     set_inner_html("post_rel", reformat_gap(donnees_new.post_rcf3_f3));
                 } else {
-                    //document.getElementById("post_rel").innerHTML = "";
-                    set_inner_html("post_rel", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("post_rel", "");
+                    } else {
+                        set_inner_html("post_rel", "-8.88");
+                    }
                 }
             }
         }
@@ -3269,13 +4100,21 @@ function update_dashboard() {
                 if (donnees_new.me_gap != undefined) {
                     set_inner_html("me_gap", reformat_gap(donnees_new.me_gap));
                 } else {
-                    set_inner_html("me_gap", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_gap", "");
+                    } else {
+                        set_inner_html("me_gap", "+8.88");
+                    }
                 }
             } else {  // en dehors des courses on affiche l'écart entre les best lap
                 if (donnees.leader_best != undefined && donnees.leader_best > 0 && donnees.me_b != undefined && donnees.me_b > 0 && donnees.me_b - donnees.leader_best > 0) {  // REM : le gap est forcément positif
                     set_inner_html("me_gap", reformat_gap(donnees.me_b - donnees.leader_best));
                 } else {
-                    set_inner_html("me_gap", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_gap", "");
+                    } else {
+                        set_inner_html("me_gap", "+8.88");
+                    }
                 }
             }
         }
@@ -3284,13 +4123,21 @@ function update_dashboard() {
                 if (donnees_new.me_cgap != undefined) {
                     set_inner_html("me_cgap", reformat_gap(donnees_new.me_cgap));
                 } else {
-                    set_inner_html("me_cgap", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_cgap", "");
+                    } else {
+                        set_inner_html("me_cgap", "+8.88");
+                    }
                 }
             } else {  // en dehors des courses on affiche l'écart entre les best lap
                 if (donnees.cleader_best != undefined && donnees.cleader_best > 0 && donnees.me_b != undefined && donnees.me_b > 0 && donnees.me_b - donnees.cleader_best) {
                     set_inner_html("me_cgap", reformat_gap(donnees.me_b - donnees.cleader_best));
                 } else {
-                    set_inner_html("me_cgap", "");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_cgap", "");
+                    } else {
+                        set_inner_html("me_cgap", "+8.88");
+                    }
                 }
             }
         }
@@ -3300,14 +4147,36 @@ function update_dashboard() {
             if (donnees.me_current != undefined && donnees.me_current > 0) {
                 set_inner_html("me_current", reformat_laptime(donnees.me_current));
             } else {
-                set_inner_html("me_current", "--'--.---");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_current", "-'--.---");
+                } else {
+                    set_inner_html("me_current", "8'88.888");
+                }
             }
         }
+
+
         if (advanced["disp_" + "me_estlaptime" + disp_sel]) {
-            if (donnees.me_b != undefined && donnees.d_b != undefined && donnees.me_b > 0) {
-                set_inner_html("me_estlaptime", reformat_laptime(donnees.me_b + donnees.d_b));
+            if (advanced["estlaptime_mode_" + "me_estlaptime" + disp_sel] == 0) {
+                if (donnees.me_b_wo_inc != undefined && donnees.d_b != undefined && donnees.me_b_wo_inc > 0) {
+                    set_inner_html("me_estlaptime", reformat_laptime(donnees.me_b_wo_inc + donnees.d_b));
+                } else {
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_estlaptime", "-'--.---");
+                    } else {
+                        set_inner_html("me_estlaptime", "8'88.888");
+                    }
+                }
             } else {
-                set_inner_html("me_estlaptime", "--'--.---");
+                if (donnees.me_l_wo_inc != undefined && donnees.d_l != undefined && donnees.me_l_wo_inc > 0) {
+                    set_inner_html("me_estlaptime", reformat_laptime(donnees.me_l_wo_inc + donnees.d_l));
+                } else {
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("me_estlaptime", "-'--.---");
+                    } else {
+                        set_inner_html("me_estlaptime", "8'88.888");
+                    }
+                }
             }
         }
 
@@ -3325,50 +4194,67 @@ function update_dashboard() {
             if (donnees.bb != undefined) {
                 set_inner_html("bb", donnees.bb.toFixed(1));
             } else {
-                set_inner_html("bb", "--");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("bb", "--");
+                } else {
+                    set_inner_html("bb", "88.8");
+                }
             }
         }
         if (advanced["disp_" + "tc" + disp_sel]) {
             if (donnees.tc != undefined) {
                 set_inner_html("tc", donnees.tc);
             } else {
-                set_inner_html("tc", "--");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("tc", "--");
+                } else {
+                    set_inner_html("tc", "8");
+                }
             }
         }
         if (advanced["disp_" + "tc2" + disp_sel]) {
             if (donnees.tc2 != undefined) {
                 set_inner_html("tc2", donnees.tc2);
             } else {
-                set_inner_html("tc2", "--");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("tc2", "--");
+                } else {
+                    set_inner_html("tc2", "8");
+                }
             }
         }
-        if (donnees.ffb != undefined && advanced["disp_" + "ffb" + disp_sel]) {
-            //document.getElementById("ffb").innerHTML = donnees.ffb;
-            set_inner_html("ffb", donnees.ffb);
+        if (advanced["disp_" + "ffb" + disp_sel]) {
+            if (donnees.ffb != undefined) {
+                set_inner_html("ffb", donnees.ffb);
+            }
         }
 
-        if (donnees.b != undefined && advanced["disp_" + "b_cont" + disp_sel]) {
-            //document.getElementById("b").style.top = (100 - donnees.b) + "%";
-            set_style_top("b", (100 - donnees.b) + "%");
+        if (advanced["disp_" + "b_cont" + disp_sel]) {
+            if (donnees.b != undefined) {
+                set_style_top("b", (100 - donnees.b) + "%");
+            }
         }
-        if (donnees.t != undefined && advanced["disp_" + "t_cont" + disp_sel]) {
-            //document.getElementById("t").style.top = (100 - donnees.t) + "%";
-            set_style_top("t", (100 - donnees.t) + "%");
+        if (advanced["disp_" + "t_cont" + disp_sel]) {
+            if (donnees.t != undefined) {
+                set_style_top("t", (100 - donnees.t) + "%");
+            }
         }
-        if (donnees.clutch != undefined && advanced["disp_" + "c_cont" + disp_sel]) {
-            //document.getElementById("c").style.top = (donnees.clutch) + "%";
-            set_style_top("c", (donnees.clutch) + "%");
+        if (advanced["disp_" + "c_cont" + disp_sel]) {
+            if (donnees.clutch != undefined) {
+                set_style_top("c", (donnees.clutch) + "%");
+            }
         }
-        if (donnees.ffbpct != undefined && advanced["disp_" + "ffbpct_cont" + disp_sel]) {
-            //document.getElementById("ffbpct").style.top = (100 - donnees.ffbpct) + "%";
-            set_style_top("ffbpct", (100 - donnees.ffbpct) + "%");
+        if (advanced["disp_" + "ffbpct_cont" + disp_sel]) {
+            if (donnees.ffbpct != undefined) {
+                set_style_top("ffbpct", (100 - donnees.ffbpct) + "%");
+            }
         }
 
         if (carname in car_with_ers_drs) {
             if (advanced["disp_" + "mgum" + disp_sel] || advanced["disp_" + "mgua" + disp_sel] || advanced["disp_" + "mguf" + disp_sel] || advanced["disp_" + "ers" + disp_sel] || advanced["disp_" + "ers_bar" + disp_sel] || advanced["disp_" + "ersco" + disp_sel] || advanced["disp_" + "ers_margin" + disp_sel] || advanced["disp_" + "mgul" + disp_sel] || advanced["disp_" + "mgu" + disp_sel] || advanced["disp_" + "drs" + disp_sel]) {
 
                 //if (donnees.mgua != undefined && donnees.mguf != undefined) {
-                if ( (donnees.mguf != undefined && advanced["disp_" + "mguf" + disp_sel]) || (donnees.mgum != undefined && (donnees.carname == "mclarenmp430" || donnees.carname == "mercedesw12") && (advanced["disp_" + "mgum" + disp_sel] || advanced["disp_" + "mgua" + disp_sel])) ) {
+                if ( (donnees.mguf != undefined && advanced["disp_" + "mguf" + disp_sel]) || (donnees.mgum != undefined && (donnees.carname == "mclarenmp430" || donnees.carname == "mercedesw12" || donnees.carname == "mercedesw13" || donnees.carname == "bmwlmdh") && (advanced["disp_" + "mgum" + disp_sel] || advanced["disp_" + "mgua" + disp_sel])) ) {
                     //mgua = donnees.mgua;
                     mguf = donnees.mguf;
                     //if (mgua < 10) mgua = "0" + mgua;
@@ -3379,28 +4265,52 @@ function update_dashboard() {
                     }
                     if (donnees.mgum != mgum_old) {
                         if (donnees.carname == "mclarenmp430") {
+                            if (donnees.styp == "Open Qualify" || donnees.styp == "Lone Qualify") {
+                                set_inner_html("mgua", "Qual");
+                            } else {
+                                set_inner_html("mgua", "Race");
+                            }
                             set_inner_html("mgum", donnees.mgum);
-                        } else if (donnees.carname == "mercedesw12") {
+                        } else if (donnees.carname == "mercedesw12" || donnees.carname == "mercedesw13") {
                             if (donnees.mgum == 0) {  // on est en manuel
                                 set_inner_html("mgua", "No");
+                                set_inner_html("mgum", 100);
                             } else if (donnees.mgum == 1) {  // on est en Qualy
                                 set_inner_html("mgua", "Qual");
+                                set_inner_html("mgum", 0);
                             } else if (donnees.mgum == 2) {  // on est en Qualy
                                 set_inner_html("mgua", "Att.");
+                                set_inner_html("mgum", 0);
                             } else if (donnees.mgum == 3) {  // on est en Balanced
                                 set_inner_html("mgua", "Bal.");
+                                set_inner_html("mgum", 80);
                             } else {  // On est en Build
                                 set_inner_html("mgua", "Build");
+                                set_inner_html("mgum", 100);
+                            }
+                        } else if (donnees.carname == "bmwlmdh") {
+                            if (donnees.mgum == 0) {  // on est en manuel
+                                set_inner_html("mgua", "No");
+                                set_inner_html("mgum", 100);
+                            } else if (donnees.mgum == 1) {  // on est en Qualy
+                                set_inner_html("mgua", "Qual");
+                                set_inner_html("mgum", 0);
+                            } else if (donnees.mgum == 2) {  // on est en Qualy
+                                set_inner_html("mgua", "Att.");
+                                set_inner_html("mgum", 0);
+                            } else if (donnees.mgum == 3) {  // on est en Balanced
+                                set_inner_html("mgua", "Bal.");
+                                set_inner_html("mgum", 50);
+                            } else {  // On est en Build
+                                set_inner_html("mgua", "Build");
+                                set_inner_html("mgum", 100);
                             }
                         } else {
                             if (donnees.mgum == 0) {  // on est en manuel
-                                //document.getElementById("mgua").innerHTML = "Man.";
                                 set_inner_html("mgua", "Man.");
                             } else if (donnees.mgum == 2) {  // on est en Qualy
-                                //document.getElementById("mgua").innerHTML = "Qual";
                                 set_inner_html("mgua", "Qual");
                             } else {  // on est en auto
-                                //document.getElementById("mgua").innerHTML = "Auto";
                                 set_inner_html("mgua", "Auto");
                             }
                             if (donnees.mgum != undefined) {
@@ -3535,46 +4445,84 @@ function update_dashboard() {
                     ref_ok_old = donnees.ref_ok;
                 }
                 if (donnees.mgul != undefined) {
-                    //document.getElementById("mgul").innerHTML = donnees.mgul.toFixed(hybrid_decimal);
                     set_inner_html("mgul", donnees.mgul.toFixed(hybrid_decimal));
                     // On change ensuite la couleur de fond si l'énergie est utilisée
                     // On ne change le fond que si la valeur a changée pour optimiser les performances graphiques
                     if (donnees.boost != boost_old) {
                         if (donnees.boost) {
-                            //document.getElementById("mgul").style.backgroundColor = "#00d9ff";
-                            set_style_bg("mgul", "#00d9ff");
-                            //document.getElementById("mgul").style.color = "#ff8800";
-                            set_style_color("mgul", "#ff8800");
+                            //set_style_bg("mgul", "#00d9ff");
+                            if (advanced["perso_bg_color_" + "mgul" + disp_sel]) {
+                                set_style_bg_alpha("mgul", advanced["bg_color_" + "mgul" + disp_sel], advanced["bg_" + "mgul" + disp_sel]);
+                            } else {
+                                set_style_bg_alpha("mgul", '#00d9ff', advanced["bg_" + "mgul" + disp_sel]);
+                            }
+
+                            //set_style_color("mgul", "#ff8800");
+                            if (advanced["perso_font_color_" + "mgul" + disp_sel]) {
+                                set_style_color("mgul", advanced["font_color_" + "mgul" + disp_sel]);
+                            } else {
+                                set_style_color("mgul", "#ff8800");
+                            }
                         } else {
-                            //document.getElementById("mgul").style.backgroundColor = "#00ff00";
-                            set_style_bg("mgul", "#00ff00");
-                            //document.getElementById("mgul").style.color = "#000000";
-                            set_style_color("mgul", "#000000");
+                            //set_style_bg("mgul", "#00ff00");
+                            if (advanced["perso_bg_color_" + "mgul" + disp_sel]) {
+                                set_style_bg_alpha("mgul", advanced["bg_color_" + "mgul" + disp_sel], advanced["bg_" + "mgul" + disp_sel]);
+                            } else {
+                                set_style_bg_alpha("mgul", '#00ff00', advanced["bg_" + "mgul" + disp_sel]);
+                            }
+
+                            //set_style_color("mgul", "#000000");
+                            if (advanced["perso_font_color_" + "mgul" + disp_sel]) {
+                                set_style_color("mgul", advanced["font_color_" + "mgul" + disp_sel]);
+                            } else {
+                                set_style_color("mgul", "#000000");
+                            }
                         }
                     }
                     if (donnees.boost_off != boost_off_old) {
                         if (donnees.boost_off) {
-                            //document.getElementById("mgul").style.backgroundColor = "#666666";
-                            set_style_bg("mgul", "#666666");
-                            //document.getElementById("mgul").style.color = "#333333";
-                            set_style_color("mgul", "#333333");
+                            //set_style_bg("mgul", "#666666");
+                            if (advanced["perso_bg_color_" + "mgul" + disp_sel]) {
+                                set_style_bg_alpha("mgul", advanced["bg_color_" + "mgul" + disp_sel], advanced["bg_" + "mgul" + disp_sel]);
+                            } else {
+                                set_style_bg_alpha("mgul", '#666666', advanced["bg_" + "mgul" + disp_sel]);
+                            }
+
+                            //set_style_color("mgul", "#333333");
+                            if (advanced["perso_font_color_" + "mgul" + disp_sel]) {
+                                set_style_color("mgul", advanced["font_color_" + "mgul" + disp_sel]);
+                            } else {
+                                set_style_color("mgul", "#333333");
+                            }
                         } else {
-                            //document.getElementById("mgul").style.backgroundColor = "#00ff00";
-                            set_style_bg("mgul", "#00ff00");
-                            //document.getElementById("mgul").style.color = "#000000";
-                            set_style_color("mgul", "#000000");
+                            //set_style_bg("mgul", "#00ff00");
+                            if (advanced["perso_bg_color_" + "mgul" + disp_sel]) {
+                                set_style_bg_alpha("mgul", advanced["bg_color_" + "mgul" + disp_sel], advanced["bg_" + "mgul" + disp_sel]);
+                            } else {
+                                set_style_bg_alpha("mgul", '#00ff00', advanced["bg_" + "mgul" + disp_sel]);
+                            }
+
+                            //set_style_color("mgul", "#000000");
+                            if (advanced["perso_font_color_" + "mgul" + disp_sel]) {
+                                set_style_color("mgul", advanced["font_color_" + "mgul" + disp_sel]);
+                            } else {
+                                set_style_color("mgul", "#000000");
+                            }
                         }
                     }
                     boost_old = donnees.boost;
                     boost_off_old = donnees.boost_off;
                 }
                 if (donnees.mgu != undefined) {
-                    if (donnees.mgu != 0)
-                        //document.getElementById("mgu").innerHTML = donnees.mgu.toFixed(hybrid_decimal);
+                    if (donnees.mgu != 0) {
                         set_inner_html("mgu", donnees.mgu.toFixed(hybrid_decimal));
-                    else
-                        //document.getElementById("mgu").innerHTML = "--";
-                        set_inner_html("mgu", "--");
+                    } else {
+                        if (donnees.is_iracing_started) {
+                            set_inner_html("mgu", "--");
+                        } else {
+                            set_inner_html("mgu", "88");
+                        }
+                    }
                 }
             }
         }
@@ -3703,7 +4651,11 @@ function update_dashboard() {
                 if (donnees[tmp_name] != undefined) {
                     set_inner_html(tmp_name, donnees[tmp_name]);
                 } else {
-                    set_inner_html(tmp_name, "--");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html(tmp_name, "--");
+                    } else {
+                        set_inner_html(tmp_name, "88");
+                    }
                 }
             }
         }
@@ -3714,20 +4666,23 @@ function update_dashboard() {
                 //document.getElementById("me_p2p").innerHTML = donnees.me_p2p_count;
                 set_inner_html("me_p2p", donnees.me_p2p_count);
             } else {
-                //document.getElementById("me_p2p").innerHTML = "--";
-                set_inner_html("me_p2p", "--");
+                if (donnees.is_iracing_started) {
+                    set_inner_html("me_p2p", "--");
+                } else {
+                    set_inner_html("me_p2p", "88");
+                }
             }
             if (advanced["perso_bg_color_" + "me_p2p" + disp_sel]) {
                 if (advanced["ccc_bg_color_" + "me_p2p" + disp_sel]) {
-                    set_style_bg("me_p2p", cc(donnees["me" + "_cc" + _f3_pre_me_post["me"]], donnees["me" + "_num" + _f3_pre_me_post["me"]], donnees["me" + "_classid" + _f3_pre_me_post["me"]]));
+                    set_style_bg_alpha("me_p2p", cc(donnees["me" + "_cc" + _f3_pre_me_post["me"]], donnees["me" + "_num" + _f3_pre_me_post["me"]], donnees["me" + "_uid" + _f3_pre_me_post["me"]], donnees["me" + "_tid" + _f3_pre_me_post["me"]], donnees["me" + "_classid" + _f3_pre_me_post["me"]]), advanced["bg_" + "me_p2p" + disp_sel]);
                 } else {
-                    set_style_bg("me_p2p", advanced["bg_color_" + "me_p2p" + disp_sel]);
+                    set_style_bg_alpha("me_p2p", advanced["bg_color_" + "me_p2p" + disp_sel], advanced["bg_" + "me_p2p" + disp_sel]);
                 }
             } else {
                 if (donnees.me_p2p_status != undefined && donnees.me_p2p_status == 1) {
-                    set_style_bg("me_p2p", '#bb77ff');
+                    set_style_bg_alpha("me_p2p", '#bb77ff', advanced["bg_" + "me_p2p" + disp_sel]);
                 } else {
-                    set_style_bg("me_p2p", 'black');
+                    set_style_bg_alpha("me_p2p", '#000000', advanced["bg_" + "me_p2p" + disp_sel]);
                 }
             }
         }
@@ -3737,20 +4692,23 @@ function update_dashboard() {
                     //document.getElementById("pre_p2p").innerHTML = donnees.pre_p2p_count;
                     set_inner_html("pre_p2p", donnees.pre_p2p_count);
                 } else {
-                    //document.getElementById("pre_p2p").innerHTML = "--";
-                    set_inner_html("pre_p2p", "--");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("pre_p2p", "--");
+                    } else {
+                        set_inner_html("pre_p2p", "88");
+                    }
                 }
                 if (advanced["perso_bg_color_" + "pre_p2p" + disp_sel]) {
                     if (advanced["ccc_bg_color_" + "pre_p2p" + disp_sel]) {
-                        set_style_bg("pre_p2p", cc(donnees["pre" + "_cc" + _f3_pre_me_post["pre"]], donnees["pre" + "_num" + _f3_pre_me_post["pre"]], donnees["pre" + "_classid" + _f3_pre_me_post["pre"]]));
+                        set_style_bg_alpha("pre_p2p", cc(donnees["pre" + "_cc" + _f3_pre_me_post["pre"]], donnees["pre" + "_num" + _f3_pre_me_post["pre"]], donnees["pre" + "_uid" + _f3_pre_me_post["pre"]], donnees["pre" + "_tid" + _f3_pre_me_post["pre"]], donnees["pre" + "_classid" + _f3_pre_me_post["pre"]]), advanced["bg_" + "pre_p2p" + disp_sel]);
                     } else {
-                        set_style_bg("pre_p2p", advanced["bg_color_" + "pre_p2p" + disp_sel]);
+                        set_style_bg_alpha("pre_p2p", advanced["bg_color_" + "pre_p2p" + disp_sel], advanced["bg_" + "pre_p2p" + disp_sel]);
                     }
                 } else {
                     if (donnees.pre_p2p_status != undefined && donnees.pre_p2p_status == 1) {
-                        set_style_bg("pre_p2p", '#bb77ff');
+                        set_style_bg_alpha("pre_p2p", '#bb77ff', advanced["bg_" + "pre_p2p" + disp_sel]);
                     } else {
-                        set_style_bg("pre_p2p", 'black');
+                        set_style_bg_alpha("pre_p2p", '#000000', advanced["bg_" + "pre_p2p" + disp_sel]);
                     }
                 }
             }
@@ -3760,20 +4718,23 @@ function update_dashboard() {
                     //document.getElementById("pre_p2p").innerHTML = donnees.pre_p2p_count_f3;
                     set_inner_html("pre_p2p", donnees.pre_p2p_count_f3);
                 } else {
-                    //document.getElementById("pre_p2p").innerHTML = "--";
-                    set_inner_html("pre_p2p", "--");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("pre_p2p", "--");
+                    } else {
+                        set_inner_html("pre_p2p", "88");
+                    }
                 }
                 if (advanced["perso_bg_color_" + "pre_p2p" + disp_sel]) {
                     if (advanced["ccc_bg_color_" + "pre_p2p" + disp_sel]) {
-                        set_style_bg("pre_p2p", cc(donnees["pre" + "_cc" + _f3_pre_me_post["pre"]], donnees["pre" + "_num" + _f3_pre_me_post["pre"]], donnees["pre" + "_classid" + _f3_pre_me_post["pre"]]));
+                        set_style_bg_alpha("pre_p2p", cc(donnees["pre" + "_cc" + _f3_pre_me_post["pre"]], donnees["pre" + "_num" + _f3_pre_me_post["pre"]], donnees["pre" + "_uid" + _f3_pre_me_post["pre"]], donnees["pre" + "_tid" + _f3_pre_me_post["pre"]], donnees["pre" + "_classid" + _f3_pre_me_post["pre"]]), advanced["bg_" + "pre_p2p" + disp_sel]);
                     } else {
-                        set_style_bg("pre_p2p", advanced["bg_color_" + "pre_p2p" + disp_sel]);
+                        set_style_bg_alpha("pre_p2p", advanced["bg_color_" + "pre_p2p" + disp_sel], advanced["bg_" + "pre_p2p" + disp_sel]);
                     }
                 } else {
                     if (donnees.pre_p2p_status_f3 != undefined && donnees.pre_p2p_status_f3 == 1) {
-                        set_style_bg("pre_p2p", '#bb77ff');
+                        set_style_bg_alpha("pre_p2p", '#bb77ff', advanced["bg_" + "pre_p2p" + disp_sel]);
                     } else {
-                        set_style_bg("pre_p2p", 'black');
+                        set_style_bg_alpha("pre_p2p", '#000000', advanced["bg_" + "pre_p2p" + disp_sel]);
                     }
                 }
             }
@@ -3784,20 +4745,23 @@ function update_dashboard() {
                     //document.getElementById("post_p2p").innerHTML = donnees.post_p2p_count;
                     set_inner_html("post_p2p", donnees.post_p2p_count);
                 } else {
-                    //document.getElementById("post_p2p").innerHTML = "--";
-                    set_inner_html("post_p2p", "--");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("post_p2p", "--");
+                    } else {
+                        set_inner_html("post_p2p", "88");
+                    }
                 }
                 if (advanced["perso_bg_color_" + "post_p2p" + disp_sel]) {
                     if (advanced["ccc_bg_color_" + "post_p2p" + disp_sel]) {
-                        set_style_bg("post_p2p", cc(donnees["post" + "_cc" + _f3_pre_me_post["post"]], donnees["post" + "_num" + _f3_pre_me_post["post"]], donnees["post" + "_classid" + _f3_pre_me_post["post"]]));
+                        set_style_bg_alpha("post_p2p", cc(donnees["post" + "_cc" + _f3_pre_me_post["post"]], donnees["post" + "_num" + _f3_pre_me_post["post"]], donnees["post" + "_uid" + _f3_pre_me_post["post"]], donnees["post" + "_tid" + _f3_pre_me_post["post"]], donnees["post" + "_classid" + _f3_pre_me_post["post"]]), advanced["bg_" + "post_p2p" + disp_sel]);
                     } else {
-                        set_style_bg("post_p2p", advanced["bg_color_" + "post_p2p" + disp_sel]);
+                        set_style_bg_alpha("post_p2p", advanced["bg_color_" + "post_p2p" + disp_sel], advanced["bg_" + "post_p2p" + disp_sel]);
                     }
                 } else {
                     if (donnees.post_p2p_status != undefined && donnees.post_p2p_status == 1) {
-                        set_style_bg("post_p2p", '#bb77ff');
+                        set_style_bg_alpha("post_p2p", '#bb77ff', advanced["bg_" + "post_p2p" + disp_sel]);
                     } else {
-                        set_style_bg("post_p2p", 'black');
+                        set_style_bg_alpha("post_p2p", '#000000', advanced["bg_" + "post_p2p" + disp_sel]);
                     }
                 }
             }
@@ -3807,27 +4771,49 @@ function update_dashboard() {
                     //document.getElementById("post_p2p").innerHTML = donnees.post_p2p_count_f3;
                     set_inner_html("post_p2p", donnees.post_p2p_count_f3);
                 } else {
-                    //document.getElementById("post_p2p").innerHTML = "--";
-                    set_inner_html("post_p2p", "--");
+                    if (donnees.is_iracing_started) {
+                        set_inner_html("post_p2p", "--");
+                    } else {
+                        set_inner_html("post_p2p", "88");
+                    }
                 }
                 if (advanced["perso_bg_color_" + "post_p2p" + disp_sel]) {
                     if (advanced["ccc_bg_color_" + "post_p2p" + disp_sel]) {
-                        set_style_bg("post_p2p", cc(donnees["post" + "_cc" + _f3_pre_me_post["post"]], donnees["post" + "_num" + _f3_pre_me_post["post"]], donnees["post" + "_classid" + _f3_pre_me_post["post"]]));
+                        set_style_bg_alpha("post_p2p", cc(donnees["post" + "_cc" + _f3_pre_me_post["post"]], donnees["post" + "_num" + _f3_pre_me_post["post"]], donnees["post" + "_uid" + _f3_pre_me_post["post"]], donnees["post" + "_tid" + _f3_pre_me_post["post"]], donnees["post" + "_classid" + _f3_pre_me_post["post"]]), advanced["bg_" + "post_p2p" + disp_sel]);
                     } else {
-                        set_style_bg("post_p2p", advanced["bg_color_" + "post_p2p" + disp_sel]);
+                        set_style_bg_alpha("post_p2p", advanced["bg_color_" + "post_p2p" + disp_sel], advanced["bg_" + "post_p2p" + disp_sel]);
                     }
                 } else {
                     if (donnees.post_p2p_status_f3 != undefined && donnees.post_p2p_status_f3 == 1) {
-                        set_style_bg("post_p2p", '#bb77ff');
+                        set_style_bg_alpha("post_p2p", '#bb77ff', advanced["bg_" + "post_p2p" + disp_sel]);
                     } else {
-                        set_style_bg("post_p2p", 'black');
+                        set_style_bg_alpha("post_p2p", '#000000', advanced["bg_" + "post_p2p" + disp_sel]);
                     }
                 }
             }
         }
 
+
+        var tmp_time = Date.now() / 1000;  // utilisé pour le display_changed_time et le setting_changed_time
+
+        // On affiche le nom du display pendant le temps défini s'il a changé
+        var tmp_name = advanced["name" + disp_sel];
+        if (tmp_name != undefined) {
+            if (tmp_name != display_changed_name) {
+                display_changed_name = tmp_name;
+                display_changed_time = tmp_time;
+                set_inner_html("display_changed_name", display_changed_name);
+            }
+
+            if (tmp_time - display_changed_time < 1 && display_changed_disp) {
+                document.getElementById("display_changed_name").style.display = "block";
+            } else if (document.getElementById("display_changed_name").style.display != "none") {
+                document.getElementById("display_changed_name").style.display = "none";
+            }
+
+        }
+
         // On affiche les valeurs changées (TC, ABS, ...) pendant incar_set_change_delay secondes
-        tmp_time = Date.now() / 1000;
         for (tmp_name in tab_setting) {
             if (donnees[tmp_name] != undefined) {
                 if (donnees[tmp_name] != setting_[tmp_name]) {
@@ -3839,7 +4825,7 @@ function update_dashboard() {
                         if (donnees.carname == "mclarenmp430") {
                             setting_changed_name = "Target batt SoC request";
                             setting_changed_value = donnees[tmp_name];
-                        } else if (donnees.carname == "mercedesw12") {
+                        } else if (donnees.carname == "mercedesw12" || donnees.carname == "mercedesw13" || donnees.carname == "bmwlmdh") {
                             setting_changed_name = "MGU-K deploy mode";
                             if (donnees[tmp_name] == 0) {
                                 setting_changed_value = "No";
@@ -3923,7 +4909,8 @@ function update_dashboard() {
         if (donnees.uts != update_telemetry_status) {
             update_telemetry_status = donnees.uts;
             for (var param1 in {"RR": 1, "RF": 1, "LF": 1, "LR": 1}) {
-                for (var param2 in {"pressure": 1, "tempL": 1, "tempM": 1, "tempR": 1, "wearL": 1, "wearM": 1, "wearR": 1}) {
+                //for (var param2 in {"pressure": 1, "tempL": 1, "tempM": 1, "tempR": 1, "wearL": 1, "wearM": 1, "wearR": 1}) {
+                for (var param2 in {"pressure": 1, "tempL": 1, "tempM": 1, "tempR": 1}) {  // Pour le tread wear, on ne change pas de couleur puisque ce n'est pas calculé avec la télémétrie
                     if (advanced["disp_" + param1 + param2 + disp_sel]) {
                         if (update_telemetry_status >= 11) {
                             if (advanced["perso_font_color_" + param1 + param2 + disp_sel]) {
@@ -3935,12 +4922,16 @@ function update_dashboard() {
                             if (advanced["perso_font_color_" + param1 + param2 + disp_sel]) {
                                 set_style_color(param1 + param2, advanced["font_color_" + param1 + param2 + disp_sel]);
                             } else {
-                                set_style_color(param1 + param2, "white");
+                                set_style_color(param1 + param2, "#ffffff");
                             }
                             if (donnees[param1 + param2] != undefined) {
                                 set_inner_html(param1 + param2, donnees[param1 + param2].toFixed(1));
                             } else {
-                                set_inner_html(param1 + param2, "--");
+                                if (donnees.is_iracing_started) {
+                                    set_inner_html(param1 + param2, "--");
+                                } else {
+                                    set_inner_html(param1 + param2, "88.8");
+                                }
                             }
                         }
                     }
@@ -4192,7 +5183,7 @@ function dashboard_light(bg, text) {
 
         set_style_color("dashboard_light", font_coul_on_bg(bg));
 
-        document.getElementById("dashboard_light").style.zIndex = 11;  // j'ai mis 11 au lieu de 10 pour que ça reste au-dessus des borders
+        document.getElementById("dashboard_light").style.zIndex = 11 + dashboard_light_zindex_offset;  // j'ai mis 11 au lieu de 10 pour que ça reste au-dessus des borders
     } else {
         dashboard_light_off();
     }
@@ -4238,5 +5229,9 @@ function font_coul_on_bg(bg) {
     if (moy < 150) {
         font_coul = "#ffffff";
     }
+
+    // DEBUG
+    //font_coul = "#ffffff";
+
     return font_coul;
 }

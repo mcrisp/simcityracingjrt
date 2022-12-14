@@ -7,7 +7,7 @@
 // Names available : "clubname", "gain", "cgain", "spos", "scpos", "cpos", "pos", "num", "name", "ir", "lic", "rel", "delta", "gap", "last", "best", "lc", "distpct", "speed", "topspeed", "apex_speed", "max_speed", "accel", "stint", "pit", "pitroadtime", "pitstalltime", "inc"
 
 // Liste de toutes les colonnes disponibles (REM : laisser sur une seule ligne sinon JRT ne pourra pas decoder les reglages)
-tab_titres_all_default = ["line_num", "pos", "cpos", "spos", "scpos", "gain", "cgain", "num", "class_box", "name", "clubname", "ir", "ir_gain", "lic", "rel", "delta", "gap", "cgap", "interval", "last", "best", "lc", "speed", "accel", "topspeed", "apex_speed", "max_speed", "stint", "pit", "pitroadtime", "pitstalltime", "inc", "distpct", "car", "qualy", "points", "gap_dist", "avg1", "avg2", "avg3", "sectors", "sectors_b", "p2p", "tire_compound", "tires_stints", "tires_nb_changes", "empty", "nblaps_race", "fuel", "predicted_pos", "predicted_cpos", "laps_led", "track_status"];
+tab_titres_all_default = ["line_num", "pos", "cpos", "spos", "scpos", "gain", "cgain", "num", "class_box", "name", "clubname", "ir", "ir_gain", "lic", "rel", "delta", "gap", "cgap", "interval", "last", "best", "lc", "speed", "accel", "topspeed", "apex_speed", "max_speed", "stint", "pit", "pitroadtime", "pitstalltime", "inc", "distpct", "car", "qualy", "points", "gap_dist", "avg1", "avg2", "avg3", "sectors", "sectors_b", "p2p", "tire_compound", "tires_stints", "tires_nb_changes", "empty", "nblaps_race", "fuel", "predicted_pos", "predicted_cpos", "laps_led", "joker_laps", "track_status", "lap_last_pit"];
 
 // Colonnes utilisées par default
 tab_titres = ["pos", "cpos", "num", "name", "ir", "lic", "rel", "delta", "gap", "last", "best", "lc", "speed", "topspeed", "apex_speed", "max_speed", "stint", "pit", "pitroadtime", "pitstalltime", "inc"];
@@ -126,10 +126,14 @@ w['predicted_pos'] = 50
 w['predicted_cpos'] = 50
 // laps_led
 w['laps_led'] = 60
+// joker_laps
+w['joker_laps'] = 60
 // track_status
 w['track_status'] = 100
 // interval
 w['interval'] = 80
+// lap_last_pit
+w['lap_last_pit'] = 60
 
 set_title = {}
 set_title["pos"] = "P"
@@ -183,8 +187,10 @@ set_title["fuel"] = "Fuel"
 set_title["predicted_pos"] = "pP"
 set_title["predicted_cpos"] = "pC"
 set_title["laps_led"] = "Led"
+set_title["joker_laps"] = "JKR"
 set_title["track_status"] = "Trk"
 set_title["interval"] = "INT"
+set_title["lap_last_pit"] = "LP"
 
 // Timing options
 responsive = 1   		// Set 1 if you want that the line height, the font-size and the column width change depending of the window width
@@ -213,6 +219,7 @@ position_change_animation = 0  // remplace le paramètre animation
 best_last_animation = 0  // remplace le paramètre animation
 disp_sofbar = 0		// Set 1 if you want to display only the sof in a single line at the top
 sofbar_h = 14		// Height of the sofbar
+sof_all_disp = 1
 selected_driver_mode = 1  // 0: disabled, 1: Selected by the user, 2: auto-select the focused car
 deltagraph_for_all = 1  // 0 = show the deltagraph only for the cars in the same class, 1 = show the deltagraph even if the car is not in the same class
 disp_titres = 1
@@ -350,6 +357,7 @@ shiftlight_Wpct = 100
 shiftlight_Hpct = 100
 shiftlight_opacity = 0.65
 
+dashboard_light_zindex_offset = 0
 dashboard_light_Xpct = 0
 dashboard_light_Ypct = 0
 dashboard_light_Wpct = 100
@@ -386,9 +394,9 @@ trackmap_thickness_coef = 1  // Thickness coefficient of the trackmap. 1 is the 
 transparence_fond_trackmap = 1;
 fps_trackmap = 10               // Number of fps for the trackmap in the trackmap.html page
                                 // in timing.html page, the fps number is the same choosen in fps.txt file
-trackmap_disp_logo = 1
+trackmap_disp_logo = 0
 trackmap_color = "#2c2c2c"
-trackmap_bg_img = 1     // 1 pour utiliser l'image de fond trackmap_bg.png au lieu de la couleur de fond, 0 sinon
+trackmap_bg_img = 0     // 1 pour utiliser l'image de fond trackmap_bg.png au lieu de la couleur de fond, 0 sinon
 trackmap_bg_color = "#a9a9a9"
 trackmap_outline_disp = 0
 trackmap_outline_coef = 1
@@ -446,6 +454,8 @@ trackmap_circular_angle = 180
 trackmap_circular_reverse = 1
 trackmap_circular_centered_on_driver = 0  // 1: le pilote selectionné ne bouge pas
 
+trackmap_select_drivers_number = 0  // 0: on affiche toutes les voitures, 1: seulement le leader de chaque classe, 2: seulement les 2 premiers, ...
+
 // 3D options
 trackmap_camera_fov = 30
 trackmap_elevation_factor = 5
@@ -474,6 +484,7 @@ fps_dashboard = 20
 toggle_f3mode_joy = -1
 toggle_f3mode_button = -1
 incar_set_change_delay = 0.5
+display_changed_disp = 0
 hybrid_decimal = 0  // nombre de décimals à afficher pour les valeurs ers/mgu ...
 rpm_leds_N_red = 9  // n° de led qui s'allume quand on atteint le rpm red défini dans le "Car Parameters"
 rpm_leds_led1_pct = 0.8  // % du rpm red à partir duquel la 1ère led s'allume
@@ -588,18 +599,24 @@ fps_broadcast = 0.2  // Refresh rate for the broadcast modes 1, 2 and 3
 temperature_mode = 0  // 0: Auto (will be Celsius if metric and fahrenheit if English, 1: Force Celsius, 2: Force fahrenheit)
 
 // Option spéciale pour la page spotter
+spotter_margin = 0;
 spotter_when_not_ontrack = 1;
 spotter_landmark_disp = 1;  // On affiche les repères
 spotter_rule_disp = 1;  // On affiche la règle lorsque le spotter est actif
 spotter_rule_opacity_coef = 1
 spotter_rule_shadow = 1
+spotter_rule_redline = 0
 spotter_side_arrow_blink = 0;
 spotter_arrow_coef = 1;  // Taille des flèches (la valeur doit être inférieure à 1
 spotter_arrow_inverted = 0
 spotter_arrow_opacity_coef = 1
 spotter_arrow_shadow = 1
+spotter_arrows_approach = 1
+spotter_arrows_colorize_blueflag = 1
 spotter_background_mode = 0  // 0: no background, 1: always, 2: only when the arrows are displayed
 spotter_background_transparency_coef = 0.75;
+spotter_nb_wide_text = 0
+spotter_nb_wide_text_size_coef = 1
 
 // Advanced options for the dashboard
 
@@ -620,38 +637,51 @@ advanced["pitlimiter_light_outpit_color"] = "#00ff00"
 advanced["dashboard_light_on"] = 1  // 0 pour désactiver le dashboard light (drapeaux, ...)
 advanced["greenflag_light_activated"] = 1
 advanced["greenflag_light_color"] = "#00ff00"
+advanced["greenflag_light_blink"] = 0
 advanced["greenflag_light_priority"] = 6
 advanced["yellowflag_light_activated"] = 1
 advanced["yellowflag_light_color"] = "#ffff00"
+advanced["yellowflag_light_blink"] = 0
+advanced["yellowflag_light_text_coef"] = 1
 advanced["yellowflag_light_priority"] = 5
 advanced["blueflag_light_activated"] = 1
 advanced["blueflag_light_color"] = "#0000ff"
+advanced["blueflag_light_blink"] = 0
 advanced["blueflag_light_priority"] = 7
 advanced["whiteflag_light_activated"] = 1
 advanced["whiteflag_light_color"] = "#ffffff"
+advanced["whiteflag_light_blink"] = 0
 advanced["whiteflag_light_priority"] = 8
 advanced["car_stopped_ontrack_light_activated"] = 1
 advanced["car_stopped_ontrack_light_color"] = "#ffcc00"
+advanced["car_stopped_ontrack_light_blink"] = 0
+advanced["car_stopped_ontrack_light_text_coef"] = 1
 advanced["car_stopped_ontrack_light_priority"] = 1
 advanced["qualy_not_valid_light_activated"] = 1
 advanced["qualy_not_valid_light_color"] = "#ff0000"
+advanced["qualy_not_valid_light_blink"] = 0
 advanced["qualy_not_valid_light_priority"] = 9
 advanced["oil_temp_alert_light_activated"] = 1
 advanced["oil_temp_alert_light_color"] = "#df49d8"
+advanced["oil_temp_alert_light_blink"] = 1
 advanced["oil_temp_alert_light_priority"] = 3
 advanced["water_temp_alert_light_activated"] = 1
 advanced["water_temp_alert_light_color"] = "#3c9ffb"
+advanced["water_temp_alert_light_blink"] = 1
 advanced["water_temp_alert_light_priority"] = 4
 advanced["fuel_alert_light_activated"] = 0
 advanced["fuel_alert_light_color"] = "#ff8800"
+advanced["fuel_alert_light_blink"] = 0
 advanced["fuel_alert_light_priority"] = 2
 advanced["abs_active_light_activated"] = 0
 advanced["abs_active_light_color"] = "#0088ff"
+advanced["abs_active_light_blink"] = 0
 advanced["abs_active_light_priority"] = 10
 
 advanced["math_channel_light_activated"] = 0
 advanced["math_channel_light_formula"] = "b > 0 and t > 0"
 advanced["math_channel_light_color"] = "#ff0088"
+advanced["math_channel_light_blink"] = 0
 advanced["math_channel_light_priority"] = 11
 
 advanced["switch_off_flags_auto"] = 1
@@ -684,6 +714,7 @@ advanced["grid_front_1"] = 1
 advanced["grid_w_1"] = 16
 advanced["grid_h_1"] = 16
 advanced["grid_snap_1"] = 1
+advanced["hide_unused_dashboard_elements_1"] = 0
 
 // On définit les valeurs par défault des iframes
 advanced["iframe1_disp_1"] = 0
@@ -809,6 +840,14 @@ advanced["w_estlaps_1"] = 256
 advanced["h_estlaps_1"] = 96
 advanced["f_estlaps_1"] = 96
 advanced["bg_estlaps_1"] = 1
+
+advanced["disp_estlaps_white_bar_pct_1"] = 0
+advanced["x_estlaps_white_bar_pct_1"] = 0
+advanced["y_estlaps_white_bar_pct_1"] = 0
+advanced["w_estlaps_white_bar_pct_1"] = 256
+advanced["h_estlaps_white_bar_pct_1"] = 96
+advanced["f_estlaps_white_bar_pct_1"] = 96
+advanced["bg_estlaps_white_bar_pct_1"] = 1
 
 advanced["disp_lapsremain_1"] = 1
 advanced["x_lapsremain_1"] = 768
@@ -1241,6 +1280,54 @@ advanced["w_post_name_1"] = 512
 advanced["h_post_name_1"] = 64
 advanced["f_post_name_1"] = 51.2
 advanced["bg_post_name_1"] = 1
+
+advanced["disp_leader_name_1"] = 0
+advanced["x_leader_name_1"] = 0
+advanced["y_leader_name_1"] = 0
+advanced["w_leader_name_1"] = 512
+advanced["h_leader_name_1"] = 64
+advanced["f_leader_name_1"] = 51.2
+advanced["bg_leader_name_1"] = 1
+
+advanced["disp_cleader_name_1"] = 0
+advanced["x_cleader_name_1"] = 0
+advanced["y_cleader_name_1"] = 0
+advanced["w_cleader_name_1"] = 512
+advanced["h_cleader_name_1"] = 64
+advanced["f_cleader_name_1"] = 51.2
+advanced["bg_cleader_name_1"] = 1
+
+advanced["disp_leader_best_1"] = 0
+advanced["x_leader_best_1"] = 0
+advanced["y_leader_best_1"] = 0
+advanced["w_leader_best_1"] = 368
+advanced["h_leader_best_1"] = 64
+advanced["f_leader_best_1"] = 51.2
+advanced["bg_leader_best_1"] = 1
+
+advanced["disp_cleader_best_1"] = 0
+advanced["x_cleader_best_1"] = 0
+advanced["y_cleader_best_1"] = 0
+advanced["w_cleader_best_1"] = 368
+advanced["h_cleader_best_1"] = 64
+advanced["f_cleader_best_1"] = 51.2
+advanced["bg_cleader_best_1"] = 1
+
+advanced["disp_leader_last_1"] = 0
+advanced["x_leader_last_1"] = 0
+advanced["y_leader_last_1"] = 0
+advanced["w_leader_last_1"] = 368
+advanced["h_leader_last_1"] = 64
+advanced["f_leader_last_1"] = 51.2
+advanced["bg_leader_last_1"] = 1
+
+advanced["disp_cleader_last_1"] = 0
+advanced["x_cleader_last_1"] = 0
+advanced["y_cleader_last_1"] = 0
+advanced["w_cleader_last_1"] = 368
+advanced["h_cleader_last_1"] = 64
+advanced["f_cleader_last_1"] = 51.2
+advanced["bg_cleader_last_1"] = 1
 
 advanced["disp_pre_lic_1"] = 0
 advanced["x_pre_lic_1"] = 0
@@ -2869,6 +2956,7 @@ launcher_timing4_disp = 1
 launcher_timing_broadcast_disp = 1
 launcher_trackmap_disp = 1
 launcher_trackmap2_disp = 1
+launcher_trackmap3_disp = 0
 launcher_trackmap_3d_disp = 1
 launcher_dashboard_disp = 1
 launcher_dashboard2_disp = 1
@@ -2882,13 +2970,14 @@ launcher_spotter_disp = 0
 // Liste des paramètres avancés du dashboard
 // IMPORTANT : il y a aussi le modlist à mettre à jour dans le fichier var_param.py
 modlist = ['weather', 'gear', 'rpm', 'speed', 'timeremain', 'tank_h', 'estlaps_h', 'lapsremain_h',
-    'fuelneed_h', 'tank', 'estlaps', 'lapsremain', 'lapsremain_orange_bar_pct', 'lapsremain_gold_line_pct', 'fuelneed', 'conso', 'nbpits', 'oil', 'water',
+    'fuelneed_h', 'tank', 'estlaps', 'estlaps_white_bar_pct', 'lapsremain', 'lapsremain_orange_bar_pct', 'lapsremain_gold_line_pct', 'fuelneed', 'conso', 'nbpits', 'oil', 'water',
     'pre_pos', 'me_pos', 'post_pos', 'pre_cpos', 'me_cpos', 'post_cpos',
     'pre_pos2', 'me_pos2', 'post_pos2', 'pre_cpos2', 'me_cpos2', 'post_cpos2',
     'pre_gain', 'pre_cgain', 'me_gain', 'me_cgain', 'post_gain', 'post_cgain',
     'pre_best', 'pre_last', 'me_best', 'me_last', 'post_best', 'post_last', 'pre_rel', 'post_rel', 'me_gap', 'me_cgap', 'pre_stint', 'me_stint',
     'pre_topspeed', 'pre_max_speed', 'pre_apex_speed', 'me_topspeed', 'me_max_speed', 'me_apex_speed', 'post_topspeed', 'post_max_speed', 'post_apex_speed',
     'post_stint', 'me_lc', 'pre_name', 'me_name', 'post_name', 'pre_lic', 'post_lic', 'pre_ir', 'post_ir',
+    'leader_name', 'cleader_name', 'leader_best', 'cleader_best', 'leader_last', 'cleader_last',
     'me_current', 'me_estlaptime',
     'delta_best_h', 'delta_last_h', 'delta_best', 'delta_last', 'bb',
     'tc', 'tc2', 'ffb', 'b_cont', 't_cont', 'ffbpct_cont', 'mgua', 'mguf', 'mgum', 'ers', 'ersco', 'ers_margin', 'mgul', 'mgu', 'regen_lap', 'regen_turn', 'drs', 'compass',
@@ -2947,21 +3036,36 @@ car_in_kg = {
     "mclarenmp430": 1,
     "nissangtpzxt": 1,
     "mercedesw12": 1,
+    "mercedesw13": 1,
 };
 disp_kg_livre = 0;       // Set 1 if you want to display the fuel in kg or in pounds
 
 // Cars with ERS and DRS --> en fait ce ne sont finalement que les voitures avec ERS
+// J'ai rajouté undefined pour pouvoir éditer les éléments sur le dashboard quand iRacing n'est pas lancé
 car_with_ers_drs = {
+    "undefined": 1,
     "mclarenmp430": 1,
     "audir18": 1,
     "porsche919": 1,
     "mercedesw12": 1,
+    "mercedesw13": 1,
+    "bmwlmdh": 1,
 };
 car_with_drs = {
+    "undefined": 1,
     "mclarenmp430": 1,
     "formularenault35": 1,
     "mercedesw12": 1,
+    "mercedesw13": 1,
 };
+
+car_with_wj = {
+    "undefined": 1,
+    "dallarair18": 1,
+    "dallara": 1,
+    "dallaradw12": 1,
+}
+
 
 ttl = 0;
 
@@ -2992,7 +3096,8 @@ if (internetIP == "not needed") {
 
 angle = 0;
 
-send_config_tstamp = 0;
+//send_config_tstamp = 0;
+send_config_tstamp_ = {};
 
 carname = "";
 
@@ -3120,6 +3225,11 @@ led_red_on = 'rgba(255,0,0,1)';
 led_blue_on = 'rgba(0,128,255,1)';
 led_col_off = [led_green_off, led_green_off, led_green_off, led_green_off, led_red_off, led_red_off, led_red_off, led_red_off, led_blue_off, led_blue_off, led_blue_off, led_blue_off];
 led_col_on = [led_green_on, led_green_on, led_green_on, led_green_on, led_red_on, led_red_on, led_red_on, led_red_on, led_blue_on, led_blue_on, led_blue_on, led_blue_on];
+led_off_speed_low_color = 'rgba(64,96,64,0.5)';
+led_off_speed_high_color = 'rgba(96,64,64,0.5)';
+led_on_speed_low_color = 'rgba(0,255,96,1)';
+led_on_speed_high_color = 'rgba(255,0,0,1)';
+
 
 liste_sessions = [];
 
@@ -3352,13 +3462,26 @@ function change_classid(donnees) {
         for (var i in donnees.d) {
             if ("classid" in donnees.d[i] && "num" in donnees.d[i]) {
                 tmp_num = donnees.d[i].num;
+
+                tmp_id = 0;
+                if ("tid" in donnees.d[i] && "uid" in donnees.d[i]) {
+                    tmp_id = donnees.d[i].tid;
+                    if (tmp_id == 0) {  // on prend en compte le team id si elle n'est pas nulle, sinon on prend l'user id
+                        tmp_id = donnees.d[i].uid;
+                    }
+                }
+
                 if (tmp_num in classid_by_num) {
                     donnees.d[i].classid = classid_by_num[tmp_num];
+                    recalc_cpos = true;
+                } else if (tmp_id in classid_by_num) {
+                    donnees.d[i].classid = classid_by_num[tmp_id];
                     recalc_cpos = true;
                 }
             }
         }
         if (recalc_cpos) {
+
             // on recalcule le nombre de classes (on en rajoute éventuellement mais on n'en enlève pas)
             // ainsi que le nombre de voitures par classe
             // et aussi le leader de chaque classe et les cgap
@@ -3390,6 +3513,7 @@ function change_classid(donnees) {
 
             // On recalcule les positions par classe
             nb_classes = 0;
+            donnees.leader = {};
             for (var c in donnees.classes) {
 
                 // On recalcule de cpos, le leader
@@ -3406,10 +3530,9 @@ function change_classid(donnees) {
                 var idx1, idx2;
                 for (var n = 0; n < tmp_cpos.length; n++) {
                     idx1 = tmp_cpos[n][0];
-                    idx2 = donnees.leader[donnees.d[tmp_cpos[n][0]].classid];  // leader de la classe
 
                     donnees.d[idx1].cpos = n + 1;
-                    if (n==0) {
+                    if (n == 0) {
                         donnees.leader[donnees.d[idx1].classid] = idx1;
                     }
                 }
@@ -3460,6 +3583,7 @@ function change_classid(donnees) {
                 }
 
             }
+
         }
 
         if (donnees.is_detect_class == 0 && donnees.nbclass < donnees.nbclass_raw) {
@@ -3491,6 +3615,8 @@ function change_classid(donnees) {
                 donnees.classname[c] = name_by_classid_corr[c];
             }
         }
+
+        sof_displayed = 0;  // pour actualiser les barres de sof
 
     }
 }

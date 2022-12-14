@@ -940,9 +940,9 @@ function update_datas(text) {
                 //    ws3.send("send_statics");
                 send_trackmap_nbrequest = donnees.stm
             }
-            loaded = 1;
+            //loaded = 1;  // Je l'ai désactivé car cela empêche le load_session() quand iRacing est déconnecté
         } else {
-            //console.log(loaded)
+            //console.log("*** loaded = ", loaded);
             if (loaded < 1 && last_sessionnum != -1) {
                 if (loaded == -1) {
                     setTimeout(function () {
@@ -1304,6 +1304,8 @@ function update_datas(text) {
                             } else {
                                 donnees.d[i].cgain = 0;
                             }
+
+
                             donnees_reform.d[i].gain = reformat_gain(donnees.d[i].gain);
                             donnees_reform.d[i].cgain = reformat_gain(donnees.d[i].cgain);
 
@@ -1675,6 +1677,13 @@ function update_datas(text) {
 
                             if (donnees.d[i].track_status != undefined) {
                                 donnees_reform.d[i].track_status = reformat_track_status(donnees.d[i].track_status);
+                            }
+
+                            if (donnees.d[i].lc != undefined && donnees.d[i].sti != undefined) {
+                                donnees_reform.d[i].lap_last_pit = Math.floor(donnees.d[i].lc - donnees.d[i].sti);
+                                if (donnees_reform.d[i].lap_last_pit <= 0) {
+                                    donnees_reform.d[i].lap_last_pit = "--";
+                                }
                             }
 
                             for (var j = 0; j < tab_titres_all.length; j++) {
@@ -2405,26 +2414,26 @@ function update_datas(text) {
         } else if (donnees_new != null) {
             send_config = donnees_new.s_c;
         } else {
-            send_config = null;
-        }
-
-        //console.log(send_config.tstamp)
-        // Changement de configuration
-        //window_shortname = get_window_shortname(window_name);
-        if (send_config != undefined && window_shortname in send_config) {
-            send_config = send_config[window_shortname];
-        } else {
             send_config = {};
         }
 
-        if (send_config != null && send_config != undefined && broadcast <= 1 && text != -1) {
-            //console.log(send_config != null, send_config != undefined, broadcast <= 1, text != -1, "tstamp" in send_config)
-            if ("tstamp" in send_config) {
-                if (send_config_tstamp != send_config.tstamp && send_config != "") {
-                    //console.log(send_config.tstamp - send_config_tstamp)
-                    send_config_tstamp = send_config.tstamp;
-                    //console.log(send_config);
-                    change_config(send_config);
+        // Changement de configuration
+        var send_configs_ = [];
+        if (send_config != undefined) {
+            for (var page in send_config) {  // de cette manière on prend aussi en compte le "car", "track" ou "pit" et pas seulement le window_shortname
+                send_configs_.push(send_config[page]);
+            }
+        }
+        if (send_configs_ != [] && broadcast <= 1 && text != -1) {
+            var new_send_config_tstamp = null;
+            for (var send_config_num in send_configs_) {
+                send_config = send_configs_[send_config_num];
+                if ("tstamp" in send_config) {
+                    if ( (!(send_config.page in send_config_tstamp_) || send_config_tstamp_[send_config.page] != send_config.tstamp) && send_config != "" ) {
+                        new_send_config_tstamp = send_config.tstamp;
+                        send_config_tstamp_[send_config.page] = new_send_config_tstamp;   // à faire absolument avec le change_config pour éviter les boulcles infinies
+                        change_config(send_config);
+                    }
                 }
             }
         }
@@ -3054,7 +3063,9 @@ liste_donnees = {
     predicted_pos: {titre: "predicted_pos", shortname: "predicted_pos", ordre: 1},
     predicted_cpos: {titre: "predicted_cpos", shortname: "predicted_cpos", ordre: 1},
     laps_led: {titre: "laps_led", shortname: "laps_led", ordre: 2},
+    joker_laps: {titre: "joker_laps", shortname: "joker_laps", ordre: 2},
     track_status: {titre: "track_status", shortname: "track_status", ordre: 1},
+    lap_last_pit: {titre: "lap_last_pit", shortname: "lap_last_pit", ordre: 2},
     // NOTE : some datas don't appear here because they aren't displayed
 };
 

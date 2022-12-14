@@ -98,6 +98,7 @@ type_setting = {
     "dashboard2": "Dashboard",
     "trackmap": "Trackmap",
     "trackmap2": "Trackmap",
+    "trackmap3": "Trackmap",
 }
 
 list_timing_pages = {
@@ -105,12 +106,13 @@ list_timing_pages = {
     "timing2": 1,
     "timing3": 1,
     "timing4": 1,
-    "timing_broadcast": 1
+    "timing_broadcast": 1,
 };
 
 list_trackmap_pages = {
     "trackmap": 1,
-    "trackmap2": 1
+    "trackmap2": 1,
+    "trackmap3": 1,
 };
 
 list_trackmap_3d_pages = {
@@ -119,7 +121,7 @@ list_trackmap_3d_pages = {
 
 list_dashboard_pages = {
     "dashboard": 1,
-    "dashboard2": 1
+    "dashboard2": 1,
 };
 
 list_overlays_pages = {
@@ -132,6 +134,7 @@ list_overlays_pages = {
     "dashboard2": 1,
     "trackmap": 1,
     "trackmap2": 1,
+    "trackmap3": 1,
     "trackmap_3d": 1,
     "calculator": 1,
     "compteur": 1,
@@ -215,6 +218,9 @@ groups_to_display = {
     "trackmap2_import_export": 0,
     "trackmap2_general": 0,
     "trackmap2_overlay": 0,
+    "trackmap3_import_export": 0,
+    "trackmap3_general": 0,
+    "trackmap3_overlay": 0,
 
     "trackmap_3d_general": 0,
     "trackmap_3d_overlay": 0,
@@ -306,6 +312,11 @@ pages_sous_groups = {
         "overlay": 1,
     },
     "trackmap2": {
+        "import_export": 1,
+        "general": 1,
+        "overlay": 1,
+    },
+    "trackmap3": {
         "import_export": 1,
         "general": 1,
         "overlay": 1,
@@ -411,6 +422,7 @@ set_options = {
         "dashboard2_overlay": 1,
         "trackmap_overlay": 1,
         "trackmap2_overlay": 1,
+        "trackmap3_overlay": 1,
         "trackmap_3d_overlay": 1,
         "calculator_overlay": 1,
         "compteur_overlay": 1,
@@ -535,7 +547,7 @@ menu_elements = [
     {"group_id": "refuel_semiauto_options", "param" : ["general", "refuel_semiauto_practice_qualy_off"], "texte": "Deactivate the 'Semi-Auto' refuel mode for practice/qualy sessions", "val_type": "int", "elt_type": "switch", "endgroup": 1},
 
     {"group_id": "refuel_auto_options", "param" : ["general", "fuelneed_auto_offset"], "texte": "'Fuel to add' Offset for the 'Auto' Refuel mode", "val_type": "float", "step": 0.1, "elt_type": "input", "long": 5, "newgroup": 1,
-        "texte2": "Amount of fuel in liters or kWh that will be added in the tank additionnally to the 'fuel to add' calculated value when using the 'Auto' refuel mode.<br>" +
+        "texte2": "Amount of fuel in liters or kWh that will be added in the tank additionally to the 'fuel to add' calculated value when using the 'Auto' refuel mode.<br>" +
         "Enter a negative value if you want to add less fuel.<br>" +
         "<b>NOTES :</b> When you change this value, the new value is displayed for 2 seconds in the 'fuel to add' box. It is also displayed in the 'fuel to add header' box. This value is converted into " +
         "the unit used in iRacing."
@@ -709,10 +721,10 @@ menu_elements = [
         "texte2": "" +
         "After selecting or changing the USB display type, connect your USB display if it's not connected yet and restart the JRT server.<br>" +
         "Don't forget to deactivate the 'add this page to the overlays' option for the pages you don't want to display as an overlay.<br><br>" +
-        "NB : To display the dashboard to the USB screen, JRT uses the windows clipboard, so keep in mind that when the JRT Overlays are opened, it won't be possible to use the copy/paste function in others applications."},
+        "NB : To display the dashboard to the USB screen, JRT uses the windows clipboard, so keep in mind that when iRacing is started, it won't be possible to use the copy/paste function in others applications."},
     {"group_id": "usb_displays_options", "param" : ["general", "usbscreen_rotate_180"], "texte": "Rotate the view by 180&deg", "val_type": "int", "elt_type": "switch"},
     {"group_id": "usb_displays_options", "param" : ["general", "usbscreen_backlight"], "texte": "Light (between 1 and 255)", "val_type": "int", "step": 1, "elt_type": "input", "long": 4},
-    {"group_id": "usb_displays_options", "param" : ["general", "usbscreen_set_black_when_iracing_off"], "texte": "Turn off the display when iRacing is not started", "val_type": "int", "elt_type": "switch", "endgroup": 1},
+    /*{"group_id": "usb_displays_options", "param" : ["general", "usbscreen_set_black_when_iracing_off"], "texte": "Turn off the display when iRacing is not started", "val_type": "int", "elt_type": "switch", "endgroup": 1},*/
     {"group_id": "usb_displays_options", "param" : ["general", "usbscreen_shift_margin"], "texte": "Adjust this value (positive or negative) if the screen is splitted", "val_type": "int", "step": 1, "elt_type": "input", "long": 4, "newgroup": 1, "endgroup": 1},
 
 
@@ -891,7 +903,7 @@ for (var page in list_timing_pages) {
         },
         {"group_id": page + "_general", "param" : [page, "show_cars_stopped_darker"], "texte": "Make the line darker when the car is stopped", "val_type": "int", "elt_type": "switch" },
         {"group_id": page + "_general", "param" : [page, "show_name_orange_inpits"], "texte": "Change the name color to orange when the driver is in the pit lane", "val_type": "int", "elt_type": "switch" },
-        {"group_id": page + "_general", "param" : [page, "show_name_bleu_red_not_samelap"], "texte": "Change the name color to red/blue when the driver is not in the same lap", "val_type": "int", "elt_type": "switch" },
+        {"group_id": page + "_general", "param" : [page, "show_name_bleu_red_not_samelap"], "texte": "Change the name color to red/blue when the driver is not in the same lap in a race session", "val_type": "int", "elt_type": "switch" },
         {"group_id": page + "_general", "param" : [page, "show_colorized_drivers"], "texte": "Show the colorized drivers", "val_type": "int", "elt_type": "switch",
             "texte2": "When this option is activated, you can colorize the drivers lines using the 'Colorize Drivers' menu."
         },
@@ -940,6 +952,8 @@ for (var page in list_timing_pages) {
 
         {"group_id": page + "_general", "param" : [page, "disp_sofbar"], "texte": "Display a little SOF bar", "val_type": "int", "elt_type": "switch", "newgroup": 1},
         {"group_id": page + "_general", "param" : [page, "sofbar_h"], "texte": "SOF Bar Height", "val_type": "int", "step": 1, "long": 4, "elt_type": "input", "endgroup": 1},
+
+        {"group_id": page + "_general", "param" : [page, "sof_all_disp"], "texte": "Display the SOF for ALL the cars in multiclass sessions", "val_type": "int", "elt_type": "switch", "newgroup": 1, "endgroup": 1},
 
         {"group_id": page + "_general", "param" : [page, "disp_events_ticker"], "texte": "Display the Events Ticker", "val_type": "int", "elt_type": "switch", "newgroup": 1,
             "texte2": "Specify if you want to display a ticker at the top of the page with live informations on the drivers."
@@ -1107,13 +1121,15 @@ for (var page in list_timing_pages) {
         {"group_id": page + "_general", "param" : [page, "fullscreen_button"], "texte": "Fullscreen button", "val_type": "int", "elt_type": "switch", "newgroup": 1},
         {"group_id": page + "_general", "param" : [page, "fullscreen_button_timeout"], "texte": "Fullscreen button timeout(in seconds)", "val_type": "int", "step": 1, "long": 4, "elt_type": "input", "endgroup": 1},
 
-        {"group_id": page + "_trackmap", "param" : [page, "trackmap_disp_mode"], "texte": {titre: "Display Mode", options: ["0: Normal", "1: Car Number", "2: First 3 letters of the name", "3: Car Position"]}, "val_type": "int", "elt_type": "select", "newgroup": 1, "endgroup": 1, "color_cycle_num": 0},
+        {"group_id": page + "_trackmap", "param" : [page, "trackmap_disp_mode"], "texte": {titre: "Display Mode", options: ["0: Normal", "1: Car Number", "2: First 3 letters of the name", "3: Car Position"]}, "val_type": "int", "elt_type": "select", "newgroup": 1, "endgroup": 1},
 
         {"group_id": page + "_trackmap", "param" : [page, "trackmap_font_family"], "texte": "Font Family", "val_type": "str", "elt_type": "input", "long": 30, "newgroup": 1, "endgroup": 1,
             "texte2": "You can enter the font name if you have installed it on windows.<br>You can also enter the file name of your own font file. Before that, you need to copy the file in the 'My&nbsp;Documents/Joel&nbsp;Real&nbsp;Timing/displays_fonts/' folder," +
             " to restart the JRT server and to reload the trackmap page.<br>" +
             "Note, that only otf, ttf and woff formats are working (the default value is Arial)."
         },
+
+        {"group_id": page + "_trackmap", "param" : [page, "trackmap_select_drivers_number"], "texte": {titre: "Filter", options: ["0: Display all the cars", "1: Display only the class leaders", "2: Display only the top 2 in each class", "3: Display only the top 3 in each class", "4: Display only the top 4 in each class", "5: Display only the top 5 in each class"]}, "val_type": "int", "elt_type": "select", "newgroup": 1, "endgroup": 1},
 
         {"group_id": page + "_trackmap", "param" : [page, "trackmap_circular"], "texte": "Make the trackmap circular", "val_type": "int", "elt_type": "switch", "newgroup": 1},
         {"group_id": page + "_trackmap", "param" : [page, "trackmap_circular_angle"], "texte": "Circular Trackmap Orientation value in degrees ", "val_type": "float", "step": 1, "long": 5, "elt_type": "input"},
@@ -1216,7 +1232,7 @@ for (var page in list_timing_pages) {
         {"group_id": page + "_overlay", "param" : ["overlays", page], "texte": "Add this page to the overlays", "val_type": "int", "elt_type": "switch", "newgroup": 1, "endgroup": 1, "color_cycle_num": 0},
 
         {"group_id": page + "_overlay", "param" : [page, "window_topmost"], "texte": "Always on top", "val_type": "int", "elt_type": "switch", "newgroup": 1},
-        {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
+        {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap3", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
             "texte2": "- If you select an overlay, both overlays will be displayed in the taskbar as a unique window.<br>- If you set auto-hide for the overlay selected, this overlay will also be auto-hidden."
         },
         {"group_id": page + "_overlay", "param" : [page, "window_click_through"], "texte": "Click through the overlay", "val_type": "int", "elt_type": "switch",
@@ -1263,12 +1279,16 @@ for (var page in list_trackmap_pages) {
             "NOTE : When you deactivate this option, the page is automatically reloaded to ignore the css perso settings."
         },
 
-        {"group_id": page + "_general", "param" : [page, "trackmap_disp_mode"], "texte": {titre: "Display Mode", options: ["0: Normal", "1: Car Number", "2: First 3 letters of the name", "3: Car Position"]}, "val_type": "int", "elt_type": "select", "newgroup": 1, "endgroup": 1, "color_cycle_num": 0},
+        {"group_id": page + "_general", "param" : [page, "trackmap_disp_mode"], "texte": {titre: "Display Mode", options: ["0: Normal", "1: Car Number", "2: First 3 letters of the name", "3: Car Position"]}, "val_type": "int", "elt_type": "select", "newgroup": 1, "endgroup": 1},
 
         {"group_id": page + "_general", "param" : [page, "trackmap_font_family"], "texte": "Font Family", "val_type": "str", "elt_type": "input", "long": 30, "newgroup": 1, "endgroup": 1,
             "texte2": "You can enter the font name if you have installed it on windows.<br>You can also enter the file name of your own font file. Before that, you need to copy the file in the 'My&nbsp;Documents/Joel&nbsp;Real&nbsp;Timing/displays_fonts/' folder," +
             " to restart the JRT server and to reload the trackmap page.<br>" +
             "Note, that only otf, ttf and woff formats are working (the default value is Arial)."
+        },
+
+        {"group_id": page + "_general", "param" : [page, "trackmap_select_drivers_number"], "texte": {titre: "Filter", options: ["0: Display all the cars", "1: Display only the class leaders", "2: Display only the top 2 in each class", "3: Display only the top 3 in each class", "4: Display only the top 4 in each class", "5: Display only the top 5 in each class"]}, "val_type": "int", "elt_type": "select", "newgroup": 1, "endgroup": 1,
+            "texte2": "You can select additional drivers using the menu available on the top left of the page"
         },
 
         {"group_id": page + "_general", "param" : [page, "trackmap_circular"], "texte": "Make the trackmap circular", "val_type": "int", "elt_type": "switch", "newgroup": 1},
@@ -1376,7 +1396,7 @@ for (var page in list_trackmap_pages) {
         {"group_id": page + "_overlay", "param" : ["overlays", page], "texte": "Add this page to the overlays", "val_type": "int", "elt_type": "switch", "newgroup": 1, "endgroup": 1, "color_cycle_num": 0},
 
         {"group_id": page + "_overlay", "param" : [page, "window_topmost"], "texte": "Always on top", "val_type": "int", "elt_type": "switch", "newgroup": 1},
-        {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
+        {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap3", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
             "texte2": "- If you select an overlay, both overlays will be displayed in the taskbar as a unique window.<br>- If you set auto-hide for the overlay selected, this overlay will also be auto-hidden."
         },
         {"group_id": page + "_overlay", "param" : [page, "window_click_through"], "texte": "Click through the overlay", "val_type": "int", "elt_type": "switch",
@@ -1416,7 +1436,11 @@ for (var page in list_trackmap_3d_pages) {
             "texte2": "Used only for the broadcast mode 1."
         },
 
-        {"group_id": page + "_general", "param" : [page, "trackmap_disp_mode"], "texte": {titre: "Display Mode", options: ["0: Normal", "1: Car Number", "2: First 3 letters of the name", "3: Car Position"]}, "val_type": "int", "elt_type": "select", "newgroup": 1, "endgroup": 1, "color_cycle_num": 0},
+        {"group_id": page + "_general", "param" : [page, "trackmap_disp_mode"], "texte": {titre: "Display Mode", options: ["0: Normal", "1: Car Number", "2: First 3 letters of the name", "3: Car Position"]}, "val_type": "int", "elt_type": "select", "newgroup": 1, "endgroup": 1},
+
+        {"group_id": page + "_general", "param" : [page, "trackmap_select_drivers_number"], "texte": {titre: "Filter", options: ["0: Display all the cars", "1: Display only the class leaders", "2: Display only the top 2 in each class", "3: Display only the top 3 in each class", "4: Display only the top 4 in each class", "5: Display only the top 5 in each class"]}, "val_type": "int", "elt_type": "select", "newgroup": 1, "endgroup": 1,
+            "texte2": "You can select additional drivers using the menu available on the top left of the page"
+        },
 
         {"group_id": page + "_general", "param" : [page, "trackmap_thickness_coef"], "texte": "Track Thickness Coefficient", "val_type": "float", "step": 0.01, "long": 4, "elt_type": "input", "newgroup": 1},
         {"group_id": page + "_general", "param" : [page, "trackmap_color"], "texte": "Track Color", "val_type": "str", "long":5, "elt_type": "input_color", "endgroup": 1},
@@ -1480,7 +1504,7 @@ for (var page in list_trackmap_3d_pages) {
         {"group_id": page + "_overlay", "param" : ["overlays", page], "texte": "Add this page to the overlays", "val_type": "int", "elt_type": "switch", "newgroup": 1, "endgroup": 1, "color_cycle_num": 0},
 
         {"group_id": page + "_overlay", "param" : [page, "window_topmost"], "texte": "Always on top", "val_type": "int", "elt_type": "switch", "newgroup": 1},
-        {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
+        {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap3", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
             "texte2": "- If you select an overlay, both overlays will be displayed in the taskbar as a unique window.<br>- If you set auto-hide for the overlay selected, this overlay will also be auto-hidden."
         },
         {"group_id": page + "_overlay", "param" : [page, "window_click_through"], "texte": "Click through the overlay", "val_type": "int", "elt_type": "switch",
@@ -1556,6 +1580,7 @@ for (var page in list_dashboard_pages) {
             "texte2": "The dashboard or a zone is colorized when you reach the RPM limit or when the pit limiter is active.<br>" +
                 "You can set the colors and some options below"
         },
+
         {"group_id": page + "_general", "param" : [page, "advanced", "shiftlight_gear_rpm_speed_on"], "texte": "Change also the RPM, Gear and Speed background color", "val_type": "int", "elt_type": "switch"},
 
         {"group_id": page + "_general", "param" : [page, "shiftlight_Xpct"], "texte": "Shift-light X position in %", "val_type": "float", "step": 0.1, "long": 4, "elt_type": "input"},
@@ -1583,6 +1608,13 @@ for (var page in list_dashboard_pages) {
             "texte2": "The dashboard or a zone is colorized according to the parameters set below.<br>" +
             "The priority param"
         },
+
+        {"group_id": page + "_general", "param" : null, "texte": {"margin-top": 0, "margin-bottom": 0, "content": "---"}, "elt_type": "text"},
+        {"group_id": page + "_general", "param" : [page, "dashboard_light_zindex_offset"], "texte": "Dashboard Lights Z-index offet", "val_type": "int", "step": 1, "long": 4, "elt_type": "input",
+            "texte2": "Increase this value if the dashboard light is hidden by some dashboard elements"
+        },
+
+        {"group_id": page + "_general", "param" : null, "texte": {"margin-top": 0, "margin-bottom": 0, "content": "---"}, "elt_type": "text"},
         {"group_id": page + "_general", "param" : [page, "dashboard_light_Xpct"], "texte": "Dashboard Lights X position in %", "val_type": "float", "step": 0.1, "long": 4, "elt_type": "input"},
         {"group_id": page + "_general", "param" : [page, "dashboard_light_Ypct"], "texte": "Dashboard Lights Y position in %", "val_type": "float", "step": 0.1, "long": 4, "elt_type": "input"},
         {"group_id": page + "_general", "param" : [page, "dashboard_light_Wpct"], "texte": "Dashboard Lights Width in %", "val_type": "float", "step": 0.1, "long": 4, "elt_type": "input"},
@@ -1593,20 +1625,27 @@ for (var page in list_dashboard_pages) {
             "texte2": "'SC' is displayed if the safety car is out."
         },
         {"group_id": page + "_general", "param" : [page, "advanced", "yellowflag_light_color"], "texte": "Light Color when there is a Yellow Flag", "val_type": "str", "long":5, "elt_type": "input_color"},
+        {"group_id": page + "_general", "param" : [page, "advanced", "yellowflag_light_blink"], "texte": "Blink when there is a Yellow Flag", "val_type": "int", "elt_type": "switch"},
+        {"group_id": page + "_general", "param" : [page, "advanced", "yellowflag_light_text_coef"], "texte": "Font size coefficient for the Light when there is a Yellow Flag", "val_type": "str", "long": 4, "step": 0.01, "elt_type": "input"},
         {"group_id": page + "_general", "param" : [page, "advanced", "yellowflag_light_priority"], "texte": "Priority order for the Light when there is a Yellow Flag", "val_type": "int", "long": 4, "step": 1, "elt_type": "input"},
         {"group_id": page + "_general", "param" : [page, "advanced", "car_stopped_ontrack_light_activated"], "texte": "Light when a car is stopped on the track ahead", "val_type": "int", "elt_type": "switch",
             "texte2": "The distance between you and the car stopped is displayed."
         },
         {"group_id": page + "_general", "param" : [page, "advanced", "car_stopped_ontrack_light_color"], "texte": "Light Color when a car is stopped on the track ahead", "val_type": "str", "long":5, "elt_type": "input_color"},
+        {"group_id": page + "_general", "param" : [page, "advanced", "car_stopped_ontrack_light_blink"], "texte": "Blink when a car is stopped on the track ahead", "val_type": "int", "elt_type": "switch"},
+        {"group_id": page + "_general", "param" : [page, "advanced", "car_stopped_ontrack_light_text_coef"], "texte": "Font size coefficient for the Light when a car is stopped on the track ahead", "val_type": "str", "long": 4, "step": 0.01, "elt_type": "input"},
         {"group_id": page + "_general", "param" : [page, "advanced", "car_stopped_ontrack_light_priority"], "texte": "Priority order for the Light when a car is stopped on the track ahead", "val_type": "int", "long": 4, "step": 1, "elt_type": "input"},
         {"group_id": page + "_general", "param" : [page, "advanced", "greenflag_light_activated"], "texte": "Light when there is the Green Flag", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "greenflag_light_color"], "texte": "Light Color when there is the Green Flag", "val_type": "str", "long":5, "elt_type": "input_color"},
+        {"group_id": page + "_general", "param" : [page, "advanced", "greenflag_light_blink"], "texte": "Blink when there is the Green Flag", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "greenflag_light_priority"], "texte": "Priority order for the Light when there is the Green Flag", "val_type": "int", "long": 4, "step": 1, "elt_type": "input"},
         {"group_id": page + "_general", "param" : [page, "advanced", "blueflag_light_activated"], "texte": "Light when there is a Blue Flag", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "blueflag_light_color"], "texte": "Light Color when there is a Blue Flag", "val_type": "str", "long":5, "elt_type": "input_color"},
+        {"group_id": page + "_general", "param" : [page, "advanced", "blueflag_light_blink"], "texte": "Blink when there is a Blue Flag", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "blueflag_light_priority"], "texte": "Priority order for the Light when there is a Blue Flag", "val_type": "int", "long": 4, "step": 1, "elt_type": "input"},
         {"group_id": page + "_general", "param" : [page, "advanced", "whiteflag_light_activated"], "texte": "Light when there is the White Flag", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "whiteflag_light_color"], "texte": "Light Color when there is the White Flag", "val_type": "str", "long":5, "elt_type": "input_color"},
+        {"group_id": page + "_general", "param" : [page, "advanced", "whiteflag_light_blink"], "texte": "Blink when there is the White Flag", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "whiteflag_light_priority"], "texte": "Priority order for the Light when there is the White Flag", "val_type": "int", "long": 4, "step": 1, "elt_type": "input"},
 
         {"group_id": page + "_general", "param" : null, "texte": {"margin-top": 0, "margin-bottom": 0, "content": "---"}, "elt_type": "text"},
@@ -1616,19 +1655,24 @@ for (var page in list_dashboard_pages) {
 
         {"group_id": page + "_general", "param" : [page, "advanced", "qualy_not_valid_light_activated"], "texte": "Light when the Qualy lap is not valid", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "qualy_not_valid_light_color"], "texte": "Light Color when the Qualy lap is not valid", "val_type": "str", "long":5, "elt_type": "input_color"},
+        {"group_id": page + "_general", "param" : [page, "advanced", "qualy_not_valid_light_blink"], "texte": "Blink when the Qualy lap is not valid", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "qualy_not_valid_light_priority"], "texte": "Priority order for the Light when the Qualy lap is not valid", "val_type": "int", "long": 4, "step": 1, "elt_type": "input"},
         {"group_id": page + "_general", "param" : [page, "advanced", "oil_temp_alert_light_activated"], "texte": "Light when there is an Oil Temperature Alert", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "oil_temp_alert_light_color"], "texte": "Light Color when there is an Oil Temperature Alert", "val_type": "str", "long":5, "elt_type": "input_color"},
+        {"group_id": page + "_general", "param" : [page, "advanced", "oil_temp_alert_light_blink"], "texte": "Blink when there is an Oil Temperature Alert", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "oil_temp_alert_light_priority"], "texte": "Priority order for the Light when there is an Oil Temperature Alert", "val_type": "int", "long": 4, "step": 1, "elt_type": "input"},
         {"group_id": page + "_general", "param" : [page, "advanced", "water_temp_alert_light_activated"], "texte": "Light when there is a Water Temperature Alert", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "water_temp_alert_light_color"], "texte": "Light Color when there is a Water Temperature Alert", "val_type": "str", "long":5, "elt_type": "input_color"},
+        {"group_id": page + "_general", "param" : [page, "advanced", "water_temp_alert_light_blink"], "texte": "Blink when there is an Water Temperature Alert", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "water_temp_alert_light_priority"], "texte": "Priority order for the Light when there is a Water Temperature Alert", "val_type": "int", "long": 4, "step": 1, "elt_type": "input"},
         {"group_id": page + "_general", "param" : [page, "advanced", "fuel_alert_light_activated"], "texte": "Light if you need to refuel next lap or when you didn't put enough fuel for the race", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "fuel_alert_light_color"], "texte": "Light Color if you need to refuel next lap or when you didn't put enough fuel for the race", "val_type": "str", "long":5, "elt_type": "input_color"},
+        {"group_id": page + "_general", "param" : [page, "advanced", "fuel_alert_light_blink"], "texte": "Blink if you need to refuel next lap or when you didn't put enough fuel for the race", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "fuel_alert_light_priority"], "texte": "Priority order for the Light if you need to refuel next lap or when you didn't put enough fuel for the race", "val_type": "int", "long": 4, "step": 1, "elt_type": "input"},
 
         {"group_id": page + "_general", "param" : [page, "advanced", "abs_active_light_activated"], "texte": "Light when ABS is active", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "abs_active_light_color"], "texte": "Light Color when ABS is active", "val_type": "str", "long":5, "elt_type": "input_color"},
+        {"group_id": page + "_general", "param" : [page, "advanced", "abs_active_light_blink"], "texte": "Blink when ABS is active", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "abs_active_light_priority"], "texte": "Priority order for the Light when ABS is active", "val_type": "int", "long": 4, "step": 1, "elt_type": "input"},
 
         {"group_id": page + "_general", "param" : null, "texte": {"margin-top": 0, "margin-bottom": 0, "content": "---"}, "elt_type": "text"},
@@ -1644,6 +1688,7 @@ for (var page in list_dashboard_pages) {
         },
         {"group_id": page + "_general", "param" : [page, "advanced", "math_channel_light_formula"], "texte": "Conditional Formula", "val_type": "str", "long": 30, "elt_type": "input"},
         {"group_id": page + "_general", "param" : [page, "advanced", "math_channel_light_color"], "texte": "Light Color when the conditional formula above is True", "val_type": "str", "long": 5, "elt_type": "input_color"},
+        {"group_id": page + "_general", "param" : [page, "advanced", "math_channel_light_blink"], "texte": "Blink when the conditional formula is True", "val_type": "int", "elt_type": "switch"},
         {"group_id": page + "_general", "param" : [page, "advanced", "math_channel_light_priority"], "texte": "Priority order for the Light when the conditional formula above is True", "val_type": "int", "long": 4, "step": 1, "elt_type": "input"},
 
         {"group_id": page + "_general", "param" : null, "texte": {"margin-top": 0, "margin-bottom": 0, "content": "---"}, "elt_type": "text"},
@@ -1651,9 +1696,10 @@ for (var page in list_dashboard_pages) {
             "texte2": "Set 0 for full transparency and 1 for full opacity.<br>"
         },
 
-        {"group_id": page + "_general", "param" : [page, "incar_set_change_delay"], "texte": "In-car settings display Delay (in seconds)", "val_type": "float", "step": 0.1, "long": 4, "elt_type": "input", "newgroup": 1, "endgroup": 1,
+        {"group_id": page + "_general", "param" : [page, "incar_set_change_delay"], "texte": "In-car settings display Delay (in seconds)", "val_type": "float", "step": 0.1, "long": 4, "elt_type": "input", "newgroup": 1,
             "texte2": "How long you want the in-car settings changes been displayed in fullscreen.<br>Set to 0 if you don't want to display it."
         },
+        {"group_id": page + "_general", "param" : [page, "display_changed_disp"], "texte": "Show the display name for 1 second when you select it", "val_type": "int", "elt_type": "switch", "endgroup": 1},
 
         {"group_id": page + "_general", "param" : [page, "advanced", "pitbox_bar_on"], "texte": "Display the pitbox yellow bar", "val_type": "int", "elt_type": "switch", "newgroup": 1, "endgroup": 1,
             "texte2": "When you approach your pit box, a yellow bar indicates how far you are from it."
@@ -1688,7 +1734,7 @@ for (var page in list_dashboard_pages) {
         {"group_id": page + "_overlay", "param" : ["overlays", page], "texte": "Add this page to the overlays", "val_type": "int", "elt_type": "switch", "newgroup": 1, "endgroup": 1, "color_cycle_num": 0},
 
         {"group_id": page + "_overlay", "param" : [page, "window_topmost"], "texte": "Always on top", "val_type": "int", "elt_type": "switch", "newgroup": 1},
-        {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
+        {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap3", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
             "texte2": "- If you select an overlay, both overlays will be displayed in the taskbar as a unique window.<br>- If you set auto-hide for the overlay selected, this overlay will also be auto-hidden."
         },
         {"group_id": page + "_overlay", "param" : [page, "window_click_through"], "texte": "Click through the overlay", "val_type": "int", "elt_type": "switch",
@@ -1766,7 +1812,7 @@ menu_elements.push(
     {"group_id": page + "_overlay", "param" : ["overlays", page], "texte": "Add this page to the overlays", "val_type": "int", "elt_type": "switch", "newgroup": 1, "endgroup": 1, "color_cycle_num": 0},
 
     {"group_id": page + "_overlay", "param" : [page, "window_topmost"], "texte": "Always on top", "val_type": "int", "elt_type": "switch", "newgroup": 1},
-    {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
+    {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap3", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
         "texte2": "- If you select an overlay, both overlays will be displayed in the taskbar as a unique window.<br>- If you set auto-hide for the overlay selected, this overlay will also be auto-hidden."
     },
     {"group_id": page + "_overlay", "param" : [page, "window_click_through"], "texte": "Click through the overlay", "val_type": "int", "elt_type": "switch",
@@ -1822,7 +1868,7 @@ menu_elements.push(
     {"group_id": page + "_overlay", "param" : ["overlays", page], "texte": "Add this page to the overlays", "val_type": "int", "elt_type": "switch", "newgroup": 1, "endgroup": 1, "color_cycle_num": 0},
 
     {"group_id": page + "_overlay", "param" : [page, "window_topmost"], "texte": "Always on top", "val_type": "int", "elt_type": "switch", "newgroup": 1},
-    {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
+    {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap3", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
         "texte2": "- If you select an overlay, both overlays will be displayed in the taskbar as a unique window.<br>- If you set auto-hide for the overlay selected, this overlay will also be auto-hidden."
     },
     {"group_id": page + "_overlay", "param" : [page, "window_click_through"], "texte": "Click through the overlay", "val_type": "int", "elt_type": "switch",
@@ -1874,6 +1920,7 @@ menu_elements.push(
     {"group_id": page + "_menu", "param" : [page, "launcher_timing_broadcast_disp"], "texte": "Display the 'timing_broadcast' button on the Menu", "val_type": "int", "elt_type": "switch"},
     {"group_id": page + "_menu", "param" : [page, "launcher_trackmap_disp"], "texte": "Display the 'trackmap' button on the Menu", "val_type": "int", "elt_type": "switch"},
     {"group_id": page + "_menu", "param" : [page, "launcher_trackmap2_disp"], "texte": "Display the 'trackmap2' button on the Menu", "val_type": "int", "elt_type": "switch"},
+    {"group_id": page + "_menu", "param" : [page, "launcher_trackmap3_disp"], "texte": "Display the 'trackmap3' button on the Menu", "val_type": "int", "elt_type": "switch"},
     {"group_id": page + "_menu", "param" : [page, "launcher_trackmap_3d_disp"], "texte": "Display the 'trackmap_3d' button on the Menu", "val_type": "int", "elt_type": "switch"},
     {"group_id": page + "_menu", "param" : [page, "launcher_dashboard_disp"], "texte": "Display the 'dashboard' button on the Menu", "val_type": "int", "elt_type": "switch"},
     {"group_id": page + "_menu", "param" : [page, "launcher_dashboard2_disp"], "texte": "Display the 'dashboard2' button on the Menu", "val_type": "int", "elt_type": "switch"},
@@ -1892,6 +1939,7 @@ menu_elements.push(
     {"group_id": page + "_buttons", "param" : [page, "launcher_timing_broadcast"], "texte": "Go to the timing_broadcast page", "val_type": "int", "elt_type": "set_button"},
     {"group_id": page + "_buttons", "param" : [page, "launcher_trackmap"], "texte": "Go to the trackmap page", "val_type": "int", "elt_type": "set_button"},
     {"group_id": page + "_buttons", "param" : [page, "launcher_trackmap2"], "texte": "Go to the trackmap2 page", "val_type": "int", "elt_type": "set_button"},
+    {"group_id": page + "_buttons", "param" : [page, "launcher_trackmap3"], "texte": "Go to the trackmap3 page", "val_type": "int", "elt_type": "set_button"},
     {"group_id": page + "_buttons", "param" : [page, "launcher_trackmap_3d"], "texte": "Go to the trackmap_3d page", "val_type": "int", "elt_type": "set_button"},
     {"group_id": page + "_buttons", "param" : [page, "launcher_dashboard"], "texte": "Go to the dashboard page", "val_type": "int", "elt_type": "set_button"},
     {"group_id": page + "_buttons", "param" : [page, "launcher_dashboard2"], "texte": "Go to the dashboard2 page", "val_type": "int", "elt_type": "set_button"},
@@ -1903,7 +1951,7 @@ menu_elements.push(
     {"group_id": page + "_overlay", "param" : ["overlays", page], "texte": "Add this page to the overlays", "val_type": "int", "elt_type": "switch", "newgroup": 1, "endgroup": 1, "color_cycle_num": 0},
 
     {"group_id": page + "_overlay", "param" : [page, "window_topmost"], "texte": "Always on top", "val_type": "int", "elt_type": "switch", "newgroup": 1},
-    {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
+    {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap3", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
         "texte2": "- If you select an overlay, both overlays will be displayed in the taskbar as a unique window.<br>- If you set auto-hide for the overlay selected, this overlay will also be auto-hidden."
     },
     {"group_id": page + "_overlay", "param" : [page, "window_click_through"], "texte": "Click through the overlay", "val_type": "int", "elt_type": "switch",
@@ -1939,17 +1987,20 @@ menu_elements.push(
         "texte2": "How many times per seconds you want the data to be updated. Higher the value is, higher the CPU will consume."
     },
 
+    {"group_id": page + "_general", "param" : [page, "spotter_margin"], "texte": "How much clearance, front and back in meters, to give a car before reporting it as clear", "val_type": "float", "step": 0.1, "long": 4, "elt_type": "input", "newgroup": 1, "endgroup": 1},
+
     {"group_id": page + "_general", "param" : [page, "spotter_when_not_ontrack"], "texte": "Display the visual spotter when you are spectating", "val_type": "int", "elt_type": "switch", "newgroup": 1, "endgroup": 1,
         "texte2": "If you deactivate this option, the spotter will be visible only when you are driving."
     },
 
-    {"group_id": page + "_general", "param" : [page, "spotter_landmark_disp"], "texte": "Display the landmarks to help positioning", "val_type": "int", "elt_type": "switch", "newgroup": 1},
+    {"group_id": page + "_general", "param" : [page, "spotter_landmark_disp"], "texte": "Display the landmarks to help positioning", "val_type": "int", "elt_type": "switch", "newgroup": 1, "endgroup": 1},
 
-    {"group_id": page + "_general", "param" : [page, "spotter_rule_disp"], "texte": "Display the rule", "val_type": "int", "elt_type": "switch"},
+    {"group_id": page + "_general", "param" : [page, "spotter_rule_disp"], "texte": "Display the rule", "val_type": "int", "elt_type": "switch", "newgroup": 1},
     {"group_id": page + "_general", "param" : [page, "spotter_rule_opacity_coef"], "texte": "Rule opacity coefficient", "val_type": "float", "step": 0.1, "long": 4, "elt_type": "input",
         "texte2": "Set it to 1 to have it 100% opaque."
     },
-    {"group_id": page + "_general", "param" : [page, "spotter_rule_shadow"], "texte": "Display the rule shadows", "val_type": "int", "elt_type": "switch", "endgroup": 1},
+    {"group_id": page + "_general", "param" : [page, "spotter_rule_shadow"], "texte": "Display the rule shadows", "val_type": "int", "elt_type": "switch"},
+    {"group_id": page + "_general", "param" : [page, "spotter_rule_redline"], "texte": "Display a redline on the side", "val_type": "int", "elt_type": "switch", "endgroup": 1},
 
     {"group_id": page + "_general", "param" : [page, "spotter_side_arrow_blink"], "texte": "Blink the orange side arrows", "val_type": "int", "elt_type": "switch", "newgroup": 1},
     {"group_id": page + "_general", "param" : [page, "spotter_arrow_inverted"], "texte": "Inverted arrows direction", "val_type": "int", "elt_type": "switch"},
@@ -1968,12 +2019,19 @@ menu_elements.push(
         "texte2": "Set it to 1 to have the background completely opaque and to 0 for a background full transparent."
     },
 
+    {"group_id": page + "_general", "param" : [page, "spotter_arrows_colorize_blueflag"], "texte": "Colorize the arrow in blue if you are a lap down", "val_type": "int", "elt_type": "switch", "newgroup": 1},
+    {"group_id": page + "_general", "param" : [page, "spotter_arrows_approach"], "texte": "Display the arrows when a car behind is close to you", "val_type": "int", "elt_type": "switch",
+        "texte2": "Deactivate this option if you want to only see the arrows for the cars that are on your side"
+    },
+    {"group_id": page + "_general", "param" : [page, "spotter_nb_wide_text"], "texte": "Display a text when there is a 2-wide or a 3-wide", "val_type": "int", "elt_type": "switch"},
+    {"group_id": page + "_general", "param" : [page, "spotter_nb_wide_text_size_coef"], "texte": "Font size coefficient", "val_type": "float", "step": 0.01, "long": 4, "elt_type": "input", "endgroup": 1},
+
     {"group_id": page + "_general", "param" : [page, "drag_enable"], "texte": "Center zone draggable for the overlay", "val_type": "int", "elt_type": "switch", "newgroup": 1, "endgroup": 1},
 
     {"group_id": page + "_overlay", "param" : ["overlays", page], "texte": "Add this page to the overlays", "val_type": "int", "elt_type": "switch", "newgroup": 1, "endgroup": 1, "color_cycle_num": 0},
 
     {"group_id": page + "_overlay", "param" : [page, "window_topmost"], "texte": "Always on top", "val_type": "int", "elt_type": "switch", "newgroup": 1},
-    {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
+    {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap3", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
         "texte2": "- If you select an overlay, both overlays will be displayed in the taskbar as a unique window.<br>- If you set auto-hide for the overlay selected, this overlay will also be auto-hidden."
     },
     {"group_id": page + "_overlay", "param" : [page, "window_click_through"], "texte": "Click through the overlay", "val_type": "int", "elt_type": "switch",
@@ -2078,7 +2136,7 @@ menu_elements.push(
     {"group_id": page + "_overlay", "param" : ["overlays", page], "texte": "Add this page to the overlays", "val_type": "int", "elt_type": "switch", "newgroup": 1, "endgroup": 1, "color_cycle_num": 0},
 
     {"group_id": page + "_overlay", "param" : [page, "window_topmost"], "texte": "Always on top", "val_type": "int", "elt_type": "switch", "newgroup": 1},
-    {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
+    {"group_id": page + "_overlay", "param" : [page, "window_parent_name"], "texte": {titre: "Specify if you want another overlay to be displayed under this one", options: ["None", "timing", "timing2", "timing3", "timing4", "timing_broadcast", "dashboard", "dashboard2", "trackmap", "trackmap2", "trackmap3", "trackmap_3d", "calculator", "compteur", "spotter", "launcher", "telemetry_inputs"]}, "val_type": "int", "elt_type": "select",
         "texte2": "- If you select an overlay, both overlays will be displayed in the taskbar as a unique window.<br>- If you set auto-hide for the overlay selected, this overlay will also be auto-hidden."
     },
     {"group_id": page + "_overlay", "param" : [page, "window_click_through"], "texte": "Click through the overlay", "val_type": "int", "elt_type": "switch",
@@ -2180,7 +2238,9 @@ timing_columns_infos_bulle = {
     "predicted_pos" : "Predicted overall position at the end of the race.",
     "predicted_cpos" : "Predicted class position at the end of the race.",
     "laps_led" : "Number of laps led in the race.",
+    "joker_laps": "Number of joker laps complete.",
     "track_status" : "Track status",
+    "lap_last_pit" : "Lap number where the driver did a pit stop for the last time",
 }
 
 menu_elements_dashboard_advanced = [
@@ -2229,6 +2289,7 @@ menu_elements_dashboard_advanced = [
     {"param" : ["grid_h"], "texte": "Grid height size", "val_type": "int", "step": 1, "long": 6, "elt_type": "input"},
     {"param" : ["grid_snap"], "texte": "Snap to grid", "val_type": "int", "elt_type": "switch", "endgroup": 1},
 
+    {"param" : ["hide_unused_dashboard_elements"], "texte": "Hide the inactive elements settings", "val_type": "int", "elt_type": "switch", "newgroup": 1, "endgroup": 1},
 
     /* REM les iframes sont ajoutés juste après */
 
@@ -2328,6 +2389,7 @@ menu_elements_dashboard_advanced = [
     {"param" : ["timeremain"], "group_num": 2, "texte": "Remaining time", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
     {"param" : ["estlaps_h"], "group_num": 2, "texte": "Estimated laps header", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
     {"param" : ["estlaps"], "group_num": 2, "texte": "Estimated laps", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
+    {"param" : ["estlaps_white_bar_pct"], "group_num": 2, "texte": "White gauge % in the estimated laps", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
     {"param" : ["time_with_fuel"], "group_num": 2, "texte": "Estimated time you can drive with the fuel left in the tank", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
     {"param" : ["predicted_stint_time"], "group_num": 2, "texte": "Predicted full stint time including a complete pit stop", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
     {"param" : ["nblaps_race_driver"], "group_num": 2, "texte": "Predicted Race Length for the driver", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
@@ -2343,7 +2405,7 @@ menu_elements_dashboard_advanced = [
     {"param" : ["fuelneed"], "group_num": 2, "texte": "Fuel to add", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
     {"param" : ["fuelneed1"], "group_num": 2, "texte": "Fuel to add based on the last lap consumption", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
     {"param" : ["fuelneed5"], "group_num": 2, "texte": "Fuel to add based on the last 5 laps consumption", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
-    {"param" : ["refuel_min"], "group_num": 2, "texte": "Min. fuel to add at the next pit to avoid an additionnal pit", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
+    {"param" : ["refuel_min"], "group_num": 2, "texte": "Min. fuel to add at the next pit to avoid an additional pit", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
     {"param" : ["refuel_avg"], "group_num": 2, "texte": "Fuel to add to equilibrate the stints", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
     {"param" : ["refuel_avg_now"], "group_num": 2, "texte": "Fuel to add to do equal stints if you pit now", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
     {"param" : ["last_partial_fuel_fill"], "group_num": 2, "texte": "Fuel to add on the last pit stop", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
@@ -2357,6 +2419,13 @@ menu_elements_dashboard_advanced = [
     {"param" : ["nextpittimelost"], "group_num": 2, "texte": "Time lost for next pit stop", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
     {"param" : ["traffic"], "group_num": 2, "texte": "Traffic prediction", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
     {"param" : ["traffic_pit"], "group_num": 2, "texte": "Traffic prediction after the pit stop", "val_type": "int", "step": 1, "long": 4, "elt_type": "input", "endgroup": 1},
+
+    {"param" : ["leader_name"], "group_num": 12, "texte": "Driver Name of the <b><i>leader</i></b>", "val_type": "int", "step": 1, "long": 4, "elt_type": "input", "newgroup": 1},
+    {"param" : ["cleader_name"], "group_num": 12, "texte": "Driver Name of the <b><i>class leader</i></b>", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
+    {"param" : ["leader_best"], "group_num": 12, "texte": "Best laptime of the <b><i>leader</i></b>", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
+    {"param" : ["cleader_best"], "group_num": 12, "texte": "Best laptime of the <b><i>class leader</i></b>", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
+    {"param" : ["leader_last"], "group_num": 12, "texte": "Last laptime of the <b><i>leader</i></b>", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
+    {"param" : ["cleader_last"], "group_num": 12, "texte": "Last laptime of the <b><i>class leader</i></b>", "val_type": "int", "step": 1, "long": 4, "elt_type": "input", "endgroup": 1},
 
     {"param" : ["pre_pos"], "group_num": 3, "texte": "Position of the car <b><i>ahead</i></b> with dot and shadow", "val_type": "int", "step": 1, "long": 4, "elt_type": "input", "newgroup": 1},
     {"param" : ["pre_pos2"], "group_num": 3, "texte": "Position of the car <b><i>ahead</i></b>", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
@@ -2487,7 +2556,7 @@ menu_elements_dashboard_advanced = [
     {"param" : ["powersteering"], "group_num": 7, "texte": "Power Steering Assist", "val_type": "int", "step": 1, "long": 4, "elt_type": "input", "endgroup": 1},
 
     {"param" : ["drs"], "group_num": 8, "texte": "DRS Status", "val_type": "int", "step": 1, "long": 4, "elt_type": "input", "newgroup": 1},
-    {"param" : ["mgum"], "group_num": 8, "texte": "Target batt SoC request for the McLaren F1", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
+    {"param" : ["mgum"], "group_num": 8, "texte": "Target batt SoC request", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
     {"param" : ["mgua"], "group_num": 8, "texte": "ERS/HYS/MGU-K deploy mode", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
     {"param" : ["mguf"], "group_num": 8, "texte": "ERS/HYS deploy trim (grayed if auto mode is selected)", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
     {"param" : ["ers"], "group_num": 8, "texte": "ERS/HYS battery charge", "val_type": "int", "step": 1, "long": 4, "elt_type": "input"},
@@ -2512,6 +2581,7 @@ for (var i in menu_elements_dashboard_advanced) {
 
 
 dashboard_advanced_infos_bulle = {
+    "me_estlaptime": "It is calculated by comparing your current time with the best / last laptime without incidents",
     "rpm_leds": "The behaviour of the leds can be changed for each car in JRT&nbsp;Config&nbsp;>&nbsp;Car&nbsp;Parameters",
     "pit_speed_diff": "Display the speed difference with the pitlane speed limit when this difference is under 3.3 km/h",
     "RRpressure": "This value is updated live in practice if you activated tires data in JRT&nbsp;Config. It will display the cold pressure in race or if you deactivated tires data in JRT&nbsp;Config.",
@@ -2546,7 +2616,7 @@ dashboard_advanced_infos_bulle = {
     "fuelneed": "Amount of fuel to add to finish the race (based on the calculations mode selected) or the 'fuel to add' manual value set for the semi-auto mode.\nSee the website for explanations on the background colors.",
     "conso": "lap consumption based on the calculations mode selected",
     "est_conso": "It is calculated based on your last lap consumption",
-    "nbpits": "Number of pit stops needed to finish the race. On the background, you have a dark red gauge that indicates how close you are to have an additionnal pit stop required.",
+    "nbpits": "Number of pit stops needed to finish the race. On the background, you have a dark red gauge that indicates how close you are to have an additional pit stop required.",
     "last_partial_fuel_fill": "It is the last partial fuel fill in case you put full tank for the others stints and refuel at the last moment every time.",
     "nextpittimelost": "Time lost in the next pit considering the tires and fuel settings",
     "traffic": "It displays 3 numbers. The first (resp. second, third) number is the number of laps in which you meet the first (resp. second, third) car in the traffic. The colors correspond to the car class. A red apostrophe behind the number indicates that the car you will meet is faster. JRT considers cars as traffic if they are at least 0.5 seconds faster or slower",
@@ -2637,6 +2707,7 @@ displays_list = {
     "grid_w": 1,
     "grid_h": 1,
     "grid_snap": 1,
+    "hide_unused_dashboard_elements": 1,
 }
 
 // Largeur les colonnes affichées dans les options avancées du dashboard
@@ -2668,6 +2739,7 @@ dashboard_advanced_bg = {
     9: "#ffff00",
     10: "#dd00dd",
     11: "#000000",
+    12: "#8800ff",
 };
 
 var_dashboard_advanced = [
@@ -2683,17 +2755,57 @@ var_dashboard_advanced = [
 //DEBUG = [
     /* more options - options supplémentaires */
 
-    {nom : "highlight", texte: "Show the box and make it movable", "val_type": "int", elt_type: "switch", is_more_options: 1, "endgroup": 1, default_value: 0},
+    {nom : "highlight", texte: "Show the box and make it draggable", "val_type": "int", elt_type: "switch", is_more_options: 1, "endgroup": 1, default_value: 0,
+        "texte2": "When an element is draggable, you can click on another element to make it draggable.<br>" +
+        "You can use the keyboard ARROWS to move it by 1 pixel and the combination [SHIFT] + ARROWS to move it faster by the number of pixels defined for the grid.",
+    },
 
     {nom : "zindex_offset", texte: "Z-index offset", "val_type": "int", "step": 1, "long": 4, elt_type: "input", is_more_options: 1, "endgroup": 1, default_value: 0,
         "texte2": "Increase this value if the box is hidden by another element",
     },
 
+    {nom : "estlaptime_mode", texte: {titre: "Laptime to use for the estimated laptime calculations", options: ["Best", "Last"]}, val_type: "int", elt_type: "select", "endgroup": 1, is_more_options: 1, special_options: "estlaptime_option", default_value: 0,
+        "texte2": "If you are using this option to estimate your laptime during a long stint, it's better to use le last laptime for the calculations."
+    },
+
+    {nom : "led1_off_color", texte: "LED #1 Color when the light is OFF", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#406040"},
+    {nom : "led2_off_color", texte: "LED #2 Color when the light is OFF", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#406040"},
+    {nom : "led3_off_color", texte: "LED #3 Color when the light is OFF", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#406040"},
+    {nom : "led4_off_color", texte: "LED #4 Color when the light is OFF", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#406040"},
+    {nom : "led5_off_color", texte: "LED #5 Color when the light is OFF", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#604040"},
+    {nom : "led6_off_color", texte: "LED #6 Color when the light is OFF", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#604040"},
+    {nom : "led7_off_color", texte: "LED #7 Color when the light is OFF", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#604040"},
+    {nom : "led8_off_color", texte: "LED #8 Color when the light is OFF", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#604040"},
+    {nom : "led9_off_color", texte: "LED #9 Color when the light is OFF", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#404060"},
+    {nom : "led10_off_color", texte: "LED #10 Color when the light is OFF", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#404060"},
+    {nom : "led11_off_color", texte: "LED #11 Color when the light is OFF", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#404060"},
+    {nom : "led12_off_color", texte: "LED #12 Color when the light is OFF", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", "endgroup": 1, default_value: "#404060"},
+
+    {nom : "led1_on_color", texte: "LED #1 Color when the light is ON", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#00ff60"},
+    {nom : "led2_on_color", texte: "LED #2 Color when the light is ON", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#00ff60"},
+    {nom : "led3_on_color", texte: "LED #3 Color when the light is ON", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#00ff60"},
+    {nom : "led4_on_color", texte: "LED #4 Color when the light is ON", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#00ff60"},
+    {nom : "led5_on_color", texte: "LED #5 Color when the light is ON", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#ff0000"},
+    {nom : "led6_on_color", texte: "LED #6 Color when the light is ON", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#ff0000"},
+    {nom : "led7_on_color", texte: "LED #7 Color when the light is ON", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#ff0000"},
+    {nom : "led8_on_color", texte: "LED #8 Color when the light is ON", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#ff0000"},
+    {nom : "led9_on_color", texte: "LED #9 Color when the light is ON", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#0080ff"},
+    {nom : "led10_on_color", texte: "LED #10 Color when the light is ON", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#0080ff"},
+    {nom : "led11_on_color", texte: "LED #11 Color when the light is ON", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#0080ff"},
+    {nom : "led12_on_color", texte: "LED #12 Color when the light is ON", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", "endgroup": 1, default_value: "#0080ff"},
+
+    {nom : "rpm_led_in_pits2", texte: "Use the LEDs to control the speed in the pit lane / Show when the pit limiter is active", "val_type": "int", elt_type: "switch", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: 1},
+    {nom : "rpm_led_in_pits2_delta", texte: "Maximum speed difference in km/h where all the LEDs will be OFF (ON)", "val_type": "float", "step": 0.1, "long": 4, elt_type:"input", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: 1.4},
+    {nom : "led_off_speed_low_color", texte: "LED Color when the light is OFF and the speed is under the limit", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#406040"},
+    {nom : "led_off_speed_high_color", texte: "LED Color when the light is OFF and the speed is over the limit", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#604040"},
+    {nom : "led_on_speed_low_color", texte: "LED Color when the light is ON and the speed is under the limit / limiter ON & out pit lane", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", default_value: "#00ff60"},
+    {nom : "led_on_speed_high_color", texte: "LED Color when the light is ON and the speed is over the limit / limiter ON & in pit lane", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "rpm_leds_color_options", "endgroup": 1, default_value: "#ff0000"},
+
     {nom : "box_border_left_width", texte: "Box border Left Width", "val_type": "float", "step": 1, "long": 4, elt_type: "input", is_more_options: 1, default_value: 0},
     {nom : "box_border_top_width", texte: "Box border Top Width", "val_type": "float", "step": 1, "long": 4, elt_type: "input", is_more_options: 1, default_value: 0},
     {nom : "box_border_right_width", texte: "Box border Right Width", "val_type": "float", "step": 1, "long": 4, elt_type: "input", is_more_options: 1, default_value: 0},
     {nom : "box_border_bottom_width", texte: "Box border Bottom Width", "val_type": "float", "step": 1, "long": 4, elt_type: "input", is_more_options: 1, default_value: 0},
-    {nom : "ccc_box_border_color", texte: "Use the class color as Box border Color", "val_type": "int", elt_type: "switch", is_more_options: 1, add_carclasscolor_option: 1, default_value: 0},
+    {nom : "ccc_box_border_color", texte: "Use the class color as Box border Color", "val_type": "int", elt_type: "switch", is_more_options: 1, special_options: "add_carclasscolor_option", default_value: 0},
     {nom : "box_border_color", texte: "Box border Color", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, default_value: "#666666"},
     {nom : "box_border_tl_radius", texte: "Box border Top Left Radius", "val_type": "int", "step": 1, "long": 4, elt_type: "input", is_more_options: 1, default_value: 0},
     {nom : "box_border_tr_radius", texte: "Box border Top Right Radius", "val_type": "int", "step": 1, "long": 4, elt_type: "input", is_more_options: 1, default_value: 0},
@@ -2702,13 +2814,16 @@ var_dashboard_advanced = [
 
     /* options pour la valeur */
     {nom : "perso_bg_color", texte: "Personalize the Value Background Color", "val_type": "int", elt_type: "switch", is_more_options: 1, default_value: 0},
-    {nom : "ccc_bg_color", texte: "Use the class color as Background Color", "val_type": "int", elt_type: "switch", is_more_options: 1, add_carclasscolor_option: 1, default_value: 0},
+    {nom : "colorize_bg_color", texte: "Colorize the Background with the color defined in the timing colorize menu", "val_type": "int", elt_type: "switch", is_more_options: 1, special_options: "add_carclasscolor_option", default_value: 0,
+        "texte2": "Note that when you colorize a driver on the timing, you will have to reload the dashboard page to see the effect."
+    },
+    {nom : "ccc_bg_color", texte: "Use the class color as Background Color", "val_type": "int", elt_type: "switch", is_more_options: 1, special_options: "add_carclasscolor_option", default_value: 0},
     {nom : "bg_color", texte: "Background Color", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, default_value: "#000000"},
     {nom : "perso_font_color", texte: "Personalize the Value Font Color", "val_type": "int", elt_type: "switch", is_more_options: 1, default_value: 0},
-    {nom : "adapt_font_color", texte: "Adapt the Value Font Color to the background", "val_type": "int", elt_type: "switch", is_more_options: 1, add_carclasscolor_option: 1, default_value: 0,
+    {nom : "adapt_font_color", texte: "Adapt the Value Font Color to the background", "val_type": "int", elt_type: "switch", is_more_options: 1, special_options: "add_carclasscolor_option", default_value: 0,
         "texte2": "The Value Font Color will be white or black depending of the background to keep a good contrast."
     },
-    {nom : "ccc_font_color", texte: "Use the class color as Font Color", "val_type": "int", elt_type: "switch", is_more_options: 1, add_carclasscolor_option: 1, default_value: 0},
+    {nom : "ccc_font_color", texte: "Use the class color as Font Color", "val_type": "int", elt_type: "switch", is_more_options: 1, special_options: "add_carclasscolor_option", default_value: 0},
     {nom : "font_color", texte: "Font Color", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, default_value: "#ffffff"},
     {nom : "perso_font_family", texte: "Personalize the Value Font Family", "val_type": "int", elt_type: "switch", is_more_options: 1, default_value: 0},
     {nom : "font_family", texte: "Font Family", "val_type": "str", "long": 29, elt_type: "input", is_more_options: 1, default_value: "Arial"},
@@ -2716,6 +2831,22 @@ var_dashboard_advanced = [
     {nom : "font_weight", texte: "Font Weight", "val_type": "str", "long": 29, elt_type: "input", is_more_options: 1, default_value: "bold"},
     {nom : "perso_font_style", texte: "Personalize the Value Font Style", "val_type": "int", elt_type: "switch", is_more_options: 1, default_value: 0},
     {nom : "font_style", texte: "Font Style", "val_type": "str", "long": 29, elt_type: "input", is_more_options: 1, "endgroup": 1, default_value: "normal"},
+
+
+    /* options spéciales pour le lapsremain, fuelneed, fuelneed1, fuelneed5, estlaps et nbpits */
+    {nom : "pit_window_bg_color", texte: "Background Color when the pit window is opened", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "fuelneedx_options", default_value: "#ff99ff"},
+    {nom : "lapsremain_gauge_color", texte: "Gauge Color", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "lapsremain_options", default_value: "#996622"},
+    {nom : "fuelneedx_gauge_color", texte: "Gauge Color", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "fuelneedx_options", default_value: "#0099ff"},
+    {nom : "estlaps_gauge_color", texte: "Gauge Color", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "estlaps_options", default_value: "#ffffff"},
+    {nom: "nbpits_nb_decimals", texte: {titre: "Number of decimals", options: ["0", "1", "2"]}, "val_type": "int", elt_type: "select", is_more_options: 1, special_options: "nbpits_options", default_value: 0},
+    {nom : "nbpits_gauge_color", texte: "Gauge Color", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "nbpits_options", default_value: "#990000"},
+    {nom : "gauge_opacity", texte: "Gauge Opacity", "val_type": "float", "step": 0.1, "long": 4, elt_type: "input", is_more_options: 1, special_options: "gauge_opacity_option", "endgroup": 1, default_value: 1},
+    {nom : "display_vertical_line", texte: "Display the blue/gold vertical line", "val_type": "int", elt_type: "switch", is_more_options: 1, special_options: "lapsremain_options", default_value: 1,
+        "texte2": "By default, this line is blue if you will end the race in the leader lap and gold otherwise"
+    },
+    {nom : "vertical_line_blue_color", texte: "Blue vertical line Color", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "lapsremain_options", default_value: "#0088ff"},
+    {nom : "vertical_line_gold_color", texte: "Gold vertical line Color", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, special_options: "lapsremain_options", "endgroup": 1, default_value: "#ffd700"},
+
 
     /* options pour l'en-tête (header) */
     {nom : "header_disp", texte: "Display the Header", "val_type": "int", elt_type: "switch", is_more_options: 1, /*"newgroup": 1,*/ default_value: 0},
@@ -2731,13 +2862,13 @@ var_dashboard_advanced = [
     },
     {nom : "header_x_offset", texte: "Header horizontal offset", "val_type": "float", "step": 1, "long": 4, elt_type:"input", is_more_options: 1, default_value: 0},
     {nom : "header_y_offset", texte: "Header vertical offset", "val_type": "float", "step": 1, "long": 4, elt_type:"input", is_more_options: 1, default_value: 0},
-    {nom : "ccc_header_bg_color", texte: "Use the class color as Header Background Color", "val_type": "int", elt_type: "switch", is_more_options: 1, add_carclasscolor_option: 1, default_value: 0},
+    {nom : "ccc_header_bg_color", texte: "Use the class color as Header Background Color", "val_type": "int", elt_type: "switch", is_more_options: 1, special_options: "add_carclasscolor_option", default_value: 0},
     {nom : "header_bg_color", texte: "Header Background Color", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, default_value: "#666666"},
     {nom : "header_bg_opacity", texte: "Header Background Opacity", "val_type": "float", "step": 0.1, "long": 4, elt_type:"input", is_more_options: 1, default_value: 1},
-    {nom : "adapt_header_font_color", texte: "Adapt the Header Font Color to the background", "val_type": "int", elt_type: "switch", is_more_options: 1, add_carclasscolor_option: 1, default_value: 0,
+    {nom : "adapt_header_font_color", texte: "Adapt the Header Font Color to the background", "val_type": "int", elt_type: "switch", is_more_options: 1, special_options: "add_carclasscolor_option", default_value: 0,
         "texte2": "The Header Font Color will be white or black depending of the background to keep a good contrast."
     },
-    {nom : "ccc_header_font_color", texte: "Use the class color as Header Font Color", "val_type": "int", elt_type: "switch", is_more_options: 1, add_carclasscolor_option: 1, default_value: 0},
+    {nom : "ccc_header_font_color", texte: "Use the class color as Header Font Color", "val_type": "int", elt_type: "switch", is_more_options: 1, special_options: "add_carclasscolor_option", default_value: 0},
     {nom : "header_font_color", texte: "Header Font Color", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, default_value: "#bbbbbb"},
     {nom : "header_font_family", texte: "Header Font Family", "val_type": "str", "long": 29, elt_type: "input", is_more_options: 1, default_value: "Arial"},
     {nom : "header_font_weight", texte: "Header Font Weight", "val_type": "str", "long": 29, elt_type: "input", is_more_options: 1, default_value: "bold"},
@@ -2746,7 +2877,7 @@ var_dashboard_advanced = [
     {nom : "header_border_top_width", texte: "Header border Top Width", "val_type": "float", "step": 1, "long": 4, elt_type:"input", is_more_options: 1, default_value: 0},
     {nom : "header_border_right_width", texte: "Header border Right Width", "val_type": "float", "step": 1, "long": 4, elt_type:"input", is_more_options: 1, default_value: 0},
     {nom : "header_border_bottom_width", texte: "Header border Bottom Width", "val_type": "float", "step": 1, "long": 4, elt_type:"input", is_more_options: 1, default_value: 0},
-    {nom : "ccc_header_border_color", texte: "Use the class color as Header Border Color", "val_type": "int", elt_type: "switch", is_more_options: 1, add_carclasscolor_option: 1, default_value: 0},
+    {nom : "ccc_header_border_color", texte: "Use the class color as Header Border Color", "val_type": "int", elt_type: "switch", is_more_options: 1, special_options: "add_carclasscolor_option", default_value: 0},
     {nom : "header_border_color", texte: "Header border Color", "val_type": "str", "long": 5, elt_type: "input_color", is_more_options: 1, default_value: "#0088ff"},
     {nom : "header_border_opacity", texte: "Header border Opacity", "val_type": "float", "step": 0.1, "long": 4, elt_type:"input", is_more_options: 1, default_value: 1},
     {nom : "header_border_tl_radius", texte: "Header border Top Left Radius", "val_type": "int", "step": 1, "long": 4, elt_type:"input", is_more_options: 1, default_value: 0},
@@ -2756,8 +2887,51 @@ var_dashboard_advanced = [
 
 ];
 
-add_carclasscolor_option_list = {};
-add_carclasscolor_option_list["pre"] = {
+
+
+// On spécifie ici pour quel(s) élément(s) ces options spéciales seront disponibles
+special_options_list = {};
+
+
+special_options_list["gauge_opacity_option"] = {
+    "lapsremain": 1,
+    "fuelneed": 1,
+    "fuelneed1": 1,
+    "fuelneed5": 1,
+    "estlaps": 1,
+    "nbpits": 1,
+}
+
+special_options_list["lapsremain_options"] = {
+    "lapsremain": 1,
+}
+
+special_options_list["fuelneedx_options"] = {
+    "fuelneed": 1,
+    "fuelneed1": 1,
+    "fuelneed5": 1,
+}
+
+special_options_list["estlaps_options"] = {
+    "estlaps": 1,
+}
+
+special_options_list["nbpits_options"] = {
+    "nbpits": 1,
+}
+
+
+special_options_list["estlaptime_option"] = {
+    "me_estlaptime": 1,
+}
+
+special_options_list["rpm_leds_color_options"] = {
+    "rpm_leds": 1,
+}
+
+//add_carclasscolor_option_list = {};
+//add_carclasscolor_option_list["pre"] = {
+special_options_list["add_carclasscolor_option_pre"] = {
     "pre_pos": 1,
     "pre_pos2": 1,
     "pre_cpos": 1,
@@ -2782,7 +2956,8 @@ add_carclasscolor_option_list["pre"] = {
     "pre_club_name": 1,
     "pre_car_name": 1,
 }
-add_carclasscolor_option_list["me"] = {
+//add_carclasscolor_option_list["me"] = {
+special_options_list["add_carclasscolor_option_me"] = {
     "me_pos": 1,
     "me_pos2": 1,
     "me_cpos": 1,
@@ -2816,7 +2991,8 @@ add_carclasscolor_option_list["me"] = {
     "me_club_name": 1,
     "me_car_name": 1,
 }
-add_carclasscolor_option_list["post"] = {
+//add_carclasscolor_option_list["post"] = {
+special_options_list["add_carclasscolor_option_post"] = {
     "post_pos": 1,
     "post_pos2": 1,
     "post_cpos": 1,
@@ -2841,6 +3017,7 @@ add_carclasscolor_option_list["post"] = {
     "post_club_name": 1,
     "post_car_name": 1,
 }
+special_options_list["add_carclasscolor_option"] = $.extend(true, special_options_list["add_carclasscolor_option_pre"], special_options_list["add_carclasscolor_option_me"], special_options_list["add_carclasscolor_option_post"]);
 
 
 // Fonction permettant d'attribuer une valeur pour tous les éléments d'un même nom (utilisé uniquement pour les infos)
@@ -2854,6 +3031,7 @@ add_carclasscolor_option_list["post"] = {
 
 function update_datas(donnees_new) {
 
+    //console.log(donnees_new.partial)
 
     if (donnees_new.partial != undefined) {
         // on met à jour juste les données X, Y, W, H envoyées quand on a déplacé un élément sur le dashboard
@@ -2866,8 +3044,9 @@ function update_datas(donnees_new) {
             for (var elt_i = 0; elt_i < elt_params.length; elt_i++) {
 
                 var elt_param = elt_params[elt_i]["param"];
+                //console.log(elt_param.length, elt_param[2], donnees.param[elt_param[0]])
 
-                if (elt_param.length == 3 && elt_param[2] == "display_selected") {
+                if (elt_param.length == 3 && elt_param[2] == "display_selected" && donnees.param[elt_param[0]] != undefined) {
                     var val = elt_params[elt_i]["value"];
                     var dashboard = elt_param[0];
                     donnees.param[dashboard]["advanced"]["display_selected"] = val;
@@ -3345,7 +3524,8 @@ function create_elements_bloc2_more_options(elt_i, dashboard, x) {
 
         if (var_dashboard_advanced[var_i]["is_more_options"] == 1) {
 
-            if (var_dashboard_advanced[var_i]["add_carclasscolor_option"] != 1 || menu_elements_dashboard_advanced[elt_i]["param"][0] in add_carclasscolor_option_list["pre"] || menu_elements_dashboard_advanced[elt_i]["param"][0] in add_carclasscolor_option_list["me"] || menu_elements_dashboard_advanced[elt_i]["param"][0] in add_carclasscolor_option_list["post"]) {
+            //if (var_dashboard_advanced[var_i]["add_carclasscolor_option"] != 1 || menu_elements_dashboard_advanced[elt_i]["param"][0] in add_carclasscolor_option_list["pre"] || menu_elements_dashboard_advanced[elt_i]["param"][0] in add_carclasscolor_option_list["me"] || menu_elements_dashboard_advanced[elt_i]["param"][0] in add_carclasscolor_option_list["post"]) {
+            if ( !("special_options" in var_dashboard_advanced[var_i]) || (menu_elements_dashboard_advanced[elt_i]["param"][0] in special_options_list[var_dashboard_advanced[var_i]["special_options"]]) ) {
 
                 var tmp_elt = {
                     "param": [var_dashboard_advanced[var_i]["nom"] + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0]],
@@ -3380,11 +3560,11 @@ function create_elements_bloc2_more_options(elt_i, dashboard, x) {
                 }
 
 
-                elements_html += "<div>";
+                //elements_html += "<div style = 'background-color: red;'>";
 
                 elements_html += str_elt([dashboard, "advanced", tmp_elt["param"][0] + "_" + x], tmp_elt, tmp_elt["elt_type"], 0, 1, tmp_bg_col, "#000000");
 
-                elements_html += "</div>";
+                //elements_html += "</div>";
             }
         }
     }
@@ -3500,6 +3680,7 @@ function create_elements_html_display(dashboard, x) {
 
                 // Couleur de la bordure de gauche
                 var tmp_bg_col = dashboard_advanced_bg[menu_elements_dashboard_advanced[elt_i]["group_num"]];
+
 
                 if ("newgroup" in menu_elements_dashboard_advanced[elt_i] && "endgroup" in menu_elements_dashboard_advanced[elt_i]) {
                     elements_html += '<div id="bloc_' + dashboard + '_advanced_' + menu_elements_dashboard_advanced[elt_i]["param"][0] + '_' + x + '" class="bloc_dashboard_advanced" style="margin-top: 0.5em; margin-bottom: 0.5em; text-align: left; color:' + dashboard_advanced_col[menu_elements_dashboard_advanced[elt_i]["group_num"]] + ';background-color: #444444; border-top: 1px solid #333333; border-bottom: 1px solid #333333; ' +
@@ -3979,7 +4160,7 @@ function load_donnees(load_dashboard_advanced, scroll, only_this_dashboard, only
         load_elt(null, null, "gears");
     }
 
-    load_spec();  // charge les spécificités de toutes les pages (cases grisées, texte différent en fonction des valeurs, couleurs pour la licence)
+    load_spec(1);  // charge les spécificités de toutes les pages (cases grisées, texte différent en fonction des valeurs, couleurs pour la licence)
 
     if (!only_more_options) {
         if (!no_display_options) {
@@ -4418,7 +4599,8 @@ function load_default_display(dashboard) {
                 //console.log(donnees.param["default"]["advanced"][var_dashboard_advanced[var_i]["nom"] + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + 1]);
                 elt = dashboard + "_advanced_" + var_dashboard_advanced[var_i]["nom"] + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + ds;
 
-                if (var_dashboard_advanced[var_i]["add_carclasscolor_option"] != 1 || menu_elements_dashboard_advanced[elt_i]["param"][0] in add_carclasscolor_option_list["pre"] || menu_elements_dashboard_advanced[elt_i]["param"][0] in add_carclasscolor_option_list["me"] || menu_elements_dashboard_advanced[elt_i]["param"][0] in add_carclasscolor_option_list["post"]) {
+                //if (var_dashboard_advanced[var_i]["add_carclasscolor_option"] != 1 || menu_elements_dashboard_advanced[elt_i]["param"][0] in add_carclasscolor_option_list["pre"] || menu_elements_dashboard_advanced[elt_i]["param"][0] in add_carclasscolor_option_list["me"] || menu_elements_dashboard_advanced[elt_i]["param"][0] in add_carclasscolor_option_list["post"]) {
+                if ( !("special_options" in var_dashboard_advanced[var_i]) || menu_elements_dashboard_advanced[elt_i]["param"][0] in special_options_list[var_dashboard_advanced[var_i]["special_options"]] ) {
 
                     d = donnees.param["default"]["advanced"][var_dashboard_advanced[var_i]["nom"] + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + 1];
                     donnees.param[dashboard]["advanced"][var_dashboard_advanced[var_i]["nom"] + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + ds] = d;
@@ -5020,7 +5202,11 @@ function load_timing_columns(page) {
             document.getElementById(page + "_display_" + title_id).checked = true;
         }
         //document.getElementById(page + "_order_num_" + title_id).value = order_nums_[page + "_columns"][title_id];
-        document.getElementById(page + "_set_title_" + title_id).value = donnees_elt_param([page, "set_title", title_id], "load");
+
+        var val = donnees_elt_param([page, "set_title", title_id], "load");
+        val = val.replace(/&#x5C;/g, "\\");  // On rétablit les backslashes
+        document.getElementById(page + "_set_title_" + title_id).value = val;
+
         document.getElementById(page + "_w_" + title_id).value = donnees_elt_param([page, "w", title_id], "load");
 
     }
@@ -5046,7 +5232,11 @@ function load_timing_columns(page) {
 
 
 // charge les spécificités de toutes les pages (cases grisées, texte différent en fonction des valeurs)
-function load_spec() {
+function load_spec(all_pages) {
+
+    if (all_pages == undefined) {
+        all_pages = 0;
+    }
 
     // Gestion de l'activation ou non du bouton create files to export on the web server
     if (donnees.param["broadcast"]["broadcast_mode"] <= 1 && donnees.param["broadcast"]["log_broadcast"] == 0) {
@@ -5107,12 +5297,14 @@ function load_spec() {
     }
 
     for (var page in list_timing_pages) {
-        if (donnees.param[page]["responsive"] == 1) {
-            document.getElementById(page + "_" + "ligne_h" + "_text").innerHTML = "<b>Relative line height</b>";
-            document.getElementById(page + "_" + "sessioninfos_height" + "_text").innerHTML = "<b>Weather Infos Relative Height</b>";
-        } else {
-            document.getElementById(page + "_" + "ligne_h" + "_text").innerHTML = "<b>Absolute line height</b>";
-            document.getElementById(page + "_" + "sessioninfos_height" + "_text").innerHTML = "<b>Weather Infos Absolute Height</b>";
+        if (all_pages || page == page_active) {
+            if (donnees.param[page]["responsive"] == 1) {
+                document.getElementById(page + "_" + "ligne_h" + "_text").innerHTML = "<b>Relative line height</b>";
+                document.getElementById(page + "_" + "sessioninfos_height" + "_text").innerHTML = "<b>Weather Infos Relative Height</b>";
+            } else {
+                document.getElementById(page + "_" + "ligne_h" + "_text").innerHTML = "<b>Absolute line height</b>";
+                document.getElementById(page + "_" + "sessioninfos_height" + "_text").innerHTML = "<b>Weather Infos Absolute Height</b>";
+            }
         }
     }
 
@@ -5159,21 +5351,23 @@ function load_spec() {
     // On cache les n° de bouton si le bouton n'est pas paramétré pour le bouton select_display
     //for (var dashboard in {"dashboard": 1, "dashboard2": 1}) {
     for (var dashboard in list_dashboard_pages) {
-        for (var x = 1; x <= donnees.param[dashboard]["nb_displays"]; x++) {
-            for (var elt_i in menu_elements_dashboard_advanced) {
-                if (menu_elements_dashboard_advanced[elt_i]["param"][0] == "select_display") {
-                    var nom_var = dashboard + "_advanced_select_display_" + x;
-                    if (document.getElementById(nom_var)) {
-                        if (document.getElementById(nom_var + "_joy").innerHTML == -1) {
-                            document.getElementById(nom_var).style.display = "none";
-                            document.getElementById(nom_var + "_del").style.setProperty('background-color', '#666666', 'important');  // le !important sert à éviter que ça passe en jaune quand on met la souris dessus
-                            document.getElementById(nom_var + "_del").style.setProperty('color', '#444444', 'important');  // le !important sert à éviter que ça passe en jaune quand on met la souris dessus
-                            document.getElementById(nom_var + "_del").disabled = true;
-                        } else {
-                            document.getElementById(nom_var).style.display = "inline-block";
-                            document.getElementById(nom_var + "_del").style.backgroundColor = "red";
-                            document.getElementById(nom_var + "_del").style.color = "white";
-                            document.getElementById(nom_var + "_del").disabled = false;
+        if (all_pages || dashboard == page_active) {
+            for (var x = 1; x <= donnees.param[dashboard]["nb_displays"]; x++) {
+                for (var elt_i in menu_elements_dashboard_advanced) {
+                    if (menu_elements_dashboard_advanced[elt_i]["param"][0] == "select_display") {
+                        var nom_var = dashboard + "_advanced_select_display_" + x;
+                        if (document.getElementById(nom_var)) {
+                            if (document.getElementById(nom_var + "_joy").innerHTML == -1) {
+                                document.getElementById(nom_var).style.display = "none";
+                                document.getElementById(nom_var + "_del").style.setProperty('background-color', '#666666', 'important');  // le !important sert à éviter que ça passe en jaune quand on met la souris dessus
+                                document.getElementById(nom_var + "_del").style.setProperty('color', '#444444', 'important');  // le !important sert à éviter que ça passe en jaune quand on met la souris dessus
+                                document.getElementById(nom_var + "_del").disabled = true;
+                            } else {
+                                document.getElementById(nom_var).style.display = "inline-block";
+                                document.getElementById(nom_var + "_del").style.backgroundColor = "red";
+                                document.getElementById(nom_var + "_del").style.color = "white";
+                                document.getElementById(nom_var + "_del").disabled = false;
+                            }
                         }
                     }
                 }
@@ -5230,7 +5424,13 @@ function load_spec() {
     gestion_couleurs_inputs_selects(donnees.param["general"]["calculations_mode_3_switchable"], [1, 1], 0, "general_conso_Set");
     gestion_couleurs_inputs_selects(donnees.param["calculator"]["disp_sofbar"], [1, 1], 0, "calculator_sofbar_h");
     gestion_couleurs_inputs_selects(donnees.param["calculator"]["responsive"], [1, 1], 0, "calculator_reference_w");
+
+    gestion_couleurs_inputs_selects(donnees.param["spotter"]["spotter_rule_disp"], [0, 0], 1, "spotter_spotter_rule_opacity_coef");
+    gestion_couleurs_inputs_selects(donnees.param["spotter"]["spotter_rule_disp"], [0, 0], 1, "spotter_spotter_rule_shadow");
+    gestion_couleurs_inputs_selects(donnees.param["spotter"]["spotter_rule_disp"], [0, 0], 1, "spotter_spotter_rule_redline");
     gestion_couleurs_inputs_selects(donnees.param["spotter"]["spotter_background_mode"], [0, 0], 1, "spotter_spotter_background_transparency_coef");
+    gestion_couleurs_inputs_selects(donnees.param["spotter"]["spotter_nb_wide_text"], [0, 0], 1, "spotter_spotter_nb_wide_text_size_coef");
+
     gestion_couleurs_inputs_selects(donnees.param["general"]["allow_telemetry"], [1, 1], 0, "general_telemetry_rate");
     gestion_couleurs_inputs_selects(donnees.param["general"]["activate_vjoy"], [1, 1], 0, "general_vjoy_device_number");
 
@@ -5247,321 +5447,355 @@ function load_spec() {
     gestion_couleurs_inputs_selects(donnees.status, [1, 1], 0, "car_rpm_leds_led1_pct");
 
     for (var page in list_timing_pages) {
-        if (donnees.param[page]["responsive"] == 0 || donnees.param[page]["reference_w_auto"] == 1) {
-            tmp_param = 1;
-        } else {
-            tmp_param = 0;
-        }
-        gestion_couleurs_inputs_selects(tmp_param, [1, 1], 1, page + "_" + "reference_w");
-        gestion_couleurs_inputs_selects(donnees.param[page]["responsive"], [1, 1], 0, page + "_" + "reference_w_auto");
-        set_switch(page + "_" + "reference_w_auto");
+        if (all_pages || page == page_active) {
+            if (donnees.param[page]["responsive"] == 0 || donnees.param[page]["reference_w_auto"] == 1) {
+                tmp_param = 1;
+            } else {
+                tmp_param = 0;
+            }
+            gestion_couleurs_inputs_selects(tmp_param, [1, 1], 1, page + "_" + "reference_w");
+            gestion_couleurs_inputs_selects(donnees.param[page]["responsive"], [1, 1], 0, page + "_" + "reference_w_auto");
+            set_switch(page + "_" + "reference_w_auto");
 
-        // on affiche le reference width calculé pour le mode auto
-        largeur_totale = 0;
-        for (var i in donnees.param[page]["tab_titres"]) {
-            largeur_totale += parseInt(donnees.param[page]["w"][donnees.param[page]["tab_titres"][i]]);
-        }
-        document.getElementById(page + "_" + "reference_w_auto_text").innerHTML = "Automatic Width Reference = " + largeur_totale;
+            // on affiche le reference width calculé pour le mode auto
+            largeur_totale = 0;
+            for (var i in donnees.param[page]["tab_titres"]) {
+                largeur_totale += parseInt(donnees.param[page]["w"][donnees.param[page]["tab_titres"][i]]);
+            }
+            document.getElementById(page + "_" + "reference_w_auto_text").innerHTML = "Automatic Width Reference = " + largeur_totale;
 
-        gestion_couleurs_inputs_selects(donnees.param[page]["banner_height"], [0, 0], 1, page + "_" + "banner_mode");
-        gestion_couleurs_inputs_selects(donnees.param[page]["banner_height"], [0, 0], 1, page + "_" + "banner_background");
-        gestion_couleurs_inputs_selects(donnees.param[page]["banner_height"], [0, 0], 1, page + "_" + "banner_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["banner_height"], [0, 0], 1, page + "_" + "banner_live_disp");
-        set_switch(page + "_" + "banner_live_disp");
-        gestion_couleurs_inputs_selects(donnees.param[page]["banner_mode"] || (donnees.param[page]["banner_height"] == 0), [0, 0], 0, page + "_" + "banner_logo");
+            gestion_couleurs_inputs_selects(donnees.param[page]["banner_height"], [0, 0], 1, page + "_" + "banner_mode");
+            gestion_couleurs_inputs_selects(donnees.param[page]["banner_height"], [0, 0], 1, page + "_" + "banner_background");
+            gestion_couleurs_inputs_selects(donnees.param[page]["banner_height"], [0, 0], 1, page + "_" + "banner_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["banner_height"], [0, 0], 1, page + "_" + "banner_live_disp");
+            set_switch(page + "_" + "banner_live_disp");
+            gestion_couleurs_inputs_selects(donnees.param[page]["banner_mode"] || (donnees.param[page]["banner_height"] == 0), [0, 0], 0, page + "_" + "banner_logo");
 
-        gestion_couleurs_inputs_selects(donnees.param[page]["disp_sofbar"], [1, 1], 0, page + "_" + "sofbar_h");
-        //gestion_couleurs_inputs_selects(donnees.param[page]["autoscroll"], [1, 1], 0, page + "_" + "autoscroll_mode");  // REM : il faut toujours pouvoir changer ce mode dans le cas où on utiliserait le bouton toggle_autoscroll
-        gestion_couleurs_inputs_selects(donnees.param["broadcast"]["broadcast_mode"], [1, 1], 0, page + "_fps_broadcast");
-        gestion_couleurs_inputs_selects(donnees.param[page]["pack_disp"], [0, 0], 1, page + "_" + "pack_gap");
-        gestion_couleurs_inputs_selects(donnees.param[page]["pack_disp"], [0, 0], 1, page + "_" + "pack_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["pack_disp"], [0, 0], 1, page + "_" + "pack_transparency");
+            gestion_couleurs_inputs_selects(donnees.param[page]["disp_sofbar"], [1, 1], 0, page + "_" + "sofbar_h");
+            //gestion_couleurs_inputs_selects(donnees.param[page]["autoscroll"], [1, 1], 0, page + "_" + "autoscroll_mode");  // REM : il faut toujours pouvoir changer ce mode dans le cas où on utiliserait le bouton toggle_autoscroll
+            gestion_couleurs_inputs_selects(donnees.param["broadcast"]["broadcast_mode"], [1, 1], 0, page + "_fps_broadcast");
+            gestion_couleurs_inputs_selects(donnees.param[page]["pack_disp"], [0, 0], 1, page + "_" + "pack_gap");
+            gestion_couleurs_inputs_selects(donnees.param[page]["pack_disp"], [0, 0], 1, page + "_" + "pack_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["pack_disp"], [0, 0], 1, page + "_" + "pack_transparency");
 
-        gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_nb_drivers_max_me");
-        gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_my_own_class_is_selected");
-        set_switch(page + "_" + "group_by_class_my_own_class_is_selected");
-        gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_nb_drivers_max_others");
-        gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_nb_lines_max_total");
+            gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_nb_drivers_max_me");
+            gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_my_own_class_is_selected");
+            set_switch(page + "_" + "group_by_class_my_own_class_is_selected");
+            gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_nb_drivers_max_others");
+            gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_nb_lines_max_total");
 
-        gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_disp_header");
-        set_switch(page + "_" + "group_by_class_disp_header");
-        gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_header_color_mode");
-        gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_header_text_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_header_bg_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_header_bg_transparency");
-        if (donnees.param[page]["group_by_class"]) {  // pour éviter d'avoir des options non grisées lorsque le group_by_class est désactivé
-            gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class_disp_header"], [1, 1], 0, page + "_" + "group_by_class_header_color_mode");
-            gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class_disp_header"], [1, 1], 0, page + "_" + "group_by_class_header_text_color");
-            gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class_disp_header"], [1, 1], 0, page + "_" + "group_by_class_header_bg_color");
-            gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class_disp_header"], [1, 1], 0, page + "_" + "group_by_class_header_bg_transparency");
-            if (donnees.param[page]["group_by_class_disp_header"]) {  // pour éviter d'avoir des options non grisées lorsque le group_by_class_disp_header est désactivé
-                gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class_header_color_mode"], [3, 4], 0, page + "_" + "group_by_class_header_bg_color");
-                if (donnees.param[page]["group_by_class_header_color_mode"] == 2 || donnees.param[page]["group_by_class_header_color_mode"] == 4) {
-                    gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class_header_color_mode"], [0, 4], 0, page + "_" + "group_by_class_header_text_color");
-                } else {
-                    gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class_header_color_mode"], [0, 4], 1, page + "_" + "group_by_class_header_text_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_disp_header");
+            set_switch(page + "_" + "group_by_class_disp_header");
+            gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_header_color_mode");
+            gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_header_text_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_header_bg_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_header_bg_transparency");
+            if (donnees.param[page]["group_by_class"]) {  // pour éviter d'avoir des options non grisées lorsque le group_by_class est désactivé
+                gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class_disp_header"], [1, 1], 0, page + "_" + "group_by_class_header_color_mode");
+                gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class_disp_header"], [1, 1], 0, page + "_" + "group_by_class_header_text_color");
+                gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class_disp_header"], [1, 1], 0, page + "_" + "group_by_class_header_bg_color");
+                gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class_disp_header"], [1, 1], 0, page + "_" + "group_by_class_header_bg_transparency");
+                if (donnees.param[page]["group_by_class_disp_header"]) {  // pour éviter d'avoir des options non grisées lorsque le group_by_class_disp_header est désactivé
+                    gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class_header_color_mode"], [3, 4], 0, page + "_" + "group_by_class_header_bg_color");
+                    if (donnees.param[page]["group_by_class_header_color_mode"] == 2 || donnees.param[page]["group_by_class_header_color_mode"] == 4) {
+                        gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class_header_color_mode"], [0, 4], 0, page + "_" + "group_by_class_header_text_color");
+                    } else {
+                        gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class_header_color_mode"], [0, 4], 1, page + "_" + "group_by_class_header_text_color");
+                    }
                 }
             }
-        }
 
-        gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_margin_between_classes");
+            gestion_couleurs_inputs_selects(donnees.param[page]["group_by_class"], [1, 1], 0, page + "_" + "group_by_class_margin_between_classes");
 
-        gestion_couleurs_inputs_selects(donnees.param[page]["group_nb_leading_cars"], [-9999, 0], 1, page + "_" + "group_nb_leading_cars_line_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["group_nb_leading_cars"], [-9999, 0], 1, page + "_" + "group_nb_leading_cars_line_color_mode");
-        gestion_couleurs_inputs_selects(donnees.param[page]["group_nb_leading_cars"], [-9999, 0], 1, page + "_" + "group_nb_leading_cars_line_color");
-        if (donnees.param[page]["group_nb_leading_cars"] > 0) {  // pour éviter d'avoir des options non grisées lorsque le group_nb_leading_cars est à 0
-            gestion_couleurs_inputs_selects(donnees.param[page]["group_nb_leading_cars_line_color_mode"], [1, 1], 0, page + "_" + "group_nb_leading_cars_line_color");
-        }
+            gestion_couleurs_inputs_selects(donnees.param[page]["group_nb_leading_cars"], [-9999, 0], 1, page + "_" + "group_nb_leading_cars_line_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["group_nb_leading_cars"], [-9999, 0], 1, page + "_" + "group_nb_leading_cars_line_color_mode");
+            gestion_couleurs_inputs_selects(donnees.param[page]["group_nb_leading_cars"], [-9999, 0], 1, page + "_" + "group_nb_leading_cars_line_color");
+            if (donnees.param[page]["group_nb_leading_cars"] > 0) {  // pour éviter d'avoir des options non grisées lorsque le group_nb_leading_cars est à 0
+                gestion_couleurs_inputs_selects(donnees.param[page]["group_nb_leading_cars_line_color_mode"], [1, 1], 0, page + "_" + "group_nb_leading_cars_line_color");
+            }
 
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_font_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_font_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_border_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_border_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_font_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_font_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_border_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_border_coef");
 
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_me_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_font_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_me_font_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_me_border_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_me_border_coef");
-
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_color_auto");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_font_color_auto");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_font_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_carnum_me_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_border_disp");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_border_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_border_coef");
-        set_switch(page + "_" + "trackmap_car_me_color_auto");
-        set_switch(page + "_" + "trackmap_car_me_font_color_auto");
-        set_switch(page + "_" + "trackmap_car_me_border_disp");
-        if (donnees.param[page]["trackmap_car_me_specify"]) {
             gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_me_color");
             gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_font_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_me_font_color");
             gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_me_border_color");
             gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_me_border_coef");
+
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_color_auto");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_font_color_auto");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_font_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_carnum_me_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_border_disp");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_border_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_border_coef");
+            set_switch(page + "_" + "trackmap_car_me_color_auto");
+            set_switch(page + "_" + "trackmap_car_me_font_color_auto");
+            set_switch(page + "_" + "trackmap_car_me_border_disp");
+            if (donnees.param[page]["trackmap_car_me_specify"]) {
+                gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_me_color");
+                gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_font_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_me_font_color");
+                gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_me_border_color");
+                gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_me_border_coef");
+            }
+
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_distance_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_num_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_num_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_info_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_info_coef");
+
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_line_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_line_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_line_thickness_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_line_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_line_length_coef");
+
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_thickness_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_length_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_distance_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_color");
+
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_circular"], [1, 1], 0, page + "_" + "trackmap_circular_angle");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_circular"], [1, 1], 0, page + "_" + "trackmap_circular_reverse");
+            set_switch(page + "_" + "trackmap_circular_reverse");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_circular"], [1, 1], 0, page + "_" + "trackmap_circular_centered_on_driver");
+            set_switch(page + "_" + "trackmap_circular_centered_on_driver");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_outline_disp"], [1, 1], 0, page + "_" + "trackmap_outline_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_outline_disp"], [1, 1], 0, page + "_" + "trackmap_outline_color");
+
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_P1"], [1, 1], 0, page + "_" + "trackmap_car_P1_myclass_only");
+            set_switch(page + "_" + "trackmap_car_P1_myclass_only");
+
+            gestion_couleurs_inputs_selects(donnees.param[page]["show_name_selected_orange"], [1, 1], 0, page + "_" + "show_name_selected_color");
+
+            set_switch("overlays_" + page);
         }
-
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_distance_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_num_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_num_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_info_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_info_coef");
-
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_line_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_line_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_line_thickness_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_line_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_line_length_coef");
-
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_thickness_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_length_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_distance_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_color");
-
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_circular"], [1, 1], 0, page + "_" + "trackmap_circular_angle");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_circular"], [1, 1], 0, page + "_" + "trackmap_circular_reverse");
-        set_switch(page + "_" + "trackmap_circular_reverse");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_circular"], [1, 1], 0, page + "_" + "trackmap_circular_centered_on_driver");
-        set_switch(page + "_" + "trackmap_circular_centered_on_driver");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_outline_disp"], [1, 1], 0, page + "_" + "trackmap_outline_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_outline_disp"], [1, 1], 0, page + "_" + "trackmap_outline_color");
-
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_P1"], [1, 1], 0, page + "_" + "trackmap_car_P1_myclass_only");
-        set_switch(page + "_" + "trackmap_car_P1_myclass_only");
-
-        gestion_couleurs_inputs_selects(donnees.param[page]["show_name_selected_orange"], [1, 1], 0, page + "_" + "show_name_selected_color");
-
-        set_switch("overlays_" + page);
     }
     for (var page in list_dashboard_pages) {
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_shiftlight_Xpct");
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_shiftlight_Ypct");
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_shiftlight_Wpct");
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_shiftlight_Hpct");
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_shiftlight_opacity");
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_shiftlight_mode");
+        if (all_pages || page == page_active) {
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_shiftlight_Xpct");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_shiftlight_Ypct");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_shiftlight_Wpct");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_shiftlight_Hpct");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_shiftlight_opacity");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_shiftlight_mode");
 
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_advanced_shiftlight_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_advanced_shiftlight_gear_rpm_speed_on");
-        set_switch(page + "_advanced_shiftlight_gear_rpm_speed_on");
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_advanced_pitlimiter_light_on");
-        set_switch(page + "_advanced_pitlimiter_light_on");
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"] && donnees.param[page]["advanced"]["pitlimiter_light_on"], [1, 1], 0, page + "_advanced_pitlimiter_light_inpit_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"] && donnees.param[page]["advanced"]["pitlimiter_light_on"], [1, 1], 0, page + "_advanced_pitlimiter_light_outpit_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_advanced_shiftlight_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_advanced_shiftlight_gear_rpm_speed_on");
+            set_switch(page + "_advanced_shiftlight_gear_rpm_speed_on");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"], [1, 1], 0, page + "_advanced_pitlimiter_light_on");
+            set_switch(page + "_advanced_pitlimiter_light_on");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"] && donnees.param[page]["advanced"]["pitlimiter_light_on"], [1, 1], 0, page + "_advanced_pitlimiter_light_inpit_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["shiftlight_on"] && donnees.param[page]["advanced"]["pitlimiter_light_on"], [1, 1], 0, page + "_advanced_pitlimiter_light_outpit_color");
 
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_dashboard_light_Xpct");
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_dashboard_light_Ypct");
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_dashboard_light_Wpct");
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_dashboard_light_Hpct");
 
-        var liste_dashboard_light_type = {
-            "yellowflag_light": 1,
-            "car_stopped_ontrack_light": 1,
-            "greenflag_light": 1,
-            "blueflag_light": 1,
-            "whiteflag_light": 1,
-            "qualy_not_valid_light": 1,
-            "oil_temp_alert_light": 1,
-            "water_temp_alert_light": 1,
-            "fuel_alert_light": 1,
-            "abs_active_light": 1,
-            "math_channel_light": 1,
-        }
-        for (var t in liste_dashboard_light_type) {
-            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_advanced_" + t + "_activated");
-            set_switch(page + "_advanced_" + t + "_activated");
-            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"] && donnees.param[page]["advanced"][t + "_activated"], [1, 1], 0, page + "_advanced_" + t + "_color");
-            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"] && donnees.param[page]["advanced"][t + "_activated"], [1, 1], 0, page + "_advanced_" + t + "_priority");
-        }
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"] && donnees.param[page]["advanced"]["math_channel_light_activated"], [1, 1], 0, page + "_advanced_math_channel_light_formula");
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_advanced_switch_off_flags_auto");
-        set_switch(page + "_advanced_switch_off_flags_auto");
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"] && donnees.param[page]["advanced"]["switch_off_flags_auto"], [1, 1], 0, page + "_advanced_switch_off_flags_auto_delay");
-        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_dashboard_light_opacity");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_dashboard_light_zindex_offset");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_dashboard_light_Xpct");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_dashboard_light_Ypct");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_dashboard_light_Wpct");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_dashboard_light_Hpct");
 
-        gestion_couleurs_inputs_selects(donnees.param["broadcast"]["broadcast_mode"], [1, 1], 0, page + "_fps_broadcast");
-        set_switch("overlays_" + page);
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_advanced_yellowflag_light_text_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_advanced_car_stopped_ontrack_light_text_coef");
 
-        // On s'occupse des options avancées supplémentaires
-        for (var x = 1; x <= donnees.param[page]["nb_displays"]; x++) {
-            for (var elt_i in menu_elements_dashboard_advanced) {
-                if (menu_elements_dashboard_advanced[elt_i]["param"][0] == "name") {
-                    //
-                } else if (menu_elements_dashboard_advanced[elt_i]["param"][0] in displays_list) {  // REM displays_list contient aussi name et select_display mais c'est pas grave car ils sont traités avant le else if
-                    //
-                } else {
+            var liste_dashboard_light_type = {
+                "yellowflag_light": 1,
+                "car_stopped_ontrack_light": 1,
+                "greenflag_light": 1,
+                "blueflag_light": 1,
+                "whiteflag_light": 1,
+                "qualy_not_valid_light": 1,
+                "oil_temp_alert_light": 1,
+                "water_temp_alert_light": 1,
+                "fuel_alert_light": 1,
+                "abs_active_light": 1,
+                "math_channel_light": 1,
+            }
+            for (var t in liste_dashboard_light_type) {
+                gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_advanced_" + t + "_activated");
+                set_switch(page + "_advanced_" + t + "_activated");
+                gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"] && donnees.param[page]["advanced"][t + "_activated"], [1, 1], 0, page + "_advanced_" + t + "_color");
+                gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"] && donnees.param[page]["advanced"][t + "_activated"], [1, 1], 0, page + "_advanced_" + t + "_blink");
+                gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"] && donnees.param[page]["advanced"][t + "_activated"], [1, 1], 0, page + "_advanced_" + t + "_priority");
+            }
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"] && donnees.param[page]["advanced"]["math_channel_light_activated"], [1, 1], 0, page + "_advanced_math_channel_light_formula");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_advanced_switch_off_flags_auto");
+            set_switch(page + "_advanced_switch_off_flags_auto");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"] && donnees.param[page]["advanced"]["switch_off_flags_auto"], [1, 1], 0, page + "_advanced_switch_off_flags_auto_delay");
+            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["dashboard_light_on"], [1, 1], 0, page + "_dashboard_light_opacity");
 
-                    gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["ccc_box_border_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 1, page + "_advanced_" + "box_border_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+            gestion_couleurs_inputs_selects(donnees.param["broadcast"]["broadcast_mode"], [1, 1], 0, page + "_fps_broadcast");
+            set_switch("overlays_" + page);
 
-                    gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["perso_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && !donnees.param[page]["advanced"]["ccc_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
-                    gestion_couleurs_inputs_selects(!donnees.param[page]["advanced"]["perso_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 1, page + "_advanced_" + "ccc_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
-                    set_switch(page + "_advanced_" + "ccc_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+            // On s'occupse des options avancées supplémentaires
+            for (var x = 1; x <= donnees.param[page]["nb_displays"]; x++) {
+                for (var elt_i in menu_elements_dashboard_advanced) {
+                    if (menu_elements_dashboard_advanced[elt_i]["param"][0] == "name") {
+                        //
+                    } else if (menu_elements_dashboard_advanced[elt_i]["param"][0] in displays_list) {  // REM displays_list contient aussi name et select_display mais c'est pas grave car ils sont traités avant le else if
+                        //
+                    } else {
 
-                    gestion_couleurs_inputs_selects(!donnees.param[page]["advanced"]["perso_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 1, page + "_advanced_" + "adapt_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
-                    set_switch(page + "_advanced_" + "adapt_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
-                    gestion_couleurs_inputs_selects(!donnees.param[page]["advanced"]["perso_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] || donnees.param[page]["advanced"]["adapt_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 1, page + "_advanced_" + "ccc_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
-                    set_switch(page + "_advanced_" + "ccc_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
-                    gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["perso_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && !donnees.param[page]["advanced"]["adapt_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && !donnees.param[page]["advanced"]["ccc_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
-
-                    gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["perso_font_family" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "font_family" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
-                    gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["perso_font_weight" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "font_weight" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
-                    gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["perso_font_style" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "font_style" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
-
-                    // Liste des paramètres du header
-                    // REM : mettre la valeur 1 si c'est un switch
-                    var tmp_list = {
-                        "header_width": 0,
-                        "header_font_size": 0,
-                        "header_text": 0,
-                        "header_text_orientation": 0,
-                        "header_position": 0,
-                        "header_is_foreground": 1,
-                        "header_x_offset": 0,
-                        "header_y_offset": 0,
-                        "ccc_header_bg_color": 1,
-                        "header_bg_color": 0,
-                        "header_bg_opacity": 0,
-                        "adapt_header_font_color": 1,
-                        "ccc_header_font_color": 1,
-                        "header_font_color": 0,
-                        "header_font_family": 0,
-                        "header_font_weight": 0,
-                        "header_font_style": 0,
-                        "header_border_left_width": 0,
-                        "header_border_top_width": 0,
-                        "header_border_right_width": 0,
-                        "header_border_bottom_width": 0,
-                        "ccc_header_border_color": 1,
-                        "header_border_color": 0,
-                        "header_border_opacity": 0,
-                        "header_border_tl_radius": 0,
-                        "header_border_tr_radius": 0,
-                        "header_border_bl_radius": 0,
-                        "header_border_br_radius": 0,
-                    }
-                    for (var name in tmp_list) {
-                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["header_disp" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + name + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
-                        if (tmp_list[name] == 1) {
-                            set_switch(page + "_advanced_" + name + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        // On n'affiche que les options cochées si l'option pour masquer les éléments non actifs est activée
+                        var tmp_elt = document.getElementById('bloc_' + page + '_advanced_' + menu_elements_dashboard_advanced[elt_i]["param"][0] + '_' + x);
+                        if (tmp_elt != null) {
+                            if (!donnees.param[page]["advanced"]["hide_unused_dashboard_elements" + "_" + x] || donnees.param[page]["advanced"]["disp_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + '_' + x] == 1) {
+                                //console.log(page_active, 'bloc_' + page + '_advanced_' + menu_elements_dashboard_advanced[elt_i]["param"][0] + '_' + x);
+                                tmp_elt.style.display = "block";
+                            } else {
+                                tmp_elt.style.display = "none";
+                            }
                         }
+
+                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["rpm_led_in_pits2" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "rpm_led_in_pits2_delta" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["rpm_led_in_pits2" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "led_off_speed_low_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["rpm_led_in_pits2" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "led_off_speed_high_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["rpm_led_in_pits2" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "led_on_speed_low_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["rpm_led_in_pits2" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "led_on_speed_high_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+
+                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["ccc_box_border_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 1, page + "_advanced_" + "box_border_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+
+                        gestion_couleurs_inputs_selects(!donnees.param[page]["advanced"]["perso_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 1, page + "_advanced_" + "colorize_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        set_switch(page + "_advanced_" + "colorize_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+
+                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["perso_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && !donnees.param[page]["advanced"]["ccc_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        gestion_couleurs_inputs_selects(!donnees.param[page]["advanced"]["perso_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 1, page + "_advanced_" + "ccc_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        set_switch(page + "_advanced_" + "ccc_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+
+                        gestion_couleurs_inputs_selects(!donnees.param[page]["advanced"]["perso_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 1, page + "_advanced_" + "adapt_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        set_switch(page + "_advanced_" + "adapt_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        gestion_couleurs_inputs_selects(!donnees.param[page]["advanced"]["perso_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] || donnees.param[page]["advanced"]["adapt_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 1, page + "_advanced_" + "ccc_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        set_switch(page + "_advanced_" + "ccc_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["perso_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && !donnees.param[page]["advanced"]["adapt_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && !donnees.param[page]["advanced"]["ccc_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+
+                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["perso_font_family" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "font_family" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["perso_font_weight" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "font_weight" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["perso_font_style" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "font_style" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+
+                        // Liste des paramètres du header
+                        // REM : mettre la valeur 1 si c'est un switch
+                        var tmp_list = {
+                            "header_width": 0,
+                            "header_font_size": 0,
+                            "header_text": 0,
+                            "header_text_orientation": 0,
+                            "header_position": 0,
+                            "header_is_foreground": 1,
+                            "header_x_offset": 0,
+                            "header_y_offset": 0,
+                            "ccc_header_bg_color": 1,
+                            "header_bg_color": 0,
+                            "header_bg_opacity": 0,
+                            "adapt_header_font_color": 1,
+                            "ccc_header_font_color": 1,
+                            "header_font_color": 0,
+                            "header_font_family": 0,
+                            "header_font_weight": 0,
+                            "header_font_style": 0,
+                            "header_border_left_width": 0,
+                            "header_border_top_width": 0,
+                            "header_border_right_width": 0,
+                            "header_border_bottom_width": 0,
+                            "ccc_header_border_color": 1,
+                            "header_border_color": 0,
+                            "header_border_opacity": 0,
+                            "header_border_tl_radius": 0,
+                            "header_border_tr_radius": 0,
+                            "header_border_bl_radius": 0,
+                            "header_border_br_radius": 0,
+                        }
+                        for (var name in tmp_list) {
+                            gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["header_disp" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + name + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                            if (tmp_list[name] == 1) {
+                                set_switch(page + "_advanced_" + name + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                            }
+                        }
+                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["header_disp" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && donnees.param[page]["advanced"]["header_is_foreground" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "header_x_offset" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["header_disp" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && donnees.param[page]["advanced"]["header_is_foreground" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "header_y_offset" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+
+                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["header_disp" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && !donnees.param[page]["advanced"]["ccc_header_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "header_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+
+                        gestion_couleurs_inputs_selects(!donnees.param[page]["advanced"]["header_disp" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] || donnees.param[page]["advanced"]["adapt_header_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 1, page + "_advanced_" + "ccc_header_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        set_switch(page + "_advanced_" + "ccc_header_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
+                        gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["header_disp" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && !donnees.param[page]["advanced"]["adapt_header_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && !donnees.param[page]["advanced"]["ccc_header_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "header_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
                     }
-                    gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["header_disp" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && donnees.param[page]["advanced"]["header_is_foreground" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "header_x_offset" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
-                    gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["header_disp" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && donnees.param[page]["advanced"]["header_is_foreground" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "header_y_offset" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
 
-                    gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["header_disp" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && !donnees.param[page]["advanced"]["ccc_header_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "header_bg_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
-
-                    gestion_couleurs_inputs_selects(!donnees.param[page]["advanced"]["header_disp" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] || donnees.param[page]["advanced"]["adapt_header_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 1, page + "_advanced_" + "ccc_header_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
-                    set_switch(page + "_advanced_" + "ccc_header_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
-                    gestion_couleurs_inputs_selects(donnees.param[page]["advanced"]["header_disp" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && !donnees.param[page]["advanced"]["adapt_header_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x] && !donnees.param[page]["advanced"]["ccc_header_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x], [1, 1], 0, page + "_advanced_" + "header_font_color" + "_" + menu_elements_dashboard_advanced[elt_i]["param"][0] + "_" + x);
                 }
-
             }
         }
 
     }
     for (var page in list_trackmap_pages) {
-        gestion_couleurs_inputs_selects(donnees.param["broadcast"]["broadcast_mode"], [1, 1], 0, page + "_fps_broadcast");
+        if (all_pages || page == page_active) {
+            gestion_couleurs_inputs_selects(donnees.param["broadcast"]["broadcast_mode"], [1, 1], 0, page + "_fps_broadcast");
 
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_font_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_font_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_border_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_border_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_font_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_font_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_border_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_border_coef");
 
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_color_auto");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_font_color_auto");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_font_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_carnum_me_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_border_disp");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_border_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_border_coef");
-        set_switch(page + "_" + "trackmap_car_me_color_auto");
-        set_switch(page + "_" + "trackmap_car_me_font_color_auto");
-        set_switch(page + "_" + "trackmap_car_me_border_disp");
-        if (donnees.param[page]["trackmap_car_me_specify"]) {
-            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_me_color");
-            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_font_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_me_font_color");
-            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_me_border_color");
-            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_me_border_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_color_auto");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_font_color_auto");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_font_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_carnum_me_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_border_disp");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_border_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_specify"], [1, 1], 0, page + "_" + "trackmap_car_me_border_coef");
+            set_switch(page + "_" + "trackmap_car_me_color_auto");
+            set_switch(page + "_" + "trackmap_car_me_font_color_auto");
+            set_switch(page + "_" + "trackmap_car_me_border_disp");
+            if (donnees.param[page]["trackmap_car_me_specify"]) {
+                gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_me_color");
+                gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_font_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_me_font_color");
+                gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_me_border_color");
+                gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_me_border_disp"], [1, 1], 0, page + "_" + "trackmap_car_me_border_coef");
+            }
+
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_circular"], [1, 1], 0, page + "_" + "trackmap_circular_angle");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_circular"], [1, 1], 0, page + "_" + "trackmap_circular_reverse");
+            set_switch(page + "_" + "trackmap_circular_reverse");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_circular"], [1, 1], 0, page + "_" + "trackmap_circular_centered_on_driver");
+            set_switch(page + "_" + "trackmap_circular_centered_on_driver");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_outline_disp"], [1, 1], 0, page + "_" + "trackmap_outline_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_outline_disp"], [1, 1], 0, page + "_" + "trackmap_outline_color");
+
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_distance_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_num_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_num_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_info_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_info_coef");
+
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_line_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_line_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_line_thickness_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_line_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_line_length_coef");
+
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_thickness_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_length_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_distance_coef");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_color");
+
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_P1"], [1, 1], 0, page + "_" + "trackmap_car_P1_myclass_only");
+            set_switch(page + "_" + "trackmap_car_P1_myclass_only");
+
+            set_switch("overlays_" + page);
         }
-
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_circular"], [1, 1], 0, page + "_" + "trackmap_circular_angle");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_circular"], [1, 1], 0, page + "_" + "trackmap_circular_reverse");
-        set_switch(page + "_" + "trackmap_circular_reverse");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_circular"], [1, 1], 0, page + "_" + "trackmap_circular_centered_on_driver");
-        set_switch(page + "_" + "trackmap_circular_centered_on_driver");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_outline_disp"], [1, 1], 0, page + "_" + "trackmap_outline_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_outline_disp"], [1, 1], 0, page + "_" + "trackmap_outline_color");
-
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_distance_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_num_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_num_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_info_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_disp_turns"], [1, 1], 0, page + "_" + "trackmap_turn_info_coef");
-
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_line_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_line_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_line_thickness_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_line_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_line_length_coef");
-
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_thickness_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_length_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_distance_coef");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_start_finish_arrow_disp"], [1, 1], 0, page + "_" + "trackmap_start_finish_arrow_color");
-
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_P1"], [1, 1], 0, page + "_" + "trackmap_car_P1_myclass_only");
-        set_switch(page + "_" + "trackmap_car_P1_myclass_only");
-
-        set_switch("overlays_" + page);
     }
     for (var page in list_trackmap_3d_pages) {
-        gestion_couleurs_inputs_selects(donnees.param["broadcast"]["broadcast_mode"], [1, 1], 0, page + "_fps_broadcast");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_color");
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_font_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_font_color");
+        if (all_pages || page == page_active) {
+            gestion_couleurs_inputs_selects(donnees.param["broadcast"]["broadcast_mode"], [1, 1], 0, page + "_fps_broadcast");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_color");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_font_color_auto"], [1, 1], 1, page + "_" + "trackmap_car_font_color");
 
-        gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_P1"], [1, 1], 0, page + "_" + "trackmap_car_P1_myclass_only");
-        set_switch(page + "_" + "trackmap_car_P1_myclass_only");
+            gestion_couleurs_inputs_selects(donnees.param[page]["trackmap_car_P1"], [1, 1], 0, page + "_" + "trackmap_car_P1_myclass_only");
+            set_switch(page + "_" + "trackmap_car_P1_myclass_only");
 
-        set_switch("overlays_" + page);
+            set_switch("overlays_" + page);
+        }
     }
     gestion_couleurs_inputs_selects(donnees.param["broadcast"]["broadcast_mode"], [1, 1], 0, "calculator_fps_broadcast");
     gestion_couleurs_inputs_selects(donnees.param["broadcast"]["broadcast_mode"], [1, 1], 0, "compteur_fps_broadcast");
@@ -5650,6 +5884,7 @@ function gestion_couleurs_inputs_selects(param, interval, equal, nom) {
                     document.getElementById(nom + "_text2").style.color = "#666666";
                 }
                 document.getElementById(nom).disabled = true;
+                document.getElementById(nom + "_str_elt_bloc").style.display = "none";  // pour cacher complètement l'option
             } else {
                 document.getElementById(nom).style.color = "#00ddff";
                 document.getElementById(nom + "_text").style.color = "white";
@@ -5657,6 +5892,7 @@ function gestion_couleurs_inputs_selects(param, interval, equal, nom) {
                     document.getElementById(nom + "_text2").style.color = "#aaaaaa";
                 }
                 document.getElementById(nom).disabled = false;
+                document.getElementById(nom + "_str_elt_bloc").style.display = "block";  // pour remontrer l'option
             }
         } else {
             if (param < interval[0] || param > interval[1]) {
@@ -5666,6 +5902,7 @@ function gestion_couleurs_inputs_selects(param, interval, equal, nom) {
                     document.getElementById(nom + "_text2").style.color = "#666666";
                 }
                 document.getElementById(nom).disabled = true;
+                document.getElementById(nom + "_str_elt_bloc").style.display = "none";  // pour cacher complètement l'option
             } else {
                 document.getElementById(nom).style.color = "#00ddff";
                 document.getElementById(nom + "_text").style.color = "white";
@@ -5673,6 +5910,7 @@ function gestion_couleurs_inputs_selects(param, interval, equal, nom) {
                     document.getElementById(nom + "_text2").style.color = "#aaaaaa";
                 }
                 document.getElementById(nom).disabled = false;
+                document.getElementById(nom + "_str_elt_bloc").style.display = "block";  // pour remontrer l'option
             }
         }
     }
@@ -5874,7 +6112,10 @@ function set_config_elt(elt_param, val_type, elt_type, update_timing_columns, sa
             if (page != "") {
                 for (var i in donnees.param[page].tab_titres_all_default) {
                     title_id = donnees.param[page].tab_titres_all_default[i];
+
                     val = document.getElementById(page + "_set_title_" + title_id).value;
+                    val = val.replace(/\\/g, "&#x5C;");  // Pour éviter les bug avec le fichier de config quand on rentrer un backslash dans le titre
+
                     elt_params_val_tab.push(donnees_elt_param([page, "set_title", title_id], save_type, val));
                     val = document.getElementById(page + "_w_" + title_id).value;
                     elt_params_val_tab.push(donnees_elt_param([page, "w", title_id], save_type, val));
@@ -6050,7 +6291,8 @@ function set_config_page(page, update_timing_columns, update_displays_list) {
 
     ws.send("jrtconfig;apply;"+ page + ";1;" + JSON.stringify(donnees.param));  // le 1 c'est pour dire au serveur de recharger les couleurs de classes
 
-    load_spec();  // charge les spécificités de toutes les pages (cases grisées, texte différent en fonction des valeurs)
+    //load_spec(1);  // charge les spécificités de toutes les pages (cases grisées, texte différent en fonction des valeurs)
+    load_spec();  // charge les spécificités de la page active (cases grisées, texte différent en fonction des valeurs)
 
     console.log("jrtconfig;apply");
     //console.log(page);
@@ -6352,6 +6594,8 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
         str_br2 = "";
     }
 
+    str_add_margin_endgroup = "";
+
     if (elt_type != "turns" && elt_type != "gears" && elt_type != "timing_columns") {  // pour éviter les erreurs car dans ce cas, elt n'est pas un élément mais le numéros de virage ou le n° du gear
         if ("long" in elt) {
             long = elt["long"];  // à définir plus tard dans menu_elements
@@ -6392,9 +6636,12 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
         for (var i = 1; i < elt_param.length; i++) {
             nom_var += "_" + elt_param[i];
         }
+
+        str_ret += '<div style="" id="' + nom_var + '_str_elt_bloc" >';
+
         if (elt_type == "input_color") {
 
-            str_ret = '<div id="' + nom_var + '_bloc" >' +
+            str_ret += '<div id="' + nom_var + '_bloc" >' +
                 '<div style="position: absolute; right: 4em; float: right; z-index: 2; background-color: rgba(0,0,0,0); display: block; text-align: right;" >' +
                     '<div id="' + nom_var + '_input_bg" style="vertical-align: top; text-align: right; background-color: rgba(0,0,0,0); display: inline-block;">' +
 
@@ -6410,13 +6657,16 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
                 //console.log('*** set_config_page_partial(\'' + page + '\', \'' + JSON.stringify(elt_param).replace(/"/g, '&quot;') + '\', \'' + "str" + '\', \'' + elt_type + '\') ***');
 
                 if ('newgroup' in elt && 'endgroup' in elt) {
-                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em ; margin-bottom: -0.7em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 } else if ('newgroup' in elt) {
                     str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 0px solid #333333; margin-top: 0.5em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 } else if ('endgroup' in elt) {
-                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: -0.25em ; margin-bottom: -0.7em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: -0.25em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 } else {
                     str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 0px solid #333333; margin-top: -0.25em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                }
+                if ('endgroup' in elt) {
+                    str_add_margin_endgroup = '<div style="height: 0.5em;"></div>';
                 }
 
                 str_ret += '<div id="' + nom_var + '_text" style="text-align: left; background-color: rgba(0,0,0,0); display: inline-block; width: 75%; padding: 0.5em 1em 0.5em 1em;">' +
@@ -6429,7 +6679,7 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
             '</div>';
 
 
-            //str_ret = '<div class="bloc" id="' + nom_var + '_bloc" style="display: inline-block; margin-bottom: 1em;" ><span id="' + nom_var + '_text">' + texte + '</span>' + '<input type="color" autocomplete="off" id="' + nom_var + '" size="' + long + '" onchange="set_config_page(\'' + page + '\')"></div>';
+            //str_ret += '<div class="bloc" id="' + nom_var + '_bloc" style="display: inline-block; margin-bottom: 1em;" ><span id="' + nom_var + '_text">' + texte + '</span>' + '<input type="color" autocomplete="off" id="' + nom_var + '" size="' + long + '" onchange="set_config_page(\'' + page + '\')"></div>';
 
         } else if (elt_type == "input" || elt_type.substr(0, 25) == "input_fuel_in_tank_manual") {
             var type_str = 'type="text"';
@@ -6451,7 +6701,7 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
             }
 
             if (elt_type.substr(0, 25) == "input_fuel_in_tank_manual") {  // utilisé notamment pour ne pas appliquer immédiatement le chgt de la valeur 'fuel in the tank'
-                str_ret = '<div class="input2" style= "" id="' + nom_var + '_bloc" >' +
+                str_ret += '<div class="input2" style= "" id="' + nom_var + '_bloc" >' +
                     '<div style="position: absolute; right: 1.5em; float: right; z-index: 2; background-color: rgba(0,0,0,0); display: block; text-align: right;" >' +
                         '<div id="' + nom_var + '_input_bg" style="vertical-align: top; text-align: right; background-color: rgba(0,0,0,0); display: inline-block; padding: 0.5em ' + (1 + 1.7*not_number) + 'em 0.5em 1em;">' +
                             '<div onmouseenter="onmouseover_text(\'' + nom_var + '\');" onmouseleave="onmouseout_text(\'' + nom_var + '\');" style="width:29em;">' +
@@ -6464,7 +6714,7 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
                 //console.log('*** set_config_page_partial(\'' + page + '\', \'' + JSON.stringify(elt_param).replace(/"/g, '&quot;') + '\', \'' + "float" + '\', \'' + elt_type + '\', 0, ' + update_displays_list + ') ***');
 
             } else {
-                str_ret = '<div class="input2" style= "" id="' + nom_var + '_bloc" >' +
+                str_ret += '<div class="input2" style= "" id="' + nom_var + '_bloc" >' +
                     '<div style="position: absolute; right: 1.5em; float: right; z-index: 2; background-color: rgba(0,0,0,0); display: block; text-align: right;" >' +
                         '<div id="' + nom_var + '_input_bg" style="vertical-align: top; text-align: right; background-color: rgba(0,0,0,0); display: inline-block; padding: 0.5em ' + (1 + 1.7*not_number) + 'em 0.5em 1em;">' +
                             '<div onmouseenter="onmouseover_text(\'' + nom_var + '\');" onmouseleave="onmouseout_text(\'' + nom_var + '\');" style="width:'+long+'em;">' +
@@ -6479,13 +6729,16 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
             }
 
                 if ('newgroup' in elt && 'endgroup' in elt) {
-                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em ; margin-bottom: -0.7em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 } else if ('newgroup' in elt) {
                     str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 0px solid #333333; margin-top: 0.5em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 } else if ('endgroup' in elt) {
-                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: -0.25em ; margin-bottom: -0.7em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: -0.25em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 } else {
                     str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 0px solid #333333; margin-top: -0.25em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                }
+                if ('endgroup' in elt) {
+                    str_add_margin_endgroup = '<div style="height: 0.5em;"></div>';
                 }
 
                 str_ret += '<div id="' + nom_var + '_text" style="text-align: left; background-color: rgba(0,0,0,0); display: inline-block; width: 75%; padding: 0.5em 1em 0.5em 1em;">' +
@@ -6498,7 +6751,7 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
             '</div>';
         } else if (elt_type == "info") {
             if (nom_var != "licence_str") {
-                str_ret = '<div style= "" id="' + nom_var + '_bloc" >' +
+                str_ret += '<div style= "" id="' + nom_var + '_bloc" >' +
                     '<div style="position: absolute; right: 1.5em; float: right; z-index: 2; background-color: rgba(255,0,0,0); display: block; text-align: right;" >' +
                         '<div id="' + nom_var + '_input_bg" style="vertical-align: top; text-align: right; background-color: rgba(0,0,0,0); display: inline-block; padding: 0.5em 1em 0.5em 1em;">' +
                             '<div style="padding-right: 1.7em; text-align: right; border: 0; background-color: rgba(0,0,0,0); color: #888888; " autocomplete="off"' + type_str + ' id="' + nom_var + '" size="" value="" ' +
@@ -6510,13 +6763,16 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
                     //console.log('*** set_config_page_partial(\'' + page + '\', \'' + JSON.stringify(elt_param).replace(/"/g, '&quot;') + '\', \'' + elt["val_type"] + '\', \'' + elt_type + '\', 0, ' + update_displays_list + ') ***');
 
                     if ('newgroup' in elt && 'endgroup' in elt) {
-                        str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em; margin-bottom: -0.7em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                        str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                     } else if ('newgroup' in elt) {
                         str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 0px solid #333333; margin-top: 0.5em; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                     } else if ('endgroup' in elt) {
-                        str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: -0.25em ; margin-bottom: -0.7em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                        str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: -0.25em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                     } else {
                         str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 0px solid #333333; margin-top: -0.25em; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                    }
+                    if ('endgroup' in elt) {
+                        str_add_margin_endgroup = '<div style="height: 0.5em;"></div>';
                     }
 
                     str_ret += '<div id="' + nom_var + '_text" style="text-align: left; background-color: rgba(0,0,0,0); display: inline-block; width: 50%; padding: 0.5em 1em 0.5em 1em;">' +
@@ -6528,17 +6784,17 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
                     '</div>' + str_br +
                 '</div>';
             } else {
-                str_ret = '<div id="' + nom_var + '" >--</div>';
+                str_ret += '<div id="' + nom_var + '" >--</div>';
             }
 
         } else if (elt_type == "switch") {
 
-            //str_ret = '<div class="bloc" id="' + nom_var + '_bloc" style="background-color: #ff4444; display: block; margin-bottom: -1.2em; padding: 0.25em; margin: 0;" ><input type="checkbox" id="' + nom_var + '" value="" onclick="set_config_page(\'' + page + '\')">' + texte + '</div>';
+            //str_ret += '<div class="bloc" id="' + nom_var + '_bloc" style="background-color: #ff4444; display: block; margin-bottom: -1.2em; padding: 0.25em; margin: 0;" ><input type="checkbox" id="' + nom_var + '" value="" onclick="set_config_page(\'' + page + '\')">' + texte + '</div>';
 
             //var set_config_str = 'set_config_page(\'' + page + '\', 0, 0)" onmouseenter="switch_hover(\'' + nom_var + '\');" onmouseleave="set_switch(\'' + nom_var + '\');" style="cursor: pointer; width: 3.2em; text-align: right; border: 0; border-radius: 0.6em; color: white; transition-duration: 0.3s; height: 1.2em; margin-right: 1.5em;" id="' + nom_var + '_switch" >'
             var set_config_str = 'set_config_page_partial(\'' + page + '\', \'' + JSON.stringify(elt_param).replace(/"/g, '&quot;') + '\', \'' + elt["val_type"] + '\', \'' + elt_type + '\', 0, 0)" onmouseenter="switch_hover(\'' + nom_var + '\');" onmouseleave="set_switch(\'' + nom_var + '\');" style="cursor: pointer; width: 3.2em; text-align: right; border: 0; border-radius: 0.6em; color: white; transition-duration: 0.3s; height: 1.2em; margin-right: 1.5em;" id="' + nom_var + '_switch" >'
 
-            str_ret = '<div class="checkbox2" id="' + nom_var + '_bloc" >' +
+            str_ret += '<div class="checkbox2" id="' + nom_var + '_bloc" >' +
                 '<div style="position: absolute; right: 1.5em; float: right; z-index: 2; background-color: rgba(0,0,0,0); display: block; text-align: right;" >' +
                     '<div style="vertical-align: top; text-align: right; background-color: rgba(255,0,0,0.0); display: inline-block; padding: 0.575em 1.15em 0.5em 1em;">' +
                         '<div onclick="change_switch(\'' + nom_var + '\', \'' + page + '\'); ' +
@@ -6555,13 +6811,16 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
                 //console.log('*** set_config_page_partial(\'' + page + '\', \'' + JSON.stringify(elt_param).replace(/"/g, '&quot;') + '\', \'' + elt["val_type"] + '\', \'' + elt_type + '\', 0, 0) ***');
 
                 if ('newgroup' in elt && 'endgroup' in elt) {
-                    str_ret += '<div id="' + nom_var + '_bloc" style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; padding-left: 0.875em; padding-top: 0.25em; padding-bottom: 0.25em; padding-right: 6em; background-color: ' + background_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em ; margin-bottom: -0.7em; z-index: 1; color: white; display: block; text-align: left;" >';
+                    str_ret += '<div id="' + nom_var + '_bloc" style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; padding-left: 0.875em; padding-top: 0.25em; padding-bottom: 0.25em; padding-right: 6em; background-color: ' + background_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em ; margin-bottom: -1.2em; z-index: 1; color: white; display: block; text-align: left;" >';
                 } else if ('newgroup' in elt) {
                     str_ret += '<div id="' + nom_var + '_bloc" style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; padding-left: 0.875em; padding-top: 0.25em; padding-bottom: 0.25em; padding-right: 6em; background-color: ' + background_col + '; border-top: 1px solid #333333; border-bottom: 0px solid #333333; margin-top: 0.5em ; margin-bottom: -1.2em; z-index: 1; color: white; display: block; text-align: left;" >';
                 } else if ('endgroup' in elt) {
-                    str_ret += '<div id="' + nom_var + '_bloc" style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; padding-left: 0.875em; padding-top: 0.25em; padding-bottom: 0.25em; padding-right: 6em; background-color: ' + background_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: 0em ; margin-bottom: -0.7em; z-index: 1; color: white; display: block; text-align: left;" >';
+                    str_ret += '<div id="' + nom_var + '_bloc" style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; padding-left: 0.875em; padding-top: 0.25em; padding-bottom: 0.25em; padding-right: 6em; background-color: ' + background_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: 0em ; margin-bottom: -1.2em; z-index: 1; color: white; display: block; text-align: left;" >';
                 } else {
                     str_ret += '<div id="' + nom_var + '_bloc" style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; padding-left: 0.875em; padding-top: 0.25em; padding-bottom: 0.25em; padding-right: 6em; background-color: ' + background_col + '; border-top: 0px solid #333333; border-bottom: 0px solid #333333; margin-top: 0em ; margin-bottom: -1.2em; z-index: 1; color: white; display: block; text-align: left;" >';
+                }
+                if ('endgroup' in elt) {
+                    str_add_margin_endgroup = '<div style="height: 0.5em;"></div>';
                 }
 
                 str_ret += '<input id="' + nom_var + '" type="checkbox" value="" ' +
@@ -6577,29 +6836,31 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
 
         } else if (elt_type == "checkbox") {
 
-            //str_ret = '<div class="bloc" id="' + nom_var + '_bloc" style="background-color: #ff4444; display: block; margin-bottom: -1.2em; padding: 0.25em; margin: 0;" ><input type="checkbox" id="' + nom_var + '" value="" onclick="set_config_page(\'' + page + '\')">' + texte + '</div>';
+            //str_ret += '<div class="bloc" id="' + nom_var + '_bloc" style="background-color: #ff4444; display: block; margin-bottom: -1.2em; padding: 0.25em; margin: 0;" ><input type="checkbox" id="' + nom_var + '" value="" onclick="set_config_page(\'' + page + '\')">' + texte + '</div>';
 
             if ('newgroup' in elt && 'endgroup' in elt) {
-                str_ret = '<div id="' + nom_var + '_bloc" style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; padding-left: 0.7em; padding-top: 0.25em; padding-bottom: 0.25em; padding-right: 1em; background-color: ' + background_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em ; margin-bottom: -0.7em; z-index: 1; color: white; display: block; text-align: left;" >' +
+                str_ret += '<div id="' + nom_var + '_bloc" style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; padding-left: 0.7em; padding-top: 0.25em; padding-bottom: 0.25em; padding-right: 1em; background-color: ' + background_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em ; margin-bottom: -1.2em; z-index: 1; color: white; display: block; text-align: left;" >' +
                     '<input type="checkbox" id="' + nom_var + '" value="" ' +
-                    /*'onclick="set_config_page(\'' + page + '\', 0, 0)">' + "<b>" + texte + "</b>";*/
                     'onclick="set_config_page_partial(\'' + page + '\', \'' + JSON.stringify(elt_param).replace(/"/g, '&quot;') + '\', \'' + elt["val_type"] + '\', \'' + elt_type + '\', 0, 0)">' + "<b>" + texte + "</b>";
             } else if ('newgroup' in elt) {
-                str_ret = '<div id="' + nom_var + '_bloc" style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; padding-left: 0.7em; padding-top: 0.25em; padding-bottom: 0.25em; padding-right: 1em; background-color: ' + background_col + '; border-top: 1px solid #333333; border-bottom: 0px solid #333333; margin-top: 0.5em ; margin-bottom: -1.2em; z-index: 1; color: white; display: block; text-align: left;" >' +
+                str_ret += '<div id="' + nom_var + '_bloc" style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; padding-left: 0.7em; padding-top: 0.25em; padding-bottom: 0.25em; padding-right: 1em; background-color: ' + background_col + '; border-top: 1px solid #333333; border-bottom: 0px solid #333333; margin-top: 0.5em ; margin-bottom: -1.2em; z-index: 1; color: white; display: block; text-align: left;" >' +
                     '<input type="checkbox" id="' + nom_var + '" value="" ' +
-                    /*'onclick="set_config_page(\'' + page + '\', 0, 0)">' + "<b>" + texte + "</b>";*/
                     'onclick="set_config_page_partial(\'' + page + '\', \'' + JSON.stringify(elt_param).replace(/"/g, '&quot;') + '\', \'' + elt["val_type"] + '\', \'' + elt_type + '\', 0, 0)">' + "<b>" + texte + "</b>";
             } else if ('endgroup' in elt) {
-                str_ret = '<div id="' + nom_var + '_bloc" style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; padding-left: 0.7em; padding-top: 0.25em; padding-bottom: 0.25em; padding-right: 1em; background-color: ' + background_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: 0em ; margin-bottom: -0.7em; z-index: 1; color: white; display: block; text-align: left;" >' +
+                str_ret += '<div id="' + nom_var + '_bloc" style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; padding-left: 0.7em; padding-top: 0.25em; padding-bottom: 0.25em; padding-right: 1em; background-color: ' + background_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: 0em ; margin-bottom: -1.2em; z-index: 1; color: white; display: block; text-align: left;" >' +
                     '<input type="checkbox" id="' + nom_var + '" value="" ' +
-                    /*'onclick="set_config_page(\'' + page + '\', 0, 0)">' + "<b>" + texte + "</b>";*/
                     'onclick="set_config_page_partial(\'' + page + '\', \'' + JSON.stringify(elt_param).replace(/"/g, '&quot;') + '\', \'' + elt["val_type"] + '\', \'' + elt_type + '\', 0, 0)">' + "<b>" + texte + "</b>";
             } else {
-                str_ret = '<div id="' + nom_var + '_bloc" style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; padding-left: 0.7em; padding-top: 0.25em; padding-bottom: 0.25em; padding-right: 1em; background-color: ' + background_col + '; border-top: 0px solid #333333; border-bottom: 0px solid #333333; margin-top: 0em ; margin-bottom: -1.2em; z-index: 1; color: white; display: block; text-align: left;" >' +
+                str_ret += '<div id="' + nom_var + '_bloc" style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; padding-left: 0.7em; padding-top: 0.25em; padding-bottom: 0.25em; padding-right: 1em; background-color: ' + background_col + '; border-top: 0px solid #333333; border-bottom: 0px solid #333333; margin-top: 0em ; margin-bottom: -1.2em; z-index: 1; color: white; display: block; text-align: left;" >' +
                     '<input type="checkbox" id="' + nom_var + '" value="" ' +
                     /*'onclick="set_config_page(\'' + page + '\', 0, 0)">' + "<b>" + texte + "</b>";*/
                     'onclick="set_config_page_partial(\'' + page + '\', \'' + JSON.stringify(elt_param).replace(/"/g, '&quot;') + '\', \'' + elt["val_type"] + '\', \'' + elt_type + '\', 0, 0)">' + "<b>" + texte + "</b>";
             }
+            if ('endgroup' in elt) {
+                str_add_margin_endgroup = '<div style="height: 0.5em;"></div>';
+            }
+
+
             // *** Préparation du set_config_page_partial ***
             //console.log('*** set_config_page_partial(\'' + page + '\', \'' + JSON.stringify(elt_param).replace(/"/g, '&quot;') + '\', \'' + elt["val_type"] + '\', \'' + elt_type + '\', 0, 0) ***');
             if (texte2 != "") {
@@ -6609,7 +6870,7 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
 
         } else if (elt_type == "set_button") {
 
-            str_ret = '<div style= "" id="' + nom_var + '_bloc" >' +
+            str_ret += '<div style= "" id="' + nom_var + '_bloc" >' +
                 '<div style="position: absolute; right: 1.5em; float: right; z-index: 2; background-color: rgba(0,255,0,0.0); display: block; text-align: right;" >' +
                     '<div id="' + nom_var + '_input_bg" style="vertical-align: top; text-align: right; background-color: rgba(0,0,0,0); display: inline-block; padding: 0.5em 1em 0.5em 1em;">' +
                         '<div class="joystick_button" style="margin-right: 0.5em;" id="' + nom_var + '">' +
@@ -6622,14 +6883,18 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
                 '</div>';
 
                 if ('newgroup' in elt && 'endgroup' in elt) {
-                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em ; margin-bottom: -0.7em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 } else if ('newgroup' in elt) {
                     str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 0px solid #333333; margin-top: 0.5em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 } else if ('endgroup' in elt) {
-                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: -0.25em ; margin-bottom: -0.7em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: -0.25em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 } else {
                     str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 0px solid #333333; margin-top: -0.25em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 }
+                if ('endgroup' in elt) {
+                    str_add_margin_endgroup = '<div style="height: 0.5em;"></div>';
+                }
+
                 str_ret += '<div style="box-sizing: border-box; text-align: left; background-color: rgba(0,0,255,0.0); display: inline-block; width: 95%; padding: 0.5em 1em 0.5em 1em;">' +
                         '<button id="' + nom_var + '_set" class="set" onmouseenter="document.getElementById(\'' + nom_var + '_text\').style.backgroundColor = \'yellow\';document.getElementById(\'' + nom_var + '\').style.color = \'yellow\';" onmouseleave="document.getElementById(\'' + nom_var + '_text\').style.backgroundColor = \'white\';document.getElementById(\'' + nom_var + '\').style.color = \'#00ddff\';" onclick="set_button(\'' + nom_var + '\')">SET</button>' +
                         '<button id="' + nom_var + '_del" class="del" onmouseenter="document.getElementById(\'' + nom_var + '_text\').style.backgroundColor = \'yellow\';document.getElementById(\'' + nom_var + '\').style.color = \'yellow\';" onmouseleave="document.getElementById(\'' + nom_var + '_text\').style.backgroundColor = \'white\';document.getElementById(\'' + nom_var + '\').style.color = \'#00ddff\';" onclick="clear_button(\'' + nom_var + '\')">DEL</button>' +
@@ -6643,7 +6908,7 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
 
         } else if (elt_type == "select") {
 
-            str_ret = '<div id="' + nom_var + '_bloc" >' +
+            str_ret += '<div id="' + nom_var + '_bloc" >' +
                 '<div style="position: absolute; right: 1.5em; float: right; z-index: 2; background-color: rgba(255,0,0,0); display: block; text-align: right;" >' +
                     '<div id="' + nom_var + '_input_bg" style="vertical-align: top; text-align: right; background-color: rgba(0,0,0,0); display: inline-block; padding: 0.5em 1em 0.5em 1em;">';
 
@@ -6666,13 +6931,16 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
                 '</div>';
 
                 if ('newgroup' in elt && 'endgroup' in elt) {
-                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em ; margin-bottom: -0.7em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 } else if ('newgroup' in elt) {
                     str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 0px solid #333333; margin-top: 0.5em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 } else if ('endgroup' in elt) {
-                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: -0.25em ; margin-bottom: -0.7em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: -0.25em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 } else {
                     str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 0px solid #333333; margin-top: -0.25em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                }
+                if ('endgroup' in elt) {
+                    str_add_margin_endgroup = '<div style="height: 0.5em;"></div>';
                 }
 
                 str_ret += '<div id="' + nom_var + '_text" style="text-align: left; background-color: rgba(0,0,0,0); display: inline-block; width: 50%; padding: 0.5em 1em 0.5em 1em;">' +
@@ -6690,13 +6958,17 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
         } else {
             console.log("elt_type not defined : ", elt_type);
         }
+
     } else {
+
+        str_ret += '<div>';
+
         if (elt_type == "page_link") {
             nom_var = elt["page_name"] + "_link";
             //console.log(nomvar, "http://" + localIP + ":" + donnees.param["general"]["PORT"] + "/" + elt["page_name"] + ".html")
             var url = "http://" + localIP + ":" + donnees.param["general"]["PORT"] + "/" + elt["page_name"] + ".html";
 
-            str_ret = '<div style= "" id="' + nom_var + '_bloc" >' +
+            str_ret += '<div style= "" id="' + nom_var + '_bloc" >' +
                 '<div style="position: absolute; right: 1.5em; float: right; z-index: 2; background-color: rgba(255,0,0,0); display: block; text-align: right;" >' +
                     '<div id="' + nom_var + '_input_bg" style="vertical-align: top; text-align: right; background-color: rgba(0,0,0,0); display: inline-block; padding: 0.5em 1em 0.5em 1em;">' +
                         '<a href="' + url + '" style="padding-right: 1.7em; text-align: right; border: 0; background-color: rgba(0,0,0,0); " id="' + nom_var + '">' + url + '</a>' +
@@ -6704,13 +6976,16 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
                 '</div>';
 
                 if ('newgroup' in elt && 'endgroup' in elt) {
-                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em; margin-bottom: -0.7em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 } else if ('newgroup' in elt) {
                     str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 0px solid #333333; margin-top: 0.5em; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 } else if ('endgroup' in elt) {
-                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: -0.25em ; margin-bottom: -0.7em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                    str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: -0.25em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                 } else {
                     str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 0px solid #333333; margin-top: -0.25em; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                }
+                if ('endgroup' in elt) {
+                    str_add_margin_endgroup = '<div style="height: 0.5em;"></div>';
                 }
 
                 str_ret += '<div id="' + nom_var + '_text" style="text-align: left; background-color: rgba(0,0,0,0); display: inline-block; width: 50%; padding: 0.5em 1em 0.5em 1em;">' +
@@ -6727,10 +7002,10 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
             margin_top = elt["texte"]["margin-top"];
             margin_bottom = elt["texte"]["margin-bottom"];
             if (texte == "<hr>") {
-                str_ret = '<hr>';
+                str_ret += '<hr>';
             } else {
 
-                str_ret = '<div>' +
+                str_ret += '<div>' +
                     '<div style="position: absolute; right: 1.5em; float: right; z-index: 2; background-color: rgba(255,0,0,0); display: block; text-align: right;" >' +
                         '<div id="' + nom_var + '_input_bg" style="vertical-align: top; text-align: right; background-color: rgba(0,0,0,0); display: inline-block; padding: 0.5em 1em 0.5em 1em;">' +
                             '<div style="padding-right: 1.7em; text-align: right; border: 0; background-color: rgba(0,0,0,0); color: #888888; " id="' + nom_var + '"></div>' +
@@ -6738,13 +7013,16 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
                     '</div>';
 
                     if ('newgroup' in elt && 'endgroup' in elt) {
-                        str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em; margin-bottom: -0.7em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                        str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 1px solid #333333; margin-top: 0.5em; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                     } else if ('newgroup' in elt) {
                         str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 1px solid #333333; border-bottom: 0px solid #333333; margin-top: 0.5em; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                     } else if ('endgroup' in elt) {
-                        str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: -0.25em ; margin-bottom: -0.7em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                        str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 1px solid #333333; margin-top: -0.25em ; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
                     } else {
                         str_ret += '<div style="box-shadow: inset 2px 0px ' + bg_col + ', inset -0px 0px ' + bg_col + '; border-top: 0px solid #333333; border-bottom: 0px solid #333333; margin-top: -0.25em; margin-bottom: -1.2em; position: relative; z-index: 1; width: 100%; color: white; background-color: ' + background_col + '; display: block; text-align: left;" >';
+                    }
+                    if ('endgroup' in elt) {
+                        str_add_margin_endgroup = '<div style="height: 0.5em;"></div>';
                     }
 
                     str_ret += '<div style="box-sizing: border-box; margin-top: ' + margin_top + 'em; margin-bottom: ' + margin_bottom + 'em; text-align: left; background-color: rgba(0,0,0,0); display: inline-block; width: 100%; padding: 0.5em 1em 0.5em 1em;">' +
@@ -6757,15 +7035,15 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
                 '</div>';
 
 
-                //str_ret = '<div style="margin-top: ' + margin_top + 'em; margin-bottom: ' + margin_bottom + 'em; display: inline-block;">' + texte + '</div>';
+                //str_ret += '<div style="margin-top: ' + margin_top + 'em; margin-bottom: ' + margin_bottom + 'em; display: inline-block;">' + texte + '</div>';
             }
         } else if (elt_type == "input_key") {
             nom_var = "input_key";
-            str_ret = '<div class="bloc" id="' + nom_var + '_bloc" style="display: inline-block;" ><span id="' + nom_var + '_text">' + texte + '</span>' + '<input autocomplete="off" type="text" id="' + nom_var + '" size="' + long + '" value=""><button onclick="add_key()">Add Key</button>' + str_br + '</div>';
+            str_ret += '<div class="bloc" id="' + nom_var + '_bloc" style="display: inline-block;" ><span id="' + nom_var + '_text">' + texte + '</span>' + '<input autocomplete="off" type="text" id="' + nom_var + '" size="' + long + '" value=""><button onclick="add_key()">Add Key</button>' + str_br + '</div>';
         } else if (elt_type == "licence_key_list") {
             nom_var = "licence_key_list";
             var size = Object.keys(donnees.param["general"]["licence_key"]).length + 1;
-            str_ret =  '<div class="bloc" id="' + nom_var + '_bloc" style="display: inline-block;" ><select id="' + nom_var + '" size=' + size + '>';
+            str_ret +=  '<div class="bloc" id="' + nom_var + '_bloc" style="display: inline-block;" ><select id="' + nom_var + '" size=' + size + '>';
             for (var n in donnees.param["general"]["licence_key"]) {
                 str_ret += '<option value="' + n + '">' + donnees.param["general"]["licence_key"][n] + '</option>';
             }
@@ -6774,14 +7052,14 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
         } else if (elt_type == "info_car") {
             nom_var = elt["group_id"] + "_info_car";
             texte = elt["texte"];
-            str_ret = '<div class="bloc" id="' + nom_var + '_bloc" style="display: block;" >' + texte + '<span style="display: inline-block;" id="' + nom_var + '" >--</span>' + str_br + '</div>';
+            str_ret += '<div class="bloc" id="' + nom_var + '_bloc" style="display: block;" >' + texte + '<span style="display: inline-block;" id="' + nom_var + '" >--</span>' + str_br + '</div>';
         } else if (elt_type == "info_track") {
             nom_var = elt["group_id"] + "_info_track";
             texte = elt["texte"];
-            str_ret = '<div class="bloc" id="' + nom_var + '_bloc" style="display: block;" >' + texte + '<span style="display: inline-block;" id="' + nom_var + '" >--</span>' + str_br + '</div>';
+            str_ret += '<div class="bloc" id="' + nom_var + '_bloc" style="display: block;" >' + texte + '<span style="display: inline-block;" id="' + nom_var + '" >--</span>' + str_br + '</div>';
         } else if (elt_type == "turns") {
             var i = elt;
-            str_ret = '<div class="bloc" id="track_turn_' + i + '_bloc" style="display: inline-block;" >';
+            str_ret += '<div class="bloc" id="track_turn_' + i + '_bloc" style="display: inline-block;" >';
             str_ret += '<input autocomplete="off" type="text" id="track_turn_num_' + i + '" size="4" value="" ' +
                 /*'oninput="set_config_page(\'track\', 0, 0)">';*/
                 'oninput="set_config_page_partial(\'track\', null, null, \'' + elt_type + '\', 0, 0)">';
@@ -6799,7 +7077,7 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
             str_ret += str_br + '</div>';
         } else if (elt_type == "gears") {
             var i = elt;
-            str_ret = '<div class="bloc" id="car_gear_' + i + '_bloc" style="display: block;" >';
+            str_ret += '<div class="bloc" id="car_gear_' + i + '_bloc" style="display: block;" >';
             str_th = "th";
             if (i == 1) str_th = "st";
             if (i == 2) str_th = "nd";
@@ -6812,9 +7090,9 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
             str_ret += str_br + '</div>';
         } else if (elt_type == "button") {
             if (elt["action"] == "reset_trackmap") {
-                str_ret = '<button id="' + elt["action"] + '" onclick="button_action(\'' + elt["action"] + '\', [\'' + donnees.trackname_path + '\', \'' + donnees.trackname + '\'])">' + "RESET '" + donnees.trackname + "' TRACKMAP" + '</button>' + str_br;
+                str_ret += '<button id="' + elt["action"] + '" onclick="button_action(\'' + elt["action"] + '\', [\'' + donnees.trackname_path + '\', \'' + donnees.trackname + '\'])">' + "RESET '" + donnees.trackname + "' TRACKMAP" + '</button>' + str_br;
             } else {
-                str_ret = '<button id="' + elt["action"] + '" onclick="button_action(\'' + elt["action"] + '\')">' + texte + '</button>' + str_br;
+                str_ret += '<button id="' + elt["action"] + '" onclick="button_action(\'' + elt["action"] + '\')">' + texte + '</button>' + str_br;
             }
         } else if (elt_type == "timing_columns") {
             //var i = elt;
@@ -6835,10 +7113,10 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
                 order_num = order_num + ".";
             }
             //console.log(i, "Title ID :", title_id, ", Name :", donnees.param["timing"].set_title[title_id], ", Width :", donnees.param["timing"].w[title_id])
-            //str_ret = "<div>" + title_id  + " - " + order_nums_["timing_columns"][title_id] + " - " + donnees.param["timing"].set_title[title_id] + " - " + donnees.param["timing"].w[title_id] + "</div>";
+            //str_ret += "<div>" + title_id  + " - " + order_nums_["timing_columns"][title_id] + " - " + donnees.param["timing"].set_title[title_id] + " - " + donnees.param["timing"].w[title_id] + "</div>";
 
-            //str_ret = '<div class="bloc" id="' + page + '_columns_bloc">';
-            str_ret = '<div class="timing_columns_bloc" id="' + page + '_columns_' + title_id + '_bloc" title="' + infos_bulle + '">&nbsp;';
+            //str_ret += '<div class="bloc" id="' + page + '_columns_bloc">';
+            str_ret += '<div class="timing_columns_bloc" id="' + page + '_columns_' + title_id + '_bloc" title="' + infos_bulle + '">&nbsp;';
             str_ret += '<div class="timing_columns_drag" style="display: inline-block;" id="' + page + '_columns_' + title_id + '_drag">';
 
             str_ret += '<div  style="display: inline-block; user-select: none;" ><div style="color : #00ddff; display: inline-block; width: 3em; cursor: grab;" id = "' + page + '_order_' + title_id + '">&nbsp;' + order_num + '</div> <input type="checkbox" id="' + page + '_display_' + title_id + '" value="" ' +
@@ -6901,6 +7179,11 @@ function str_elt(elt_param, elt, elt_type, update_displays_list, add_br, bg_col,
     }
 
     str_ret += str_br2;
+
+    str_ret += "</div>";
+
+    str_ret += str_add_margin_endgroup;
+
     //console.log(str_ret)
     return str_ret;
 }

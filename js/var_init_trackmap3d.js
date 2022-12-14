@@ -167,3 +167,23 @@ function init_var() {
 
 pro_expired = -1;
 pro_expired_old = -1;
+
+// Objet définissant si les pilotes qui ont été sélectionnés manuellement ou non pour être affichés sur la trackmap (défini pour chaque page indépendemment)
+driver_selected_caridx_ = {};
+if (localStorage.driver_selected_caridx_ == null || localStorage.driver_selected_caridx_ == 'null') {
+    localStorage.driver_selected_caridx_ = JSON.stringify(driver_selected_caridx_);
+}
+driver_selected_caridx_ = JSON.parse(localStorage.driver_selected_caridx_);
+if (!(window_shortname in driver_selected_caridx_)) {
+    driver_selected_caridx_[window_shortname] = {};
+}
+if (localStorage.sessionid == null || localStorage.sessionid == 'null') {
+    var tmp_sid = {};
+    tmp_sid[window_shortname] = 0;
+    localStorage.sessionid = JSON.stringify(tmp_sid);
+}
+if (!(window_shortname in JSON.parse(localStorage.sessionid))) {
+    var tmp_sid = JSON.parse(localStorage.sessionid);
+    tmp_sid[window_shortname] = 0;
+    localStorage.sessionid = JSON.stringify(tmp_sid);
+}

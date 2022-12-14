@@ -82,6 +82,7 @@
     <script type="text/javascript">document.write('<scr' + 'ipt src="js/func_options.js?'+Math.random()+'" type="text/javascript"></scr' + 'ipt>');</script>
     <script type="text/javascript">document.write('<scr' + 'ipt src="js/animations.js?'+Math.random()+'" type="text/javascript"></scr' + 'ipt>');</script>
     <script type="text/javascript">document.write('<scr' + 'ipt src="js/deltas_and_gapcolor_dashboard.js?'+Math.random()+'" type="text/javascript"></scr' + 'ipt>');</script>
+    <script type="text/javascript">document.write('<scr' + 'ipt src="js/_colorize.js?'+Math.random()+'" type="text/javascript"></scr' + 'ipt>');</script>
     <script type="text/javascript">document.write('<scr' + 'ipt src="js/responsive_dashboard.js?'+Math.random()+'" type="text/javascript"></scr' + 'ipt>');</script>
     <script type="text/javascript">document.write('<scr' + 'ipt src="js/update_dashboard.js?'+Math.random()+'" type="text/javascript"></scr' + 'ipt>');</script>
     <script type="text/javascript">document.write('<scr' + 'ipt src="js/dashboard.js?'+Math.random()+'" type="text/javascript"></scr' + 'ipt>');</script>
@@ -142,6 +143,9 @@
 	<div id="estlaps">88.8</div>
     <div id ="estlaps_bg0">&nbsp;</div>
     <div id ="estlaps_bg1">&nbsp;</div>
+
+	<div id="estlaps_white_bar_pct">88.8%</div>
+
 	<div id="lapsremain">88.8</div>
     <div id = "lapsremain_bg0">&nbsp;</div>
     <div id = "lapsremain_bg1">&nbsp;</div>
@@ -150,7 +154,7 @@
 	<div id="lapsremain_orange_bar_pct">88.8%</div>
 	<div id="lapsremain_gold_line_pct">88.8%</div>
 
-	<div onclick = "if(broadcast==0) ws.send('refuel')" id="fuelneed">88.8</div>
+	<div onclick = "if(broadcast==0) ws.send('refuel'); if(broadcast==1) ws3.send('refuel')" id="fuelneed">88.8</div>
     <div id = "fuelneed_bg0">&nbsp;</div>
     <div id = "fuelneed_bg1">&nbsp;</div>
 	<div id="conso">8.888</div>
@@ -225,6 +229,13 @@
 	<div id="pre_name">&nbsp;Name Ahead</div>
 	<div id="me_name">&nbsp;Name Focused</div>
 	<div id="post_name">&nbsp;Name Behind</div>
+
+	<div id="leader_name">&nbsp;Name Leader</div>
+	<div id="cleader_name">&nbsp;Name Class Leader</div>
+	<div id="leader_best">--'--.---</div>
+	<div id="cleader_best">--'--.---</div>
+	<div id="leader_last">--'--.---</div>
+	<div id="cleader_last">--'--.---</div>
 
     <div id="delta_best_h">BEST</div>
     <div id="delta_best">+0.00</div>
@@ -384,7 +395,7 @@
 	<div id="air_dens">8.88</div>
 	<div id="fog">88%</div>
 	<div id="track_temp">88.8&degC</div>
-	<div id="track_usage">88.8%</div>
+	<div id="track_usage">moderately low usage</div>
 
 	<div id="date_ingame">
 		<div id="date_ingame_flex_content" style="display: inline-flex;">
@@ -440,6 +451,8 @@
 	<div id="iframe3_cont"><iframe id="iframe3"></iframe></div>
 	<div id="iframe4_cont"><iframe id="iframe4"></iframe></div>
 
+	<div id="display_changed_name">--</div>
+
 	<div id="setting_changed_name">--</div>
 	<div id="setting_changed_value">--</div>
 
@@ -484,15 +497,15 @@
 	<div id="LeftTireSetsAvailable">8</div>
 	<div id="RightTireSetsAvailable">8</div>
 
-	<div onclick="if(broadcast==0) ws.send('iracing_fuel_box')" id="iracing_fuel_box">X</div>
+	<div onclick="if(broadcast==0) ws.send('iracing_fuel_box'); if(broadcast==1) ws3.send('iracing_fuel_box')" id="iracing_fuel_box">&#10004;</div>
 	<div id="iracing_fuel_add">88.8</div>
-	<div onclick="if(broadcast==0) ws.send('iracing_windshield_box')" id="iracing_windshield_box">X</div>
-	<div onclick="if(broadcast==0) ws.send('iracing_fastrepair_box')" id="iracing_fastrepair_box">X</div>
+	<div onclick="if(broadcast==0) ws.send('iracing_windshield_box'); if(broadcast==1) ws3.send('iracing_windshield_box')" id="iracing_windshield_box">&#10004;</div>
+	<div onclick="if(broadcast==0) ws.send('iracing_fastrepair_box'); if(broadcast==1) ws3.send('iracing_fastrepair_box')" id="iracing_fastrepair_box">&#10004;</div>
 	<div id="iracing_fastrepair_remaining">8</div>
-	<div onclick="if(broadcast==0) ws.send('iracing_lf_tire_box')" id="iracing_lf_tire_box">X</div>
-	<div onclick="if(broadcast==0) ws.send('iracing_rf_tire_box')" id="iracing_rf_tire_box">X</div>
-	<div onclick="if(broadcast==0) ws.send('iracing_lr_tire_box')" id="iracing_lr_tire_box">X</div>
-	<div onclick="if(broadcast==0) ws.send('iracing_rr_tire_box')" id="iracing_rr_tire_box">X</div>
+	<div onclick="if(broadcast==0) ws.send('iracing_lf_tire_box'); if(broadcast==1) ws3.send('iracing_lf_tire_box')" id="iracing_lf_tire_box">&#10004;</div>
+	<div onclick="if(broadcast==0) ws.send('iracing_rf_tire_box'); if(broadcast==1) ws3.send('iracing_rf_tire_box')" id="iracing_rf_tire_box">&#10004;</div>
+	<div onclick="if(broadcast==0) ws.send('iracing_lr_tire_box'); if(broadcast==1) ws3.send('iracing_lr_tire_box')" id="iracing_lr_tire_box">&#10004;</div>
+	<div onclick="if(broadcast==0) ws.send('iracing_rr_tire_box'); if(broadcast==1) ws3.send('iracing_rr_tire_box')" id="iracing_rr_tire_box">&#10004;</div>
 
 	<div id="pit_speed_diff">8.8</div>
 

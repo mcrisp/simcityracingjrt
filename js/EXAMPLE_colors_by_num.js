@@ -1,6 +1,7 @@
 
 // If you want to set a special font and background color for a specific car number :
 // NOTE : it will be ignored if you set font and background color for the class of the car
+// NOTE2 : you can enter an user id or a team id instead of the car number
 //col_by_num['05'] = '#ffffff';
 //bg_by_num['05'] = '#ff0000';
 

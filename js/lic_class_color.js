@@ -4,8 +4,19 @@ function lic_class_color() {
         // On change la couleur de fond des numéros , de l'irating et de la couleur de la position dans la class
         var str = donnees.d[i].cc;
         var tmp_num = donnees.d[i].num;
+
+        var tmp_id = 0;
+        if ("tid" in donnees.d[i] && "uid" in donnees.d[i]) {
+            tmp_id = donnees.d[i].tid;
+            if (tmp_id == 0) {  // on prend en compte le team id si elle n'est pas nulle, sinon on prend l'user id
+                tmp_id = donnees.d[i].uid;
+            }
+        }
+
         if (tmp_num in bg_by_num) {
             str = "0x" + bg_by_num[tmp_num].slice(1);
+        } else if (tmp_id in bg_by_num) {
+            str = "0x" + bg_by_num[tmp_id].slice(1);
         }
         if (donnees.d[i].classid in bg_by_classid_corr) {
             str = "0x" + bg_by_classid_corr[donnees.d[i].classid].slice(1);
@@ -33,6 +44,8 @@ function lic_class_color() {
                 }
                 if (tmp_num in col_by_num) {  // si on a définit des couleurs spécifiques pour un numéros
                     font_coul = col_by_num[tmp_num].slice(1);  // REM : on enlève le #
+                } else if (tmp_id in col_by_num) {
+                    font_coul = col_by_num[tmp_id].slice(1);  // REM : on enlève le #
                 }
                 if (donnees.d[i].classid in col_by_classid_corr) {
                     font_coul = col_by_classid_corr[donnees.d[i].classid].slice(1);

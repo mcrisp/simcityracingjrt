@@ -373,7 +373,7 @@ function trackmap() {
                         if (i != selected_idxjs) {
                             trackmap_context.globalAlpha = 0.75;
                             // Si le pilote a un tour de retard on rajoute du bleu, et s'il a un tour d'avance on met du rouge
-                            if (trackmap_car_ring_lapper) {
+                            if (trackmap_car_ring_lapper && donnees.styp == "Race") {
                                 if (donnees.d[i].dp - dp_exit > 0.5)
                                     driver_on_trackmap("#ff4444", ldp, i, 1.5, 0, 1.5);
                                 if (donnees.d[i].dp - dp_exit < -0.5)
@@ -384,8 +384,19 @@ function trackmap() {
                         // Couleur de la class du pilote
                         str = donnees.d[i].cc;
                         var tmp_num = donnees.d[i].num;
+
+                        var tmp_id = 0;
+                        if ("tid" in donnees.d[i] && "uid" in donnees.d[i]) {
+                            tmp_id = donnees.d[i].tid;
+                            if (tmp_id == 0) {  // on prend en compte le team id si elle n'est pas nulle, sinon on prend l'user id
+                                tmp_id = donnees.d[i].uid;
+                            }
+                        }
+
                         if (tmp_num in bg_by_num) {
                             str = "0x" + bg_by_num[tmp_num].slice(1);
+                        } else if (tmp_id in bg_by_num) {
+                            str = "0x" + bg_by_num[tmp_id].slice(1);
                         }
                         if (donnees.d[i].classid in bg_by_classid_corr) {
                             str = "0x" + bg_by_classid_corr[donnees.d[i].classid].slice(1);
@@ -644,247 +655,262 @@ function driver_on_trackmap(coul, ldp, caridx, taille, plein, epaisseur_trait) {
         is_myclass = true;
     }
 
-    // Si le driver est dans les stands, on ne l'affiche que si l'option trackmap_car_inpits_disp est activée
-    // Si l'option trackmap_car_myclass_only est activée, on n'affiche que les voitures de notre classe
-    if ( (!trackmap_car_myclass_only || is_myclass) && (!(donnees.d[caridx].pr) || (trackmap_car_inpits_disp == 1 || caridx == selected_idxjs)) ) {
+    // Indication du premier de la classe
+    if (donnees.styp == "Race") {
+        classpos = donnees.d[caridx].cpos;
+    } else {
+        classpos = donnees.d[caridx].cposbest;
+    }
 
-        if (trackmap_circular_centered_on_driver == 1 && trackmap_circular == 1 && ldp_selected_idxjs != -1) {
-            ldp = (ldp - ldp_selected_idxjs) % 1;
-            if (ldp < 0) ldp += 1;
-        }
+    if (trackmap_select_drivers_number == 0 || classpos <= trackmap_select_drivers_number || (caridx in driver_selected_caridx_[window_shortname] && driver_selected_caridx_[window_shortname][caridx] == 1)) {
 
-        k = Math.floor(donnees.coef_k * ldp);
-        d = donnees.coef_k * ldp;
+        // Si le driver est dans les stands, on ne l'affiche que si l'option trackmap_car_inpits_disp est activée
+        // Si l'option trackmap_car_myclass_only est activée, on n'affiche que les voitures de notre classe
+        if ((!trackmap_car_myclass_only || is_myclass) && (!(donnees.d[caridx].pr) || (trackmap_car_inpits_disp == 1 || caridx == selected_idxjs))) {
 
-        // REM : le k ne doit être égale ni à k_max, ni à 0 pour éviter un mouvement saccadé sur la ligne
-        if (k >= donnees.k_max || k == 0) k = donnees.k_max - 1;
-        k2 = k + 1;
-        if (k2 >= donnees.k_max || k2 == 0) k2 = 1;
-
-        if (k in track.x && k in track.y && donnees.k_max > 0) {
-
-            rayon = taille * track_epaisseur / 2;
-            /*if (trackmap_disp_mode != 0) {  // on double le rayon si on affiche le n° ou les 3 premières lettres
-             rayon = 2 * rayon;
-             }*/
-
-            if (caridx == selected_idxjs && trackmap_car_me_specify) {
-                tmp_trackmap_car_coef = trackmap_car_me_coef;
-            } else {
-                tmp_trackmap_car_coef = trackmap_car_coef;
+            if (trackmap_circular_centered_on_driver == 1 && trackmap_circular == 1 && ldp_selected_idxjs != -1) {
+                ldp = (ldp - ldp_selected_idxjs) % 1;
+                if (ldp < 0) ldp += 1;
             }
 
-            rayon = tmp_trackmap_car_coef * rayon;
+            k = Math.floor(donnees.coef_k * ldp);
+            d = donnees.coef_k * ldp;
 
-            // On fait une interpolation
-            coord_x_y = calc_x_y(ldp, null);
-            x = coord_x_y[0];
-            y = coord_x_y[1];
-            coord_x_y = calc_x_y(0, k);
-            x1 = coord_x_y[0];
-            y1 = coord_x_y[1];
-            coord_x_y = calc_x_y(0, k2);
-            x2 = coord_x_y[0];
-            y2 = coord_x_y[1];
+            // REM : le k ne doit être égale ni à k_max, ni à 0 pour éviter un mouvement saccadé sur la ligne
+            if (k >= donnees.k_max || k == 0) k = donnees.k_max - 1;
+            k2 = k + 1;
+            if (k2 >= donnees.k_max || k2 == 0) k2 = 1;
 
-            l = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+            if (k in track.x && k in track.y && donnees.k_max > 0) {
 
-            // Indication du premier de la classe
-            if (donnees.styp == "Race") {
-                classpos = donnees.d[caridx].cpos;
-            } else {
-                classpos = donnees.d[caridx].cposbest;
-            }
-
-            // Dessin du panneau P1
-            if (plein != 0 && taille == 1 && classpos == 1 && trackmap_car_P1 && (trackmap_car_P1_myclass_only == 0 || is_myclass)) {
-                //if (trackmap_disp_mode != 0) {
-                rayon2 = rayon / 2;
-                tmp_coef1 = 4 / 3;
-                tmp_coef2 = 1.92;
-                tmp_coef3 = 1.64;
-                /*} else {
-                 rayon2 = rayon;
-                 tmp_coef1 = 1;
-                 tmp_coef2 = 1;
-                 tmp_coef3 = 1;
+                rayon = taille * track_epaisseur / 2;
+                /*if (trackmap_disp_mode != 0) {  // on double le rayon si on affiche le n° ou les 3 premières lettres
+                 rayon = 2 * rayon;
                  }*/
 
-                var x_ = x;
-                var y_ = y;
+                if (caridx == selected_idxjs && trackmap_car_me_specify) {
+                    tmp_trackmap_car_coef = trackmap_car_me_coef;
+                } else {
+                    tmp_trackmap_car_coef = trackmap_car_coef;
+                }
+
+                rayon = tmp_trackmap_car_coef * rayon;
+
+                // On fait une interpolation
+                coord_x_y = calc_x_y(ldp, null);
+                x = coord_x_y[0];
+                y = coord_x_y[1];
+                coord_x_y = calc_x_y(0, k);
+                x1 = coord_x_y[0];
+                y1 = coord_x_y[1];
+                coord_x_y = calc_x_y(0, k2);
+                x2 = coord_x_y[0];
+                y2 = coord_x_y[1];
+
+                l = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+
+                // Dessin du panneau P1
+                if (plein != 0 && taille == 1 && classpos == 1 && trackmap_car_P1 && (trackmap_car_P1_myclass_only == 0 || is_myclass)) {
+                    //if (trackmap_disp_mode != 0) {
+                    rayon2 = rayon / 2;
+                    tmp_coef1 = 4 / 3;
+                    tmp_coef2 = 1.92;
+                    tmp_coef3 = 1.64;
+                    /*} else {
+                     rayon2 = rayon;
+                     tmp_coef1 = 1;
+                     tmp_coef2 = 1;
+                     tmp_coef3 = 1;
+                     }*/
+
+                    var x_ = x;
+                    var y_ = y;
+
+                    // Si le driver est dans les stands, on le décale sur le côté de la piste
+                    if (donnees.d[caridx].pr && l != 0) {
+                        decale_x = -(y2 - y1) / l * track_epaisseur * 1.5 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? -1 : 1);
+                        decale_y = (x2 - x1) / l * track_epaisseur * 1.5 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? -1 : 1);
+                    } else {
+                        decale_x = 0;
+                        decale_y = 0
+                    }
+                    x_ += decale_x;
+                    y_ += decale_y;
+
+                    //xp1 = x + 1.5*(y2 - y1) / l * track_epaisseur * 1.5 * tmp_coef1;
+                    //yp1 = y - 1.5*(x2 - x1) / l * track_epaisseur * 1.5 * tmp_coef1;
+                    xp1 = x_ + 1.5 * (y2 - y1) / l * rayon * 2 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? 1 : -1);
+                    yp1 = y_ - 1.5 * (x2 - x1) / l * rayon * 2 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? 1 : -1);
+                    //xt1 = x + 0.35*(y2 - y1) / l * track_epaisseur * 1.5 * tmp_coef2;
+                    //yt1 = y - 0.35*(x2 - x1) / l * track_epaisseur * 1.5 * tmp_coef2;
+                    //xt2 = x + 0.75*(y2 - y1) / l * track_epaisseur * 1.5 * tmp_coef3;
+                    //yt2 = y - 0.75*(x2 - x1) / l * track_epaisseur * 1.5 * tmp_coef3;
+                    xt1 = x_ + 0.5 * (y2 - y1) / l * rayon * 2 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? 1 : -1);
+                    yt1 = y_ - 0.5 * (x2 - x1) / l * rayon * 2 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? 1 : -1);
+                    xt2 = x_ + 1 * (y2 - y1) / l * rayon * 2 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? 1 : -1);
+                    yt2 = y_ - 1 * (x2 - x1) / l * rayon * 2 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? 1 : -1);
+                    trackmap_context.beginPath(); //On démarre un nouveau tracé.
+                    trackmap_context.strokeStyle = "#000000";
+                    trackmap_context.lineWidth = 3 * rayon2 / 7 * epaisseur_trait;
+                    trackmap_context.moveTo(xt1, yt1);//On se déplace au coin inférieur gauche
+                    trackmap_context.lineTo(xt2, yt2);
+                    trackmap_context.stroke(); //On trace seulement les lignes.
+                    trackmap_context.closePath();
+                    trackmap_context.beginPath(); //On démarre un nouveau tracé.
+                    if (rayon2 >= 0) {
+                        trackmap_context.arc(xp1, yp1, 2 * rayon2, 0, Math.PI * 2); //On trace la courbe délimitant notre forme
+                    }
+                    trackmap_context.fillStyle = coul;
+                    trackmap_context.fill(); //On utilise la méthode fill(); si l'on veut une forme pleine
+                    trackmap_context.closePath();
+                    trackmap_context.beginPath(); //On démarre un nouveau tracé.
+                    if (rayon2 >= 0) {
+                        trackmap_context.arc(xp1, yp1, 2.1 * rayon2, 0, Math.PI * 2); //On trace la courbe délimitant notre forme
+                    }
+                    trackmap_context.strokeStyle = "#000000";
+                    trackmap_context.lineWidth = 3 * rayon2 / 7 * epaisseur_trait;
+                    trackmap_context.stroke(); //On utilise la méthode fill(); si l'on veut une forme pleine
+                    trackmap_context.closePath();
+                    trackmap_context.fillStyle = "#000000";
+                    trackmap_context.font = "bold " + 2.5 * rayon2 * 0.9 + "px " + "'" + trackmap_font_family + "'";
+                    trackmap_context.textAlign = "center";
+                    trackmap_context.fillText("P1", xp1, yp1 + 0.75 * rayon2 * 0.9);
+                }
+
 
                 // Si le driver est dans les stands, on le décale sur le côté de la piste
                 if (donnees.d[caridx].pr && l != 0) {
-                    decale_x = -(y2 - y1) / l * track_epaisseur * 1.5 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? -1:1);
-                    decale_y = (x2 - x1) / l * track_epaisseur * 1.5 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? -1:1);
+                    decale_x = -(y2 - y1) / l * track_epaisseur * 1.5 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? -1 : 1);
+                    decale_y = (x2 - x1) / l * track_epaisseur * 1.5 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? -1 : 1);
                 } else {
                     decale_x = 0;
                     decale_y = 0
                 }
-                x_ += decale_x;
-                y_ += decale_y;
-
-                //xp1 = x + 1.5*(y2 - y1) / l * track_epaisseur * 1.5 * tmp_coef1;
-                //yp1 = y - 1.5*(x2 - x1) / l * track_epaisseur * 1.5 * tmp_coef1;
-                xp1 = x_ + 1.5 * (y2 - y1) / l * rayon * 2 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? 1:-1);
-                yp1 = y_ - 1.5 * (x2 - x1) / l * rayon * 2 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? 1:-1);
-                //xt1 = x + 0.35*(y2 - y1) / l * track_epaisseur * 1.5 * tmp_coef2;
-                //yt1 = y - 0.35*(x2 - x1) / l * track_epaisseur * 1.5 * tmp_coef2;
-                //xt2 = x + 0.75*(y2 - y1) / l * track_epaisseur * 1.5 * tmp_coef3;
-                //yt2 = y - 0.75*(x2 - x1) / l * track_epaisseur * 1.5 * tmp_coef3;
-                xt1 = x_ + 0.5 * (y2 - y1) / l * rayon * 2 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? 1:-1);
-                yt1 = y_ - 0.5 * (x2 - x1) / l * rayon * 2 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? 1:-1);
-                xt2 = x_ + 1 * (y2 - y1) / l * rayon * 2 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? 1:-1);
-                yt2 = y_ - 1 * (x2 - x1) / l * rayon * 2 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? 1:-1);
-                trackmap_context.beginPath(); //On démarre un nouveau tracé.
-                trackmap_context.strokeStyle = "#000000";
-                trackmap_context.lineWidth = 3 * rayon2 / 7 * epaisseur_trait;
-                trackmap_context.moveTo(xt1, yt1);//On se déplace au coin inférieur gauche
-                trackmap_context.lineTo(xt2, yt2);
-                trackmap_context.stroke(); //On trace seulement les lignes.
-                trackmap_context.closePath();
-                trackmap_context.beginPath(); //On démarre un nouveau tracé.
-                if (rayon2 >= 0) {
-                    trackmap_context.arc(xp1, yp1, 2 * rayon2, 0, Math.PI * 2); //On trace la courbe délimitant notre forme
-                }
-                trackmap_context.fillStyle = coul;
-                trackmap_context.fill(); //On utilise la méthode fill(); si l'on veut une forme pleine
-                trackmap_context.closePath();
-                trackmap_context.beginPath(); //On démarre un nouveau tracé.
-                if (rayon2 >= 0) {
-                    trackmap_context.arc(xp1, yp1, 2.1 * rayon2, 0, Math.PI * 2); //On trace la courbe délimitant notre forme
-                }
-                trackmap_context.strokeStyle = "#000000";
-                trackmap_context.lineWidth = 3 * rayon2 / 7 * epaisseur_trait;
-                trackmap_context.stroke(); //On utilise la méthode fill(); si l'on veut une forme pleine
-                trackmap_context.closePath();
-                trackmap_context.fillStyle = "#000000";
-                trackmap_context.font = "bold " + 2.5 * rayon2 * 0.9 + "px " + "'" + trackmap_font_family + "'";
-                trackmap_context.textAlign = "center";
-                trackmap_context.fillText("P1", xp1, yp1 + 0.75 * rayon2 * 0.9);
-            }
-
-
-            // Si le driver est dans les stands, on le décale sur le côté de la piste
-            if (donnees.d[caridx].pr && l != 0) {
-                decale_x = -(y2 - y1) / l * track_epaisseur * 1.5 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? -1:1);
-                decale_y = (x2 - x1) / l * track_epaisseur * 1.5 * (trackmap_circular == 1 && trackmap_circular_reverse == 1 ? -1:1);
-            } else {
-                decale_x = 0;
-                decale_y = 0
-            }
-            x += decale_x;
-            y += decale_y;
-
-            if (caridx == selected_idxjs && trackmap_car_me_specify) {
-                tmp_trackmap_car_border_disp = trackmap_car_me_border_disp;
-            } else {
-                tmp_trackmap_car_border_disp = trackmap_car_border_disp;
-            }
-
-            trackmap_context.beginPath(); //On démarre un nouveau tracé.
-            if (plein && tmp_trackmap_car_border_disp && rayon - 1 >= 0) {
-                trackmap_context.arc(x, y, rayon - 1, 0, Math.PI * 2);  // on enlève 1px au rayon pour éviter que le cercle plein déborde de la bordure
-            } else if (rayon >= 0) {
-                trackmap_context.arc(x, y, rayon, 0, Math.PI * 2);
-            }
-            trackmap_context.fillStyle = coul;
-            trackmap_context.strokeStyle = coul;
-            trackmap_context.lineWidth = rayon / 7 * epaisseur_trait;
-            if (plein)
-                trackmap_context.fill(); //On utilise la méthode fill(); si l'on veut une forme pleine
-            else
-                trackmap_context.stroke(); //On utilise la méthode fill(); si l'on veut une forme pleine
-            trackmap_context.closePath();
-
-            // Si le driver est dans les stands, on le grise
-            if (donnees.d[caridx].pr && l != 0 && caridx != selected_idxjs && plein != 0 && taille == 1) {
-                trackmap_context.beginPath(); //On démarre un nouveau tracé.
-                if (rayon >= 0) {
-                    trackmap_context.arc(x, y, rayon * 1.65, 0, Math.PI * 2);  //On trace la courbe délimitant notre forme
-                }
-                trackmap_context.fillStyle = "#666666";
-                trackmap_context.fill(); //On utilise la méthode fill(); si l'on veut une forme pleine
-                trackmap_context.closePath();
-            }
-
-            // On écrit le numéros du pilote ou son nom en fonction du mode choisi
-            if (plein != 0 && taille == 1 && trackmap_disp_mode != 0) {
-                trackmap_context.globalAlpha = 1;
-
-                // On calcule la bonne couleur pour la font
-                // REM : normalement, coul est forcément au format #xxxxxx car taille = 1
-                var str = coul.slice(1)
-                var r = parseInt("0x" + str.substr(0, 2));
-                var g = parseInt("0x" + str.substr(2, 2));
-                var b = parseInt("0x" + str.substr(4, 2));
-                var moy = (r + g + b) / 3;
-                var font_coul = "000000";
-                if (moy < 150) {
-                    font_coul = "ffffff";
-                }
-                var tmp_num = donnees.d[caridx].num;
-                if (tmp_num in col_by_num) {
-                    font_coul = col_by_num[tmp_num].slice(1);  // REM : on enlève le #
-                }
-                if (donnees.d[caridx].classid in col_by_classid_corr) {
-                    font_coul = col_by_classid_corr[donnees.d[caridx].classid].slice(1);
-                }
-                font_coul = "#" + font_coul;
-
-                if (!trackmap_car_font_color_auto) {  // si on n'est pas en couleur automatique on remplace par la couleur spécifiée
-                    font_coul = trackmap_car_font_color;
-                }
-                if (!trackmap_car_me_font_color_auto && caridx == selected_idxjs && trackmap_car_me_specify) {  // si on n'est pas en couleur automatique on remplace par la couleur spécifiée
-                    font_coul = trackmap_car_me_font_color;
-                }
-
-                trackmap_context.fillStyle = font_coul;
-
-                trackmap_context.textAlign = "center";
-                // Ombrage
-                /*trackmap_context.shadowColor = "black";
-                trackmap_context.shadowOffsetX = 0;
-                trackmap_context.shadowOffsetY = 0;
-                trackmap_context.shadowBlur = rayon / 3;*/
-                //
+                x += decale_x;
+                y += decale_y;
 
                 if (caridx == selected_idxjs && trackmap_car_me_specify) {
-                    tmp_trackmap_carnum_coef = trackmap_carnum_me_coef;
+                    tmp_trackmap_car_border_disp = trackmap_car_me_border_disp;
                 } else {
-                    tmp_trackmap_carnum_coef = trackmap_carnum_coef;
+                    tmp_trackmap_car_border_disp = trackmap_car_border_disp;
                 }
 
-                if (trackmap_disp_mode == 1) {
-                    trackmap_context.font = "bold " + 1.5 * rayon * tmp_trackmap_carnum_coef + "px " + "'" + trackmap_font_family + "'";
-                    if (donnees.d[caridx].num != undefined) {
-                        trackmap_context.fillText(donnees.d[caridx].num, x, y + 0.5 * rayon * tmp_trackmap_carnum_coef);
-                    }
+                trackmap_context.beginPath(); //On démarre un nouveau tracé.
+                if (plein && tmp_trackmap_car_border_disp && rayon - 1 >= 0) {
+                    trackmap_context.arc(x, y, rayon - 1, 0, Math.PI * 2);  // on enlève 1px au rayon pour éviter que le cercle plein déborde de la bordure
+                } else if (rayon >= 0) {
+                    trackmap_context.arc(x, y, rayon, 0, Math.PI * 2);
                 }
-                if (trackmap_disp_mode == 2) {
-                    name = donnees.d[caridx].name;
-                    nom_ = name.split(" ");
-                    nom = nom_[nom_.length - 1].toUpperCase();
-                    name = "";
-                    for (var i = 0; i < 3; i++) {
-                        if (nom[i] != undefined) {
-                            name += nom[i];
+                trackmap_context.fillStyle = coul;
+                trackmap_context.strokeStyle = coul;
+                trackmap_context.lineWidth = rayon / 7 * epaisseur_trait;
+                if (plein)
+                    trackmap_context.fill(); //On utilise la méthode fill(); si l'on veut une forme pleine
+                else
+                    trackmap_context.stroke(); //On utilise la méthode fill(); si l'on veut une forme pleine
+                trackmap_context.closePath();
+
+                // Si le driver est dans les stands, on le grise
+                if (donnees.d[caridx].pr && l != 0 && caridx != selected_idxjs && plein != 0 && taille == 1) {
+                    trackmap_context.beginPath(); //On démarre un nouveau tracé.
+                    if (rayon >= 0) {
+                        trackmap_context.arc(x, y, rayon * 1.65, 0, Math.PI * 2);  //On trace la courbe délimitant notre forme
+                    }
+                    trackmap_context.fillStyle = "#666666";
+                    trackmap_context.fill(); //On utilise la méthode fill(); si l'on veut une forme pleine
+                    trackmap_context.closePath();
+                }
+
+                // On écrit le numéros du pilote ou son nom en fonction du mode choisi
+                if (plein != 0 && taille == 1 && trackmap_disp_mode != 0) {
+                    trackmap_context.globalAlpha = 1;
+
+                    // On calcule la bonne couleur pour la font
+                    // REM : normalement, coul est forcément au format #xxxxxx car taille = 1
+                    var str = coul.slice(1)
+                    var r = parseInt("0x" + str.substr(0, 2));
+                    var g = parseInt("0x" + str.substr(2, 2));
+                    var b = parseInt("0x" + str.substr(4, 2));
+                    var moy = (r + g + b) / 3;
+                    var font_coul = "000000";
+                    if (moy < 150) {
+                        font_coul = "ffffff";
+                    }
+                    var tmp_num = donnees.d[caridx].num;
+
+                    var tmp_id = 0;
+                    if ("tid" in donnees.d[caridx] && "uid" in donnees.d[caridx]) {
+                        tmp_id = donnees.d[caridx].tid;
+                        if (tmp_id == 0) {  // on prend en compte le team id si elle n'est pas nulle, sinon on prend l'user id
+                            tmp_id = donnees.d[caridx].uid;
                         }
                     }
-                    trackmap_context.font = "bold " + 1 * rayon * tmp_trackmap_carnum_coef + "px " + "'" + trackmap_font_family + "'";
-                    trackmap_context.fillText(name, x, y + 0.4 * rayon * tmp_trackmap_carnum_coef);
-                }
-                if (trackmap_disp_mode == 3) {
-                    trackmap_context.font = "bold " + 1.5 * rayon * tmp_trackmap_carnum_coef + "px " + "'" + trackmap_font_family + "'";
-                    if (classpos != undefined) {
-                        trackmap_context.fillText(classpos, x, y + 0.5 * rayon * tmp_trackmap_carnum_coef);
+
+                    if (tmp_num in col_by_num) {
+                        font_coul = col_by_num[tmp_num].slice(1);  // REM : on enlève le #
+                    } else if (tmp_id in col_by_num) {
+                        font_coul = col_by_num[tmp_id].slice(1);  // REM : on enlève le #
                     }
+                    if (donnees.d[caridx].classid in col_by_classid_corr) {
+                        font_coul = col_by_classid_corr[donnees.d[caridx].classid].slice(1);
+                    }
+                    font_coul = "#" + font_coul;
+
+                    if (!trackmap_car_font_color_auto) {  // si on n'est pas en couleur automatique on remplace par la couleur spécifiée
+                        font_coul = trackmap_car_font_color;
+                    }
+                    if (!trackmap_car_me_font_color_auto && caridx == selected_idxjs && trackmap_car_me_specify) {  // si on n'est pas en couleur automatique on remplace par la couleur spécifiée
+                        font_coul = trackmap_car_me_font_color;
+                    }
+
+                    trackmap_context.fillStyle = font_coul;
+
+                    trackmap_context.textAlign = "center";
+                    // Ombrage
+                    /*trackmap_context.shadowColor = "black";
+                     trackmap_context.shadowOffsetX = 0;
+                     trackmap_context.shadowOffsetY = 0;
+                     trackmap_context.shadowBlur = rayon / 3;*/
+                    //
+
+                    if (caridx == selected_idxjs && trackmap_car_me_specify) {
+                        tmp_trackmap_carnum_coef = trackmap_carnum_me_coef;
+                    } else {
+                        tmp_trackmap_carnum_coef = trackmap_carnum_coef;
+                    }
+
+                    if (trackmap_disp_mode == 1) {
+                        trackmap_context.font = "bold " + 1.5 * rayon * tmp_trackmap_carnum_coef + "px " + "'" + trackmap_font_family + "'";
+                        if (donnees.d[caridx].num != undefined) {
+                            trackmap_context.fillText(donnees.d[caridx].num, x, y + 0.5 * rayon * tmp_trackmap_carnum_coef);
+                        }
+                    }
+                    if (trackmap_disp_mode == 2) {
+                        name = donnees.d[caridx].name;
+                        nom_ = name.split(" ");
+                        nom = nom_[nom_.length - 1].toUpperCase();
+                        name = "";
+                        for (var i = 0; i < 3; i++) {
+                            if (nom[i] != undefined) {
+                                name += nom[i];
+                            }
+                        }
+                        trackmap_context.font = "bold " + 1 * rayon * tmp_trackmap_carnum_coef + "px " + "'" + trackmap_font_family + "'";
+                        trackmap_context.fillText(name, x, y + 0.4 * rayon * tmp_trackmap_carnum_coef);
+                    }
+                    if (trackmap_disp_mode == 3) {
+                        trackmap_context.font = "bold " + 1.5 * rayon * tmp_trackmap_carnum_coef + "px " + "'" + trackmap_font_family + "'";
+                        if (classpos != undefined) {
+                            trackmap_context.fillText(classpos, x, y + 0.5 * rayon * tmp_trackmap_carnum_coef);
+                        }
+                    }
+                    trackmap_context.globalAlpha = trackmap_car_color_transparency;
+                    // On enlève l'ombrage
+                    trackmap_context.shadowOffsetX = 0;
+                    trackmap_context.shadowOffsetY = 0;
+                    trackmap_context.shadowBlur = 0;
                 }
-                trackmap_context.globalAlpha = trackmap_car_color_transparency;
-                // On enlève l'ombrage
-                trackmap_context.shadowOffsetX = 0;
-                trackmap_context.shadowOffsetY = 0;
-                trackmap_context.shadowBlur = 0;
+
             }
 
         }

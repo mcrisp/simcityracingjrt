@@ -16,6 +16,39 @@ if (!String.prototype.includes) {
 }
 
 
+function set_style_text_shadow(i) {
+
+    // On ne modifie le text_shadow que si on a fait un changement dans la couleur de fond des lignes
+    if ( !(i in style_text_shadow_pB) || !(i in style_text_shadow_p) || style_text_shadow_pB[i] != document.getElementById('pB' + i).style.backgroundColor || style_text_shadow_p[i] != document.getElementById('p' + i).style.backgroundColor ) {
+
+        style_text_shadow_pB[i] = document.getElementById('pB' + i).style.backgroundColor;
+        style_text_shadow_p[i] = document.getElementById('p' + i).style.backgroundColor;
+
+        if (document.getElementById('pB' + i).style.backgroundColor != "rgba(0, 0, 0, 0)") {
+            // On rajoute une ombre au texte des colonnes
+            for (var j = 0; j < tab_titres_all.length; j++) {
+                var t = tab_titres_all[j];
+                if (t in liste_donnees) {
+                    if (window.getComputedStyle(document.getElementById(t + i), null).getPropertyValue('color') != "rgb(0, 0, 0)") {  // si le text n'est pas en noir pour éviter de rajouter un ombre inesthétique
+                        document.getElementById(t + i).classList.add("text_shadow");
+                    } else {
+                        document.getElementById(t + i).classList.remove("text_shadow");
+                    }
+                }
+            }
+        } else {
+            // On renlève l'ombre
+            for (var j = 0; j < tab_titres_all.length; j++) {
+                var t = tab_titres_all[j];
+                if (t in liste_donnees) {
+                    document.getElementById(t + i).classList.remove("text_shadow");
+                }
+            }
+        }
+    }
+}
+
+
 function colorize_driver(i, save) {
 
     if (show_colorized_drivers) {
@@ -38,12 +71,14 @@ function colorize_driver(i, save) {
             RGBA(document.getElementById('pB' + i), 0.8);  // on remet les couleurs pour les pilotes colorisés
 
             // On rajoute une ombre au texte des colonnes
-            for (var j=0; j < tab_titres_all.length; j++) {
+            /*for (var j=0; j < tab_titres_all.length; j++) {
                 var t = tab_titres_all[j];
                 if (t in liste_donnees) {
-                    document.getElementById(t + i).classList.add("text_shadow");
+                    if (window.getComputedStyle(document.getElementById(t + i), null).getPropertyValue('color') != "rgb(0, 0, 0)") {  // si le text n'est pas en noir pour éviter de rajouter un ombre inesthétique
+                        document.getElementById(t + i).classList.add("text_shadow");
+                    }
                 }
-            }
+            }*/
 
         } else {
 
@@ -55,15 +90,16 @@ function colorize_driver(i, save) {
             document.getElementById('pB' + i).style.backgroundColor = 'rgba(0,0,0,0)';
 
             // On renlève l'ombre
-            for (var j=0; j < tab_titres_all.length; j++) {
+            /*for (var j=0; j < tab_titres_all.length; j++) {
                 var t = tab_titres_all[j];
                 if (t in liste_donnees) {
                     document.getElementById(t + i).classList.remove("text_shadow");
                 }
-            }
+            }*/
 
         }
 
+        set_style_text_shadow(i);
 
         if (save) {
             //console.log("SAVE");
@@ -428,3 +464,8 @@ function delete_sessions() {
 
     timing_menu(0);
 }
+
+
+style_text_shadow = {};
+style_text_shadow_pB = {};
+style_text_shadow_p = {};

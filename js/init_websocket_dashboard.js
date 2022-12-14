@@ -159,6 +159,9 @@ function init_ws() {
         } , 1000/fps_broadcast);
     }
 
+    display_changed_name = "--";
+    display_changed_time = 0;
+
     setting_changed_time = 0;  // pour savoir quand afficher le changement de setting (tc, abs, ...)
     setting_changed_name = "--";
     setting_changed_value = 0;

@@ -503,6 +503,8 @@ function calc_disp_col_for_events(e) {
 
 function reload_ticker_events() {
 
+    //console.log("***", "reload_ticker_events")
+
     // On réinitialise le session_time pour les chronos
     init_session_time_event();
 

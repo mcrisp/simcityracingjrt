@@ -1,3 +1,106 @@
+effacer_select_menu_btn = null;
+
+function clear_drivers_selection() {
+    driver_selected_caridx_[window_shortname] = {};
+    localStorage.driver_selected_caridx_ = JSON.stringify(driver_selected_caridx_);
+    update_drivers_list();
+}
+
+function change_driver_selected(caridx) {
+    if (caridx in driver_selected_caridx_[window_shortname] && driver_selected_caridx_[window_shortname][caridx] == 1) {
+        driver_selected_caridx_[window_shortname][caridx] = 0;
+    } else {
+        driver_selected_caridx_[window_shortname][caridx] = 1;
+    }
+    localStorage.driver_selected_caridx_ = JSON.stringify(driver_selected_caridx_);
+    update_drivers_list();
+}
+
+function update_drivers_list() {
+    if (donnees.d != undefined) {
+        var aff = "";
+        for (var i in donnees.d) {
+
+            // Couleur de la class du pilote
+            var str = donnees.d[i].cc;
+            var tmp_num = donnees.d[i].num;
+            if (tmp_num in bg_by_num) {
+                str = "0x" + bg_by_num[tmp_num].slice(1);
+            }
+            if (donnees.d[i].classid in bg_by_classid_corr) {
+                str = "0x" + bg_by_classid_corr[donnees.d[i].classid].slice(1);
+            }
+
+            if (str != undefined) {
+                str = str.slice(2);
+                for (n = str.length; n < 6; n++) {
+                    str = "0" + str
+                }
+            }
+            var coul = "#" + str;
+
+            var font_coul = "#bbbbbb";
+            var font_weight = "normal";
+
+            if (trackmap_select_drivers_number == 0 || donnees.d[i].cpos <= trackmap_select_drivers_number) {
+                font_coul = "#ffffff";
+                font_weight = "bold";
+            }
+
+            if (i in driver_selected_caridx_[window_shortname] && driver_selected_caridx_[window_shortname][i] == 1) {
+                font_coul = "#ffff00";
+                font_weight = "bold";
+            }
+            aff += '<div onclick="change_driver_selected(' + i + ')" id="caridx_' + i + '" class="driver_line" style="font-weight: ' + font_weight + '; color: ' + font_coul + '">';
+            aff += '<div style="flex: 0 0 0.25rem; margin-left: 0.25rem; margin-right: 0.25rem; background-color: ' + coul + ';"></div>';
+            aff += '<div style="text-align: right; flex: 0 0 1.5rem; margin-right: 0.25rem;">' + donnees.d[i].cpos + '.</div>';
+            aff += '<div style="text-align: center; flex: 0 0 2.25rem; margin-right: 0.25rem;">#' + donnees.d[i].num + '</div>';
+            aff += '<div style="text-align: left; flex: 0 1 auto; margin-right: 0.25rem; overflow: hidden; text-overflow:clip; white-space:nowrap;">' + donnees.d[i].name + '</div>';
+            aff += '</div>';
+
+        }
+        set_inner_html("drivers_list", aff);  // c'est important de ne pas mettre à jour tout le temps en utilisant la fonction set_inner_html sinon on ne pourra pas cliquer
+
+        // On ordonne maintenant par class position en groupant par classe
+        for (var i in donnees.d) {
+            document.getElementById("caridx_" + i).style.order = donnees.d[i].cpos + donnees.d[i].classid * 100;
+        }
+    }
+}
+
+function select_drivers(n) {
+    trackmap_select_drivers_number = n;
+}
+
+function display_select_menu_btn() {
+    if (document.getElementById("select_menu") && document.getElementById("select_menu").style.display != "block") {
+        clearTimeout(effacer_select_menu_btn);
+        document.getElementById("select_menu_btn").style.opacity = 1;
+        effacer_select_menu_btn = setTimeout(function () {
+            document.getElementById("select_menu_btn").style.opacity = 0;
+        }, 1000);
+    }
+}
+
+function select_menu(x) {
+    x.classList.toggle("change");
+    if (document.getElementById("select_menu").style.display != "block") {
+        clearTimeout(effacer_select_menu_btn);
+        document.getElementById("select_menu_btn").style.opacity = 1;
+        document.getElementById("select_menu").style.display = "block";
+        setTimeout(function () {
+            document.getElementById("select_menu").style.opacity = 1;
+        }, 0);
+    } else {
+        document.getElementById("select_menu").style.opacity = 0;
+        setTimeout(function () {
+            document.getElementById("select_menu").style.display = "none";
+        }, 400);
+        effacer_select_menu_btn = setTimeout(function () {
+            document.getElementById("select_menu_btn").style.opacity = 0;
+        }, 1000);
+    }
+}
 
 // Display the datas contained in text variable
 function update_datas(text) {
@@ -88,6 +191,15 @@ function update_datas(text) {
 
                 sessionnum = donnees_new.sn;
                 sessionid = donnees_new.sid;
+
+				if (sessionid != JSON.parse(localStorage.sessionid)[window_shortname]) {
+					driver_selected_caridx_[window_shortname] = {};
+					localStorage.driver_selected_caridx_ = JSON.stringify(driver_selected_caridx_);
+                    var tmp_sid = JSON.parse(localStorage.sessionid);
+                    tmp_sid[window_shortname] = sessionid;
+					localStorage.sessionid = JSON.stringify(tmp_sid);  // pour savoir pour quelle session on a mémorisé le driver_selected_caridx_[window_shortname]
+				}
+
                 type_session = donnees_new.styp;
                 name_session = donnees_new.sname;
                 donnees = JSON.parse(text);
@@ -108,6 +220,7 @@ function update_datas(text) {
                 nb_drivers = donnees_new.nb;
             }
 
+			update_drivers_list();  // mise à jour pour les positions notamment
 
             //}
 
@@ -118,8 +231,15 @@ function update_datas(text) {
             else
                 trackname_new = trackname;
 
+            //console.log("***", trackname_new, trackname)
             if (trackname_new != trackname && trackname != "init") {
                 console.log("Chargement du nouveau circuit ...");
+                load_track_data = 1;  // pour le mode broadcast
+				if (broadcast == 0) {
+					ws.send("11");
+				} else if (broadcast == 1) {
+					ws3.send("11");
+				}
                 //ws.send("Chargement du nouveau circuit : nouveau = '" + trackname_new +"' ancien = '"+trackname+"'");
                 //location.reload();
                 // On efface les anciens virages
@@ -129,13 +249,10 @@ function update_datas(text) {
                 donnees.turn_info = donnees_new.turn_info;
                 responsive_dim();
             }
-            //console.log("***", trackname_new, trackname)
             if (trackname_new != trackname && trackname == "init") {
                 console.log("Chargement du circuit ...");
                 responsive_dim();
             }
-            if (trackname_new != undefined)
-                trackname = trackname_new;
 
             // Si la trackmap a changée on demande au serveur de nous envoyer les données
             if (donnees.stm != send_trackmap_nbrequest) {
@@ -147,6 +264,10 @@ function update_datas(text) {
                     ws3.send("11");
                 }
                 send_trackmap_nbrequest = donnees.stm
+            }
+
+            if (trackname_new != undefined) {
+                trackname = trackname_new;
             }
 
             // Dès qu'on reçoit toutes les données on dessine le circuit
@@ -174,24 +295,23 @@ function update_datas(text) {
         }
 
         // Changement de configuration
-        //window_shortname = get_window_shortname(window_name);
-        if (send_config != undefined && (window_shortname in send_config || "track" in send_config)) {
-            if ("track" in send_config) {
-                send_config = send_config["track"];
-            } else {
-                send_config = send_config[window_shortname];
+        var send_configs_ = [];
+        if (send_config != undefined) {
+            for (var page in send_config) {  // de cette manière on prend aussi en compte le "car", "track" ou "pit" et pas seulement le window_shortname
+                send_configs_.push(send_config[page]);
             }
-        } else {
-            send_config = {};
         }
-        if (send_config != undefined && broadcast <= 1 && text != -1) {
-            if ("tstamp" in send_config) {
-                if (send_config_tstamp != send_config.tstamp && send_config != "") {
-                    send_config_tstamp = send_config.tstamp;
-                    //console.log(send_config);
-                    change_config(send_config);
-                    /*init_var();
-                     responsive_dim();*/
+        if (send_configs_ != [] && broadcast <= 1 && text != -1) {
+            var new_send_config_tstamp = null;
+            for (var send_config_num in send_configs_) {
+                send_config = send_configs_[send_config_num];
+                //console.log(send_config)
+                if ("tstamp" in send_config) {
+                    if ( (!(send_config.page in send_config_tstamp_) || send_config_tstamp_[send_config.page] != send_config.tstamp) && send_config != "" ) {
+                        new_send_config_tstamp = send_config.tstamp;
+                        send_config_tstamp_[send_config.page] = new_send_config_tstamp;   // à faire absolument avec le change_config pour éviter les boulcles infinies
+                        change_config(send_config);
+                    }
                 }
             }
         }
@@ -200,6 +320,7 @@ function update_datas(text) {
 
 
 function init() {
+    responsive_dim();
     window.onresize = function() {
         redim_canvas_trackmap = 1;
         responsive_dim();
@@ -213,6 +334,10 @@ function init() {
         }
 
     };
+
+    window.onmousemove = display_select_menu_btn;
+    window.onclick = display_select_menu_btn;  // permet de faire apparaître le menu en tapant sur l'écran pour les tablettes
+
 }
 
 

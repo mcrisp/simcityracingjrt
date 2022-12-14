@@ -25,6 +25,9 @@ function get_window_shortname(window_name) {
     if (window_name == "JRT Trackmap2") {
         window_shortname = "trackmap2";
     }
+    if (window_name == "JRT Trackmap3") {
+        window_shortname = "trackmap3";
+    }
     if (window_name == "JRT Trackmap_3D") {
         window_shortname = "trackmap_3d";
     }
@@ -202,6 +205,9 @@ function change_config(config) {
                     break;
                 case "sofbar_h":
                     sofbar_h = config.param["sofbar_h"];
+                    break;
+                case "sof_all_disp":
+                    sof_all_disp = config.param["sof_all_disp"];
                     break;
                 case "selected_driver_mode":
                     selected_driver_mode = config.param["selected_driver_mode"];
@@ -386,19 +392,6 @@ function change_config(config) {
                 case "f3_mode_in_race_dashboard": f3_mode_in_race_dashboard = config.param["f3_mode_in_race_dashboard"];break;
                 case "dashboard_f3mode_dot": dashboard_f3mode_dot = config.param["dashboard_f3mode_dot"];break;
                 case "dashboard_name_mode": dashboard_name_mode = config.param["dashboard_name_mode"];break;
-
-                case "shiftlight_Xpct": shiftlight_Xpct = config.param["shiftlight_Xpct"];break;
-                case "shiftlight_Ypct": shiftlight_Ypct = config.param["shiftlight_Ypct"];break;
-                case "shiftlight_Wpct": shiftlight_Wpct = config.param["shiftlight_Wpct"];break;
-                case "shiftlight_Hpct": shiftlight_Hpct = config.param["shiftlight_Hpct"];break;
-                case "shiftlight_opacity": shiftlight_opacity = config.param["shiftlight_opacity"];break;
-                case "shiftlight_mode": shiftlight_mode = config.param["shiftlight_mode"];break;
-
-                case "dashboard_light_Xpct": dashboard_light_Xpct = config.param["dashboard_light_Xpct"];break;
-                case "dashboard_light_Ypct": dashboard_light_Ypct = config.param["dashboard_light_Ypct"];break;
-                case "dashboard_light_Wpct": dashboard_light_Wpct = config.param["dashboard_light_Wpct"];break;
-                case "dashboard_light_Hpct": dashboard_light_Hpct = config.param["dashboard_light_Hpct"];break;
-                case "dashboard_light_opacity": dashboard_light_opacity = config.param["dashboard_light_opacity"];break;
 
                 case "gear_":
                     for (i = 1; i <= 8; i++) {
@@ -654,6 +647,9 @@ function change_config(config) {
                 case "incar_set_change_delay":
                     incar_set_change_delay = config.param["incar_set_change_delay"];
                     break;
+                case "display_changed_disp":
+                    display_changed_disp = config.param["display_changed_disp"];
+                    break;
                 case "trackmap_camera_fov":
                     trackmap_camera_fov = config.param["trackmap_camera_fov"];
                     break;
@@ -705,6 +701,9 @@ function change_config(config) {
                 case "trackmap_circular_centered_on_driver":
                     trackmap_circular_centered_on_driver = config.param["trackmap_circular_centered_on_driver"];
                     break;
+                case "trackmap_select_drivers_number":
+                    trackmap_select_drivers_number = config.param["trackmap_select_drivers_number"];
+                    break;
                 case "avg1_nblaps":
                     avg1_nblaps = config.param["avg1_nblaps"];
                     break;
@@ -723,45 +722,81 @@ function change_config(config) {
                 case "avg3_best":
                     avg3_best = config.param["avg3_best"];
                     break;
+                case "jrt_logo_disp":
+                    jrt_logo_disp = config.param["jrt_logo_disp"];
+                    break;
+
+                case "spotter_margin":
+                    spotter_margin = config.param["spotter_margin"];
+                    break;
                 case "spotter_landmark_disp":
                     spotter_landmark_disp = config.param["spotter_landmark_disp"];
+                    param_overview_tstamp["spotter"] = Date.now();
                     break;
                 case "spotter_when_not_ontrack":
                     spotter_when_not_ontrack = config.param["spotter_when_not_ontrack"];
                     break;
-                case "jrt_logo_disp":
-                    jrt_logo_disp = config.param["jrt_logo_disp"];
-                    break;
                 case "spotter_rule_disp":
                     spotter_rule_disp = config.param["spotter_rule_disp"];
+                    param_overview_tstamp["spotter"] = Date.now();
                     break;
                 case "spotter_rule_opacity_coef":
                     spotter_rule_opacity_coef = config.param["spotter_rule_opacity_coef"];
+                    param_overview_tstamp["spotter"] = Date.now();
                     break;
                 case "spotter_rule_shadow":
                     spotter_rule_shadow = config.param["spotter_rule_shadow"];
+                    param_overview_tstamp["spotter"] = Date.now();
+                    break;
+                case "spotter_rule_redline":
+                    spotter_rule_redline = config.param["spotter_rule_redline"];
+                    param_overview_tstamp["spotter"] = Date.now();
                     break;
                 case "spotter_side_arrow_blink":
                     spotter_side_arrow_blink = config.param["spotter_side_arrow_blink"];
+                    param_overview_tstamp["spotter"] = Date.now();
                     break;
                 case "spotter_arrow_coef":
                     spotter_arrow_coef = config.param["spotter_arrow_coef"];
+                    param_overview_tstamp["spotter"] = Date.now();
                     break;
                 case "spotter_arrow_inverted":
                     spotter_arrow_inverted = config.param["spotter_arrow_inverted"];
+                    param_overview_tstamp["spotter"] = Date.now();
                     break;
                 case "spotter_arrow_opacity_coef":
                     spotter_arrow_opacity_coef = config.param["spotter_arrow_opacity_coef"];
+                    param_overview_tstamp["spotter"] = Date.now();
                     break;
                 case "spotter_arrow_shadow":
                     spotter_arrow_shadow = config.param["spotter_arrow_shadow"];
+                    param_overview_tstamp["spotter"] = Date.now();
+                    break;
+                case "spotter_arrows_approach":
+                    spotter_arrows_approach = config.param["spotter_arrows_approach"];
+                    param_overview_tstamp["spotter"] = Date.now();
+                    break;
+                case "spotter_arrows_colorize_blueflag":
+                    spotter_arrows_colorize_blueflag = config.param["spotter_arrows_colorize_blueflag"];
+                    param_overview_tstamp["spotter"] = Date.now();
                     break;
                 case "spotter_background_transparency_coef":
                     spotter_background_transparency_coef = config.param["spotter_background_transparency_coef"];
+                    param_overview_tstamp["spotter"] = Date.now();
                     break;
                 case "spotter_background_mode":
                     spotter_background_mode = config.param["spotter_background_mode"];
+                    param_overview_tstamp["spotter"] = Date.now();
                     break;
+                case "spotter_nb_wide_text":
+                    spotter_nb_wide_text = config.param["spotter_nb_wide_text"];
+                    param_overview_tstamp["spotter"] = Date.now();
+                    break;
+                case "spotter_nb_wide_text_size_coef":
+                    spotter_nb_wide_text_size_coef = config.param["spotter_nb_wide_text_size_coef"];
+                    param_overview_tstamp["spotter"] = Date.now();
+                    break;
+
                 case "drag_enable":
                     drag_enable = config.param["drag_enable"];
                     break;
@@ -811,6 +846,7 @@ function change_config(config) {
                 case "launcher_timing_broadcast_disp": launcher_timing_broadcast_disp = config.param["launcher_timing_broadcast_disp"];break;
                 case "launcher_trackmap_disp": launcher_trackmap_disp = config.param["launcher_trackmap_disp"];break;
                 case "launcher_trackmap2_disp": launcher_trackmap2_disp = config.param["launcher_trackmap2_disp"];break;
+                case "launcher_trackmap3_disp": launcher_trackmap3_disp = config.param["launcher_trackmap3_disp"];break;
                 case "launcher_trackmap_3d_disp": launcher_trackmap_3d_disp = config.param["launcher_trackmap_3d_disp"];break;
                 case "launcher_dashboard_disp": launcher_dashboard_disp = config.param["launcher_dashboard_disp"];break;
                 case "launcher_dashboard2_disp": launcher_dashboard2_disp = config.param["launcher_dashboard2_disp"];break;
@@ -829,6 +865,7 @@ function change_config(config) {
                 case "launcher_timing_broadcast": launcher_timing_broadcast = config.param["launcher_timing_broadcast"];break;
                 case "launcher_trackmap": launcher_trackmap = config.param["launcher_trackmap"];break;
                 case "launcher_trackmap2": launcher_trackmap2 = config.param["launcher_trackmap2"];break;
+                case "launcher_trackmap3": launcher_trackmap3 = config.param["launcher_trackmap3"];break;
                 case "launcher_trackmap_3d": launcher_trackmap_3d = config.param["launcher_trackmap_3d"];break;
                 case "launcher_dashboard": launcher_dashboard = config.param["launcher_dashboard"];break;
                 case "launcher_dashboard2": launcher_dashboard2 = config.param["launcher_dashboard2"];break;
@@ -888,8 +925,88 @@ function change_config(config) {
                     }
                     break;
 
+                case "shiftlight_Xpct":
+                    shiftlight_Xpct = config.param["shiftlight_Xpct"];
+                    param_overview_tstamp["shiftlight"] = Date.now();
+                    list_param_id["shiftlight"] = 1;
+                    break;
+                case "shiftlight_Ypct":
+                    shiftlight_Ypct = config.param["shiftlight_Ypct"];
+                    param_overview_tstamp["shiftlight"] = Date.now();
+                    list_param_id["shiftlight"] = 1;
+                    break;
+                case "shiftlight_Wpct":
+                    shiftlight_Wpct = config.param["shiftlight_Wpct"];
+                    param_overview_tstamp["shiftlight"] = Date.now();
+                    list_param_id["shiftlight"] = 1;
+                    break;
+                case "shiftlight_Hpct":
+                    shiftlight_Hpct = config.param["shiftlight_Hpct"];
+                    param_overview_tstamp["shiftlight"] = Date.now();
+                    list_param_id["shiftlight"] = 1;
+                    break;
+                case "shiftlight_opacity":
+                    shiftlight_opacity = config.param["shiftlight_opacity"];
+                    param_overview_tstamp["shiftlight"] = Date.now();
+                    list_param_id["shiftlight"] = 1;
+                    break;
+                case "shiftlight_mode": shiftlight_mode = config.param["shiftlight_mode"];break;
+
+                case "dashboard_light_zindex_offset":
+                    dashboard_light_zindex_offset = config.param["dashboard_light_zindex_offset"];
+                    param_overview_tstamp["dashboard_light"] = Date.now();
+                    list_param_id["dashboard_light"] = 1;
+                    break;
+                case "dashboard_light_Xpct":
+                    dashboard_light_Xpct = config.param["dashboard_light_Xpct"];
+                    param_overview_tstamp["dashboard_light"] = Date.now();
+                    list_param_id["dashboard_light"] = 1;
+                    break;
+                case "dashboard_light_Ypct":
+                    dashboard_light_Ypct = config.param["dashboard_light_Ypct"];
+                    param_overview_tstamp["dashboard_light"] = Date.now();
+                    list_param_id["dashboard_light"] = 1;
+                    break;
+                case "dashboard_light_Wpct":
+                    dashboard_light_Wpct = config.param["dashboard_light_Wpct"];
+                    param_overview_tstamp["dashboard_light"] = Date.now();
+                    list_param_id["dashboard_light"] = 1;
+                    break;
+                case "dashboard_light_Hpct":
+                    dashboard_light_Hpct = config.param["dashboard_light_Hpct"];
+                    param_overview_tstamp["dashboard_light"] = Date.now();
+                    list_param_id["dashboard_light"] = 1;
+                    break;
+                case "dashboard_light_opacity":
+                    dashboard_light_opacity = config.param["dashboard_light_opacity"];
+                    param_overview_tstamp["dashboard_light"] = Date.now();
+                    list_param_id["dashboard_light"] = 1;
+                    break;
+
                 case "advanced":
-                    //advanced = config.param["advanced"];
+
+                    //console.log(config.param["advanced"]["car_stopped_ontrack_light_activated"], config.param["advanced"]["car_stopped_ontrack_light_color"])
+                    //console.log(config.param["advanced"]);
+                    //console.log(config.param["advanced"]["display_selected"], advanced["display_selected"]);
+
+                    var d = "";
+                    for (var name in list_param_for_overview) {
+                        if ("add_display_num" in list_param_for_overview[name] && list_param_for_overview[name]["add_display_num"]) {
+                            d = "_" + advanced["display_selected"];
+                        } else {
+                            d = "";
+                        }
+                        if ((name + d) in config.param["advanced"] && (list_param_for_overview[name]["option"] != 0 || config.param["advanced"][name + d] != 0)) {
+                            param_overview_tstamp[list_param_for_overview[name]["param_id"]] = Date.now();
+                            list_param_id[list_param_for_overview[name]["param_id"]] = 1;
+                            //console.log(list_param_for_overview[name]["param_id"], param_overview_tstamp[list_param_for_overview[name]["param_id"]]);
+                        }
+                    }
+
+                    // On désactive l'overview si c'est un changement de display
+                    if (config.param["advanced"]["display_selected"] != undefined && config.param["advanced"]["display_selected"] != advanced["display_selected"]) {
+                        param_overview_tstamp = {};
+                    }
 
                     $.extend(true, advanced, config.param["advanced"]);
                     dashboard_ref_w = config.param["dashboard_ref_w"];
@@ -898,6 +1015,7 @@ function change_config(config) {
                     if (display_selected_in_url != false) {
                         advanced["display_selected"] = parseInt(display_selected_in_url);
                     }
+
                     break;
             }
         }
@@ -954,7 +1072,7 @@ function change_config(config) {
                     break;
 
                 case "fps_trackmap":
-                    if (window_name == "JRT Trackmap" || window_name == "JRT Trackmap2" || window_name == "JRT Trackmap_3D") {
+                    if (window_name == "JRT Trackmap" || window_name == "JRT Trackmap2" || window_name == "JRT Trackmap3" || window_name == "JRT Trackmap_3D") {
                         if (broadcast == 0) {
                             if (fps_trackmap != config.param["fps_trackmap"]) {
                                 fps_trackmap = config.param["fps_trackmap"];
@@ -1223,10 +1341,10 @@ function change_config(config) {
             }*/
         }
 
-        if (window_name == "JRT Trackmap" || window_name == "JRT Trackmap2" || window_name == "JRT Calculator") {
+        if (window_name == "JRT Trackmap" || window_name == "JRT Trackmap2" || window_name == "JRT Trackmap3" || window_name == "JRT Calculator") {
             //if(parseInt(Date.now()/1000) - 60 < donnees.tct) {  // Si la trackmap a été créée il y a moins de 60 s
 
-            if (window_name == "JRT Trackmap" || window_name == "JRT Trackmap2") {
+            if (window_name == "JRT Trackmap" || window_name == "JRT Trackmap2" || window_name == "JRT Trackmap3") {
                 //console.log("redrawing trackmap ...", parseInt(Date.now()/1000) - 3, donnees.tct);
                 /*$("#trackmap_canvas").remove();
                  $("#trackmap_fond_canvas").remove();
@@ -1280,9 +1398,9 @@ function change_config(config) {
     }
 
     // Raffraîchissement des turns et du logo
-    if ((config_page == "track" || config_page == "trackmap" || config_page == "trackmap2" || config_page == "trackmap_3d") && broadcast <= 1) {
+    if ((config_page == "track" || config_page == "trackmap" || config_page == "trackmap2" || config_page == "trackmap3" || config_page == "trackmap_3d") && broadcast <= 1) {
         if(window_name == "JRT Timing" || window_name == "JRT Timing2" || window_name == "JRT Timing3" ||
-            window_name == "JRT Timing4" || window_name == "JRT Timing Broadcast" || window_name == "JRT Trackmap" || window_name == "JRT Trackmap2" || window_name == "JRT Trackmap_3D") {
+            window_name == "JRT Timing4" || window_name == "JRT Timing Broadcast" || window_name == "JRT Trackmap" || window_name == "JRT Trackmap2" || window_name == "JRT Trackmap3" || window_name == "JRT Trackmap_3D") {
 
             for(config_varname in config.param) {
                 //console.log(config_varname);
@@ -1298,7 +1416,7 @@ function change_config(config) {
 
             }
 
-            if(window_name == "JRT Trackmap" || window_name == "JRT Trackmap2" || window_name == "JRT Trackmap_3D") {
+            if(window_name == "JRT Trackmap" || window_name == "JRT Trackmap2" || window_name == "JRT Trackmap3" || window_name == "JRT Trackmap_3D") {
                 if(window_name == "JRT Trackmap_3D") {
         			draw_track("#ffffff", 1, 1, 1);
                 } else {
@@ -1316,12 +1434,16 @@ function change_config(config) {
             for (i = 1; i <= 8; i++) {
                 //gear_[i] = config.param["gear_"][i];
                 gear_[i] = config.param["rpm" + i];
-                if (donnees.gear_ != undefined) {
+                if (donnees.gear_ != undefined && gear_[i] != undefined) {
                     donnees.gear_[i] = gear_[i];
                 }
             }
-            rpm_leds_N_red = config.param["rpm_leds_N_red"];
-            rpm_leds_led1_pct = config.param["rpm_leds_led1_pct"];
+            if (config.param["rpm_leds_N_red"] != undefined) {
+                rpm_leds_N_red = config.param["rpm_leds_N_red"];
+            }
+            if (config.param["rpm_leds_led1_pct"] != undefined) {
+                rpm_leds_led1_pct = config.param["rpm_leds_led1_pct"];
+            }
             //console.log(rpm_leds_N_red, rpm_leds_led1_pct);
         }
     }
@@ -1530,3 +1652,73 @@ window_shortname = get_window_shortname(window_name);
 //console.log(window_shortname)
 
 last_change_config_tstamp = 0;
+
+// Liste des paramètres qui vont activer l'aperçu pendant 2 secondes
+// mettre l'option à 0 si on ne souhaite pas afficher l'overview en cas de valeur égale à zéro de l'option
+// param_id est l'id qu'on va utiliser dans update_dashboard.js pour afficher l'aperçu ou pas
+// add_display_num à 1 va indiquer qu'il faudra ajouter le disp_sel dans la recherche du nom de paramètre et dans le tableau param_overview (voir ce qui est déjà fait avec le abs_light)
+list_param_for_overview = {
+
+    "shiftlight_on": {"param_id": "shiftlight", "option": 1},
+    "shiftlight_Xpct": {"param_id": "shiftlight", "option": 1},
+    "shiftlight_Ypct": {"param_id": "shiftlight", "option": 1},
+    "shiftlight_Wpct": {"param_id": "shiftlight", "option": 1},
+    "shiftlight_Hpct": {"param_id": "shiftlight", "option": 1},
+    "shiftlight_color": {"param_id": "shiftlight", "option": 1},
+    "pitlimiter_light_inpit_color": {"param_id": "shiftlight_pitlimiter_inpit", "option": 1},
+    "pitlimiter_light_outpit_color": {"param_id": "shiftlight_pitlimiter_outpit", "option": 1},
+
+    "dashboard_light_on": {"param_id": "dashboard_light", "option": 1},
+    "yellowflag_light_activated": {"param_id": "yellowflag", "option": 0},
+    "yellowflag_light_color": {"param_id": "yellowflag", "option": 1},
+    "yellowflag_light_blink": {"param_id": "yellowflag", "option": 1},
+    "yellowflag_light_text_coef": {"param_id": "yellowflag", "option": 1},
+    "car_stopped_ontrack_light_activated": {"param_id": "car_stopped_ontrack", "option": 0},
+    "car_stopped_ontrack_light_color": {"param_id": "car_stopped_ontrack", "option": 1},
+    "car_stopped_ontrack_light_blink": {"param_id": "car_stopped_ontrack", "option": 1},
+    "car_stopped_ontrack_light_text_coef": {"param_id": "car_stopped_ontrack", "option": 1},
+    "greenflag_light_activated": {"param_id": "greenflag", "option": 0},
+    "greenflag_light_color": {"param_id": "greenflag", "option": 1},
+    "greenflag_light_blink": {"param_id": "greenflag", "option": 1},
+    "blueflag_light_activated": {"param_id": "blueflag", "option": 0},
+    "blueflag_light_color": {"param_id": "blueflag", "option": 1},
+    "blueflag_light_blink": {"param_id": "blueflag", "option": 1},
+    "whiteflag_light_activated": {"param_id": "whiteflag", "option": 0},
+    "whiteflag_light_color": {"param_id": "whiteflag", "option": 1},
+    "whiteflag_light_blink": {"param_id": "whiteflag", "option": 1},
+    "qualy_not_valid_light_activated": {"param_id": "qualy_not_valid", "option": 0},
+    "qualy_not_valid_light_color": {"param_id": "qualy_not_valid", "option": 1},
+    "qualy_not_valid_light_blink": {"param_id": "qualy_not_valid", "option": 1},
+    "oil_temp_alert_light_activated": {"param_id": "oil_temp_alert", "option": 0},
+    "oil_temp_alert_light_color": {"param_id": "oil_temp_alert", "option": 1},
+    "oil_temp_alert_light_blink": {"param_id": "oil_temp_alert", "option": 1},
+    "water_temp_alert_light_activated": {"param_id": "water_temp_alert", "option": 0},
+    "water_temp_alert_light_color": {"param_id": "water_temp_alert", "option": 1},
+    "water_temp_alert_light_blink": {"param_id": "water_temp_alert", "option": 1},
+    "fuel_alert_light_activated": {"param_id": "fuel_alert", "option": 0},
+    "fuel_alert_light_color": {"param_id": "fuel_alert", "option": 1},
+    "fuel_alert_light_blink": {"param_id": "fuel_alert", "option": 1},
+    "abs_active_light_activated": {"param_id": "abs_active", "option": 0},
+    "abs_active_light_color": {"param_id": "abs_active", "option": 1},
+    "abs_active_light_blink": {"param_id": "abs_active", "option": 1},
+    "math_channel_light_activated": {"param_id": "math_channel", "option": 0},
+    "math_channel_light_color": {"param_id": "math_channel", "option": 1},
+    "math_channel_light_blink": {"param_id": "math_channel", "option": 1},
+
+    "disp_abs_light": {"param_id": "abs_light", "option": 0, "add_display_num": 1},
+    "x_abs_light": {"param_id": "abs_light", "option": 0, "add_display_num": 1},
+    "y_abs_light": {"param_id": "abs_light", "option": 0, "add_display_num": 1},
+    "w_abs_light": {"param_id": "abs_light", "option": 0, "add_display_num": 1},
+    "h_abs_light": {"param_id": "abs_light", "option": 0, "add_display_num": 1},
+    "f_abs_light": {"param_id": "abs_light", "option": 0, "add_display_num": 1},
+    "bg_abs_light": {"param_id": "abs_light", "option": 0, "add_display_num": 1},
+    "perso_bg_color_abs_light": {"param_id": "abs_light", "option": 0, "add_display_num": 1},
+    "bg_color_abs_light": {"param_id": "abs_light", "option": 0, "add_display_num": 1},
+    "zindex_offset_abs_light": {"param_id": "abs_light", "option": 0, "add_display_num": 1},
+}
+
+list_param_id = {};
+param_overview_tstamp = {};
+param_overview = {};
+
+param_overview_tstamp["spotter"] = Date.now();  // pour activer l'overview au démarrage de la page

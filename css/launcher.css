@@ -74,6 +74,7 @@ body {
     box-sizing: border-box;
 }
 #drag_overlays {
+    position: relative;
     width:94%;
     height:94%;
     top: 3%;

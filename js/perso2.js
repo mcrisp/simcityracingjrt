@@ -180,6 +180,7 @@ car_in_kg = {
     "mclarenmp430": 1,
     "nissangtpzxt": 1,
     "mercedesw12": 1,
+    "mercedesw13": 1,
 };
 
 fps_perso = 1;

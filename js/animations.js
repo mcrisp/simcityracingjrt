@@ -261,17 +261,17 @@ function animations() {
                             dp_sel = donnees.d[selected_idxjs].dp;
                             if (dp != undefined && dp_sel != undefined) {
                                 if (cl > cl_sel) { // si le pilote est derrière
-                                    if (show_name_bleu_red_not_samelap && dp_sel > dp + 1) { // le pilote a au moins un tour de retard (bleu)
+                                    if (show_name_bleu_red_not_samelap && donnees.styp == "Race" && dp_sel > dp + 1) { // le pilote a au moins un tour de retard (bleu)
                                         tmp_name_color = '#0099FF';
-                                    } else if (show_name_bleu_red_not_samelap && dp > dp_sel) {  // le pilote a au moins un tour d'avance (rouge)
+                                    } else if (show_name_bleu_red_not_samelap && donnees.styp == "Race" && dp > dp_sel) {  // le pilote a au moins un tour d'avance (rouge)
                                         tmp_name_color = '#FF4444';
                                     } else {  // on est dans le même tour ou si on a désactivé l'option show_name_bleu_red_not_samelap
                                         tmp_name_color = '#FFFFFF';
                                     }
                                 } else { // si le pilote est devant
-                                    if (show_name_bleu_red_not_samelap && dp_sel > dp) {  // le pilote a au moins un tour de retard (bleu)
+                                    if (show_name_bleu_red_not_samelap && donnees.styp == "Race" && dp_sel > dp) {  // le pilote a au moins un tour de retard (bleu)
                                         tmp_name_color = '#0099FF';
-                                    } else if (show_name_bleu_red_not_samelap && dp > dp_sel + 1) {  // le pilote a au moins un tour d'avance (rouge)
+                                    } else if (show_name_bleu_red_not_samelap && donnees.styp == "Race" && dp > dp_sel + 1) {  // le pilote a au moins un tour d'avance (rouge)
                                         tmp_name_color = '#FF4444';
                                     } else {  // on est dans le même tour ou si on a désactivé l'option show_name_bleu_red_not_samelap
                                         tmp_name_color = '#FFFFFF';
@@ -335,17 +335,17 @@ function animations() {
                         dp_sel = donnees.d[selected_idxjs].dp;
                         if (dp != undefined && dp_sel != undefined) {
                             if (cl > cl_sel) { // si le pilote est derrière
-                                if (show_name_bleu_red_not_samelap && dp_sel > dp + 1) { // le pilote a au moins un tour de retard (bleu)
+                                if (show_name_bleu_red_not_samelap && donnees.styp == "Race" && dp_sel > dp + 1) { // le pilote a au moins un tour de retard (bleu)
                                     tmp_name_color = '#0099FF';
-                                } else if (show_name_bleu_red_not_samelap && dp > dp_sel) {  // le pilote a au moins un tour d'avance (rouge)
+                                } else if (show_name_bleu_red_not_samelap && donnees.styp == "Race" && dp > dp_sel) {  // le pilote a au moins un tour d'avance (rouge)
                                     tmp_name_color = '#FF4444';
                                 } else {  // on est dans le même tour ou si on a désactivé l'option show_name_bleu_red_not_samelap
                                     tmp_name_color = '#FFFFFF';
                                 }
                             } else { // si le pilote est devant
-                                if (show_name_bleu_red_not_samelap && dp_sel > dp) {  // le pilote a au moins un tour de retard (bleu)
+                                if (show_name_bleu_red_not_samelap && donnees.styp == "Race" && dp_sel > dp) {  // le pilote a au moins un tour de retard (bleu)
                                     tmp_name_color = '#0099FF';
-                                } else if (show_name_bleu_red_not_samelap && dp > dp_sel + 1) {  // le pilote a au moins un tour d'avance (rouge)
+                                } else if (show_name_bleu_red_not_samelap && donnees.styp == "Race" && dp > dp_sel + 1) {  // le pilote a au moins un tour d'avance (rouge)
                                     tmp_name_color = '#FF4444';
                                 } else {  // on est dans le même tour ou si on a désactivé l'option show_name_bleu_red_not_samelap
                                     tmp_name_color = '#FFFFFF';
@@ -412,20 +412,23 @@ function animations() {
             //}
             // Colorize Drivers
             /*if (document.getElementById('opt_colorize_drivers_' + i)) {
-             if (document.getElementById('opt_colorize_drivers_' + i).checked) {
-             document.getElementById('pB' + i).style.transitionDuration = "0s";
-             document.getElementById('pB' + i).style.transitionDelay = "0s";
-             document.getElementById('pB' + i).style.backgroundColor = document.getElementById('colorize_drivers_col_' + i).value;
-             //RGBA(document.getElementById('pB' + i), 0.8);
-             //e = document.getElementById('pB' + i)
-             //b = $(e).css('background-color');
-             //$(e).css('backgroundColor', 'rgba' + b.slice(b.indexOf('('), ( (b.match(/,/g).length == 2) ? -1 : b.lastIndexOf(',') - b.length)) + ', ' + 0.8 + ')');
-             } else {
-             document.getElementById('pB' + i).style.transitionDuration = "0s";
-             document.getElementById('pB' + i).style.transitionDelay = "0s";
-             document.getElementById('pB' + i).style.backgroundColor = 'rgba(0,0,0,0)';
-             }
-             }*/
+            if (document.getElementById('opt_colorize_drivers_' + i).checked) {
+            document.getElementById('pB' + i).style.transitionDuration = "0s";
+            document.getElementById('pB' + i).style.transitionDelay = "0s";
+            document.getElementById('pB' + i).style.backgroundColor = document.getElementById('colorize_drivers_col_' + i).value;
+            //RGBA(document.getElementById('pB' + i), 0.8);
+            //e = document.getElementById('pB' + i)
+            //b = $(e).css('background-color');
+            //$(e).css('backgroundColor', 'rgba' + b.slice(b.indexOf('('), ( (b.match(/,/g).length == 2) ? -1 : b.lastIndexOf(',') - b.length)) + ', ' + 0.8 + ')');
+            } else {
+            document.getElementById('pB' + i).style.transitionDuration = "0s";
+            document.getElementById('pB' + i).style.transitionDelay = "0s";
+            document.getElementById('pB' + i).style.backgroundColor = 'rgba(0,0,0,0)';
+            }
+            }*/
+
+            // Pour gérer les ombres en fonction du fond et du texte
+            set_style_text_shadow(i);
         }
     }
 

@@ -146,6 +146,7 @@ body {
     box-sizing: border-box;
 }
 #drag_overlays {
+    position: relative;
     width:94%;
     height:94%;
     top: 3%;
@@ -212,7 +213,7 @@ canvas {
     position:absolute;
     background-color : #555555;
     overflow:hidden;
-    text-overflow:clip ;
+    text-overflow:clip;
     white-space:nowrap;
     width:100%;
     z-index:4;
@@ -360,7 +361,10 @@ canvas {
 }
 #clubname00:hover {color:#ffffff;cursor:pointer;}
 
-.gain {width: 42px; text-align:center; display:inline-block; font-weight: bold;  }
+.gain {width: 42px; text-align:center; display:inline-block; font-weight: bold;
+	-webkit-filter: drop-shadow(1px 1px 1px black);
+	filter: drop-shadow(1px 1px 1px black);
+}
 #gain00 {display:inline-block;color: #9e9e9e;
 	-webkit-filter: drop-shadow(1px 1px 1px black);
 	filter: drop-shadow(1px 1px 1px black);
@@ -537,7 +541,7 @@ canvas {
 #delta00:hover {color:#ffffff;cursor:pointer;}
 
 .gap {display:inline-block;padding-left:8px; color: #9e9e9e; font-weight: bold;}
-#gap00 {display:inline-block; font-weight: bold;
+#gap00 {display:inline-block; color: #9e9e9e; font-weight: bold;
 	-webkit-filter: drop-shadow(1px 1px 1px black);
 	filter: drop-shadow(1px 1px 1px black);
 }
@@ -705,6 +709,13 @@ canvas {
 }
 #laps_led00:hover {color:#ffffff;cursor:pointer;}
 
+.joker_laps {text-align:center; display:inline-block; font-weight: bold;}
+#joker_laps00 {display:inline-block;font-weight: bold;color: #9e9e9e;
+	-webkit-filter: drop-shadow(1px 1px 1px black);
+	filter: drop-shadow(1px 1px 1px black);
+}
+#joker_laps00:hover {color:#ffffff;cursor:pointer;}
+
 
 .fuel {text-align:center; display:inline-block; font-weight: bold;}
 #fuel00 {display:inline-block;font-weight: bold;color: #9e9e9e;
@@ -720,6 +731,14 @@ canvas {
 	filter: drop-shadow(1px 1px 1px black);
 }
 #track_status00:hover {color:#ffffff;cursor:pointer;}
+
+
+.lap_last_pit {text-align:center; display:inline-block; font-weight: bold; color: #FFFFFF;}
+#lap_last_pit00 {display:inline-block;font-weight: bold;color: #9e9e9e; opacity: 1;
+	-webkit-filter: drop-shadow(1px 1px 1px black);
+	filter: drop-shadow(1px 1px 1px black);
+}
+#lap_last_pit00:hover {color:#ffffff;cursor:pointer;}
 
 
 #tick { display:none; font-size : 48px; padding-left: 1px; color : #ffffff;background-color:#000000;font-weight: bold}

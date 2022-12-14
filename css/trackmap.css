@@ -90,6 +90,7 @@ body {
     box-sizing: border-box;
 }
 #drag_overlays {
+    position: relative;
     width:94%;
     height:94%;
     top: 3%;
@@ -149,6 +150,84 @@ canvas {
     /*background-color:rgba(255,255,0,0.8);*/
 }
 #trackmap_fond_turns_canvas { z-index:-2; margin:0px; padding:0px; top:0px; left: 0px; }
+
+
+.driver_line {
+    display: flex;
+    cursor: pointer;
+}
+.driver_line:hover {
+    background-color: rgba(0,0,0,0.5);
+}
+
+.clear_btn {
+    position: absolute;
+    right: 0.5rem;
+    top: 0;
+    background-color: #ffff00;
+    color: black;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    font-weight: bold;
+    margin-left: 0.25rem;
+    cursor: pointer;
+}
+.clear_btn:hover {
+    background-color: #ffffff;
+}
+
+#select_menu {
+    position: absolute;
+    /*display: block;*/
+    font-size: 1rem;
+    width: 20rem;
+    height: 100%;
+    line-height: 1.5rem;
+    background-color: rgba(0,0,0,0.6);
+    color: #ffffff;
+    text-align: center;
+    left: 0.5rem;
+    bottom: 0.25rem;
+    z-index: 9999;
+    display: none;
+    opacity: 0;
+    transition: 0.4s;
+    left: 0;
+    top: 0rem;
+    padding-top: 2.5rem;
+
+    overflow: auto;
+    /*display:flex;*/
+    flex-direction: column;
+
+}
+#select_menu_btn {
+    position: absolute;
+    left: 0.5rem;
+    top: 0.25rem;
+    cursor: pointer;
+    z-index: 99999;
+    -webkit-filter: drop-shadow(1px 1px 1px black);
+	filter: drop-shadow(1px 1px 1px black);
+    opacity: 0;
+    transition: 0.4s;
+}
+.select_menu_btn_bar1, .select_menu_btn_bar2, .select_menu_btn_bar3 {
+  width: 1.75rem;
+  height: 0.25rem;
+  background-color: #ffffff;
+  margin: 0.3rem 0;
+  transition: 0.4s;
+}
+.change .select_menu_btn_bar1 {
+  transform: translate(0, 0.55rem) rotate(-45deg);
+}
+.change .select_menu_btn_bar2 {opacity: 0;}
+.change .select_menu_btn_bar3 {
+  transform: translate(0, -0.55rem) rotate(45deg);
+}
 
 #fullscreen {
     position: absolute;

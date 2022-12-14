@@ -12,7 +12,10 @@ function update_datas(text) {
 
         //if (text != -1 && text != "-2" && text != "-3") {
         if (text != -1 && text_header != "-2" && text_header != "-3" && text != "") {
+
             donnees_new = JSON.parse(text);
+
+            //console.log("***", donnees_new.flag)
 
             if (donnees_new != null && (donnees_new.typ == 31 || donnees_new.typ == 32)) {
                 if (donnees_new.is_cars_logos_perso != undefined) {
@@ -90,7 +93,15 @@ function update_datas(text) {
                     sof_displayed = 0;
                     nb_drivers = donnees_new.nb;
                 }
+
+                if (donnees_new.typ == 31 || donnees_new.typ == 32) {
+                    init_colorize();
+                }
+
             } else {
+
+                colorize_drivers_init = 3;  // pour remettre à jour le tableau colorize en fonction de si c'est en team ou pas
+
                 donnees_defined = 1;
 
                 sof_displayed = 0;
@@ -163,25 +174,26 @@ function update_datas(text) {
         }
 
         // Changement de configuration
-        //window_shortname = get_window_shortname(window_name);
-        if (send_config != undefined && window_shortname in send_config) {
-            send_config = send_config[window_shortname];
-        } else {
-            send_config = {};
+        var send_configs_ = [];
+        if (send_config != undefined) {
+            for (var page in send_config) {  // de cette manière on prend aussi en compte le "car", "track" ou "pit" et pas seulement le window_shortname
+                send_configs_.push(send_config[page]);
+            }
         }
-        //console.log(0)
-        if (send_config != undefined && broadcast <= 1 && text != -1) {
-            if ("tstamp" in send_config) {
-                //console.log("send_config", send_config.tstamp);
-                if (send_config_tstamp != send_config.tstamp && send_config != "") {
-                    //console.log("*************")
-                    send_config_tstamp = send_config.tstamp;
-                    //console.log(send_config);
-                    change_config(send_config);
-                    //ws.send("config_received;" + window_shortname + ";" + send_config_tstamp);
+        if (send_configs_ != [] && broadcast <= 1 && text != -1) {
+            var new_send_config_tstamp = null;
+            for (var send_config_num in send_configs_) {
+                send_config = send_configs_[send_config_num];
+                if ("tstamp" in send_config) {
+                    if ( (!(send_config.page in send_config_tstamp_) || send_config_tstamp_[send_config.page] != send_config.tstamp) && send_config != "" ) {
+                        new_send_config_tstamp = send_config.tstamp;
+                        send_config_tstamp_[send_config.page] = new_send_config_tstamp;   // à faire absolument avec le change_config pour éviter les boulcles infinies
+                        change_config(send_config);
+                    }
                 }
             }
         }
+
     }
 }
 
