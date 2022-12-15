@@ -1,6 +1,7 @@
 liste_sessions = [];
-last_sessionid = 58225162;
-last_sessionnum = 2;
+last_sessionid = 58245084;
+last_sessionnum = 0;
+liste_sessions = liste_sessions.concat([{'sessionid': 58245084, 'sessionnum': 0, 'track': 'Canadian Tire Motorsport Park', 'car': 'Lamborghini Huracan GT3 EVO', 'annee': 2022, 'mois': 12, 'jour': 15, 'type': 'Practice', 'nom': 'Practice, 3:00:00 - 2022-12-15 01h00 UTC - Canadian Tire Motorsport Park - Lamborghini Huracan GT3 EVO'}]);
 liste_sessions = liste_sessions.concat([{'sessionid': 58225162, 'sessionnum': 2, 'track': 'Red Bull Ring - Grand Prix', 'car': 'Lamborghini Huracan GT3 EVO', 'annee': 2022, 'mois': 12, 'jour': 14, 'type': 'Race', 'nom': 'Race, 0:40:00 - 2022-12-14 02h45 UTC - Red Bull Ring - Grand Prix - Lamborghini Huracan GT3 EVO'}]);
 liste_sessions = liste_sessions.concat([{'sessionid': 58225162, 'sessionnum': 1, 'track': 'Red Bull Ring - Grand Prix', 'car': 'Lamborghini Huracan GT3 EVO', 'annee': 2022, 'mois': 12, 'jour': 14, 'type': 'Lone Qualify', 'nom': 'Lone Qualify, 4 laps - 2022-12-14 02h30 UTC - Red Bull Ring - Grand Prix - Lamborghini Huracan GT3 EVO'}]);
 liste_sessions = liste_sessions.concat([{'sessionid': 58225162, 'sessionnum': 0, 'track': 'Red Bull Ring - Grand Prix', 'car': 'Lamborghini Huracan GT3 EVO', 'annee': 2022, 'mois': 12, 'jour': 14, 'type': 'Practice', 'nom': 'Practice, 2:00:00 - 2022-12-14 00h30 UTC - Red Bull Ring - Grand Prix - Lamborghini Huracan GT3 EVO'}]);
