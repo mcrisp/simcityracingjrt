@@ -142,7 +142,6 @@ sessioninfos_height = 46
 disp_menu = 0
 disp_conso_bigger = 1
 jrt_logo_disp = 0
-drag_overlays = 1
 fullscreen_button = 0
 use_css_perso = 0
 trackmap_disp_timelost = 0

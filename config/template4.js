@@ -135,7 +135,6 @@ group_by_class_nb_drivers_max_others = 30
 pack_disp = 0
 disp_conso_bigger = 1
 jrt_logo_disp = 0
-drag_overlays = 1
 trackmap_disp_logo = 1
 trackmap_bg_img = 1
 window_x = 3310

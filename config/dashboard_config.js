@@ -1,5 +1,4 @@
 banner_mode = 0
-drag_overlays = 1
 fullscreen_button = 0
 conso_decimal = 2
 fuel_decimal = 2

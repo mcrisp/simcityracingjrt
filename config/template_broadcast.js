@@ -124,7 +124,6 @@ ligne_h = 32
 banner_mode = 0
 tires_buttons = 0
 disp_fuelinfos = 0
-drag_overlays = 1
 use_css_perso = 0
 trackmap_disp_logo = 1
 trackmap_bg_img = 1

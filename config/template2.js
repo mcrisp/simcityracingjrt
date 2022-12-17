@@ -157,7 +157,6 @@ disable_all_events = 1
 sessioninfos_height = 0
 disp_menu = 0
 jrt_logo_disp = 0
-drag_overlays = 1
 display_virtual_winner = 0
 fullscreen_button = 0
 trackmap_disp_logo = 1

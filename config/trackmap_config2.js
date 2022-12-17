@@ -1,4 +1,3 @@
-drag_overlays = 1
 use_css_perso = 0
 trackmap_disp_logo = 1
 trackmap_bg_img = 1

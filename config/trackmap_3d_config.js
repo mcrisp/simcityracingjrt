@@ -1,4 +1,3 @@
-drag_overlays = 1
 fullscreen_button = 0
 trackmap_disp_mode = 3
 transparence_fond_trackmap = 0.9

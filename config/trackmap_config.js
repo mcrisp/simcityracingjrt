@@ -1,4 +1,3 @@
-drag_overlays = 1
 fullscreen_button = 0
 use_css_perso = 0
 trackmap_disp_timelost = 0
